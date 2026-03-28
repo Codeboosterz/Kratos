@@ -1,23 +1,41 @@
 /* ══════════════════════════════════════════════════════════════════════════════
    Kratos E-Books — Purchase & Download Flow
-   Handles: buy button clicks → Stripe checkout → success/cancel return → download
+   Handles: catalog load → buy clicks → Stripe checkout → success/cancel → download
+   Works with: /api/ebooks, /api/create-ebook-checkout-session, /api/ebook-download-link
    ══════════════════════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
 
-  // ─── EBOOK PRICE LABELS (for restoring after loading state) ────────────────
-  const EBOOK_LABELS = {
-    ebook_1: 'Koop nu — €19',
-    ebook_2: 'Koop nu — €25',
-    ebook_3: 'Koop nu — €17',
-  };
+  // ─── EBOOK CATALOG CACHE ───────────────────────────────────────────────────
+  let catalogItems = [];
 
-  const EBOOK_TITLES = {
-    ebook_1: 'Meal Prep Mastery',
-    ebook_2: 'Kracht & Spieropbouw',
-    ebook_3: 'Vetverlies Zonder Gedoe',
-  };
+  function getEbookTitle(ebookId) {
+    const item = catalogItems.find((x) => x.ebook_id === ebookId);
+    return item ? item.title_nl : 'E-book';
+  }
+
+  function getEbookLabel(ebookId) {
+    const item = catalogItems.find((x) => x.ebook_id === ebookId);
+    if (!item) return 'Koop nu';
+    return `Koop nu — €${(item.price_cents / 100).toFixed(0).replace('.', ',')}`;
+  }
+
+  // ─── LOAD CATALOG ON INIT ─────────────────────────────────────────────────
+  async function loadCatalog() {
+    try {
+      const res = await fetch('/api/ebooks');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data.items)) {
+        catalogItems = data.items;
+      }
+    } catch {
+      // Silently fail — static HTML still works
+    }
+  }
+
+  loadCatalog();
 
   // ─── EBOOK BUY BUTTON HANDLER (Event Delegation on #ebooks) ────────────────
   const ebooksSection = document.getElementById('ebooks');
@@ -54,7 +72,7 @@
       } catch (err) {
         console.error('Ebook checkout error:', err);
         btn.disabled = false;
-        if (label) label.textContent = EBOOK_LABELS[ebookId] || 'Koop nu';
+        if (label) label.textContent = getEbookLabel(ebookId);
         if (loader) loader.classList.add('hidden');
         showEbookToast('error', 'Er ging iets mis bij het openen van de checkout. Probeer opnieuw of neem contact op.');
       }
@@ -72,8 +90,8 @@
     // Only handle ebook returns
     if (product !== 'ebook') return;
 
-    if (payment === 'success' && ebookId && sessionId) {
-      showEbookSuccessToast(ebookId, sessionId);
+    if (payment === 'success' && ebookId) {
+      showEbookSuccessToast(ebookId, sessionId || '');
       // Clean URL without reloading
       window.history.replaceState({}, '', window.location.pathname + '#ebooks');
     } else if (payment === 'cancel') {
@@ -84,9 +102,8 @@
 
   // ─── SUCCESS TOAST WITH DOWNLOAD BUTTON ───────────────────────────────────
   function showEbookSuccessToast(ebookId, sessionId) {
-    const title = EBOOK_TITLES[ebookId] || 'E-book';
+    const title = getEbookTitle(ebookId);
 
-    // Create a richer success toast with download capability
     const existing = document.getElementById('ebook-toast');
     if (existing) existing.remove();
 
@@ -160,7 +177,11 @@
         if (loader) loader.classList.remove('hidden');
 
         try {
-          const res = await fetch(`/api/ebook-download-link?ebook_id=${encodeURIComponent(eid)}&session_id=${encodeURIComponent(sid)}`);
+          // Build download link URL — include session_id for fallback verification
+          let url = `/api/ebook-download-link?ebook_id=${encodeURIComponent(eid)}`;
+          if (sid) url += `&session_id=${encodeURIComponent(sid)}`;
+
+          const res = await fetch(url);
           const data = await res.json();
 
           if (!res.ok) {
@@ -197,7 +218,6 @@
 
   // ─── GENERIC EBOOK TOAST ──────────────────────────────────────────────────
   function showEbookToast(type, message) {
-    // Reuse the existing showPaymentToast pattern but with ebook-specific id
     const existing = document.getElementById('ebook-toast');
     if (existing) existing.remove();
 
