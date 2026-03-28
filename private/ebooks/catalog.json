@@ -1,0 +1,49 @@
+{
+  "items": [
+    {
+      "ebook_id": "ebook_1",
+      "title_nl": "Meal Prep Mastery",
+      "short_desc_nl": "7 dagen plannen + boodschappenlijst + macro's. Alles wat je nodig hebt om consistent te eten.",
+      "price_cents": 1900,
+      "currency": "eur",
+      "cover_img": "./img/ebook_mealprep.svg",
+      "features": [
+        "7-daagse meal prep planning",
+        "Complete boodschappenlijst",
+        "Macro-berekeningen per maaltijd"
+      ],
+      "file_name": "meal-prep-mastery.pdf",
+      "created_at": "2026-03-28T16:00:00.000Z"
+    },
+    {
+      "ebook_id": "ebook_2",
+      "title_nl": "Kracht & Spieropbouw",
+      "short_desc_nl": "4-week trainingsschema's + progressie & techniek. Gebouwd voor serieuze resultaten.",
+      "price_cents": 2500,
+      "currency": "eur",
+      "cover_img": "./img/ebook_kracht.svg",
+      "features": [
+        "4-weekse trainingsschema's",
+        "Progressie tracking systeem",
+        "Techniek uitleg per oefening"
+      ],
+      "file_name": "kracht-spieropbouw.pdf",
+      "created_at": "2026-03-28T16:00:00.000Z"
+    },
+    {
+      "ebook_id": "ebook_3",
+      "title_nl": "Vetverlies Zonder Gedoe",
+      "short_desc_nl": "Realistische aanpak + habits + voeding. Geen crash diëten, wel duurzaam resultaat.",
+      "price_cents": 1700,
+      "currency": "eur",
+      "cover_img": "./img/ebook_vetverlies.svg",
+      "features": [
+        "Realistische voedingsaanpak",
+        "Habit-building framework",
+        "Duurzame vetverlies tips"
+      ],
+      "file_name": "vetverlies-zonder-gedoe.pdf",
+      "created_at": "2026-03-28T16:00:00.000Z"
+    }
+  ]
+}

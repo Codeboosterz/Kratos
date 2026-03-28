@@ -3,7 +3,8 @@ node_modules/
 *.log
 .DS_Store
 .vercel
-private/
+private/ebooks/*.pdf
+private/ebooks/orders.json
 testsprite_tests/
 Media/
 Muscle tech videos/

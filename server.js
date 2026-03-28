@@ -16,9 +16,9 @@ const ORDERS_PATH = path.join(__dirname, process.env.EBOOK_ORDERS_PATH || 'priva
 const MAX_EBOOK_MB = Number(process.env.MAX_EBOOK_MB || '50');
 const MAX_EBOOK_BYTES = MAX_EBOOK_MB * 1024 * 1024;
 
-// Ensure directories exist
-fs.mkdirSync(PUBLIC_DIR, { recursive: true });
-fs.mkdirSync(EBOOK_DIR, { recursive: true });
+// Ensure directories exist (gracefully handle read-only filesystems like Vercel)
+try { fs.mkdirSync(PUBLIC_DIR, { recursive: true }); } catch {}
+try { fs.mkdirSync(EBOOK_DIR, { recursive: true }); } catch {}
 
 // ─── JSON File Helpers ───────────────────────────────────────────────────────
 function readJsonSafe(filePath, fallbackObj) {
@@ -32,7 +32,11 @@ function readJsonSafe(filePath, fallbackObj) {
 }
 
 function writeJsonSafe(filePath, obj) {
-  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2), 'utf8');
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(obj, null, 2), 'utf8');
+  } catch {
+    // Read-only filesystem (e.g., Vercel) — silently skip write
+  }
 }
 
 function nowIso() {
@@ -512,7 +516,6 @@ app.post('/api/admin/ebooks/upload', adminAuth, adminLimiter, upload.single('pdf
       cover_img: cover_img || null,
       features,
       file_name: req.file.filename,
-      file_path: path.join(EBOOK_DIR, req.file.filename),
       created_at: nowIso(),
     });
 
@@ -712,7 +715,10 @@ app.get('/api/ebook-download', downloadLimiter, (req, res) => {
     const ebook = getEbookById(ebook_id);
     if (!ebook) return res.status(404).send('E-book niet gevonden.');
 
-    const filePath = ebook.file_path;
+    // Resolve file path — prefer file_name + EBOOK_DIR for portability
+    const filePath = ebook.file_name
+      ? path.join(EBOOK_DIR, ebook.file_name)
+      : ebook.file_path;
     if (!filePath || !fs.existsSync(filePath)) {
       return res.status(404).send('Bestand niet gevonden. Neem contact op met Omar.');
     }
