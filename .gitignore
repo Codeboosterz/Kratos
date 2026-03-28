@@ -1,0 +1,24 @@
+node_modules/
+.env
+*.log
+.DS_Store
+.vercel
+private/
+testsprite_tests/
+Media/
+Muscle tech videos/
+
+# Root-level duplicate/source images (served from public/img/)
+/IMG_3876.jpg
+/NEoq8SYOsQ1wlzxgELHP0_pK2bXGIa.png
+/Transparent logo.png
+/anatomy_*.png
+/essential_*.png
+/hero-banner.png
+/icon-logo*.png
+/index.html
+/logo.png
+/omar.jpg
+
+# Large source files not needed in repo
+public/img/NEoq8SYOsQ1wlzxgELHP0_pK2bXGIa.png

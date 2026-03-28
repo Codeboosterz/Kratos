@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="nl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Kratos Personal Training - Ontketen je ware kracht</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a9cf68",
+                        "primary-hover": "#9ec45d",
+                        "background-light": "#f7f8f6",
+                        "background-dark": "#0B090A", /* Solid Black */
+                        "background-alt": "#21201F", /* Dark Charcoal */
+                        "text-main": "#F2F3EF", /* Off-white */
+                        "surface": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Flip Card Base Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-inner {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .group:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom scrollbar for a premium feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0B090A;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #21201F;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+
+        .glass-panel {
+            background: rgba(33, 32, 31, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-dark text-text-main font-body antialiased selection:bg-primary selection:text-background-dark">
+    <!-- Sticky Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-panel border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 text-white">
+                <img id="kratos-logo" src="./img/Transparent logo.png" alt="Kratos Logo" width="48" height="48"
+                    class="h-12 w-auto transition-transform duration-75 ease-out" />
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#over">Over Omar</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#voordelen">Voordelen</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#prijzen">Prijzen</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#ebooks">E-books</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#reviews">Reviews</a>
+            </div>
+            <a class="hidden md:flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-all transform hover:scale-105"
+                href="#contact">
+                Start vandaag nog
+            </a>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white">
+                <span class="material-symbols-outlined text-3xl">menu</span>
+            </button>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/80 to-transparent z-10">
+            </div>
+            <div class="w-full h-full bg-cover bg-center bg-no-repeat"
+                data-alt="Dark moody fitness shot of a muscular male trainer looking determined in a gym setting with dramatic lighting"
+                style="background-image: url('./img/hero-banner.png');">
+            </div>
+        </div>
+        <div class="relative z-20 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="flex flex-col gap-6">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 w-fit">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    <span class="text-xs font-bold text-primary tracking-wider uppercase">Nu plaatsen beschikbaar</span>
+                </div>
+                <h1
+                    class="font-display font-black text-6xl md:text-8xl lg:text-9xl leading-[0.9] tracking-tighter text-white">
+                    KRATOS
+                </h1>
+                <h2 class="font-display text-xl md:text-3xl text-gray-300 font-medium tracking-wide">
+                    Ontketen je ware kracht
+                </h2>
+                <p class="text-gray-400 max-w-lg text-lg leading-relaxed">
+                    Professionele personal training in Olen die verder gaat dan alleen fysiek. Bouw de mindset van een
+                    krijger.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                    <a class="flex items-center justify-center rounded-full h-14 px-8 bg-primary hover:bg-primary-hover text-background-dark text-base font-bold transition-all transform hover:scale-105"
+                        href="#contact">
+                        Start vandaag nog
+                    </a>
+                    <a class="flex items-center justify-center rounded-full h-14 px-8 border border-white/20 hover:border-white/50 bg-white/5 backdrop-blur-sm text-white text-base font-bold transition-all"
+                        href="#over">
+                        Meer informatie
+                    </a>
+                </div>
+                <div class="mt-4 text-center sm:text-left">
+                    <button onclick="toggleCoachChat()"
+                        class="text-sm font-medium text-gray-400 hover:text-primary transition-colors inline-flex items-center gap-1 group focus:outline-none focus:ring-1 focus:ring-white rounded-md px-2 py-1">
+                        Twijfel je nog? Doe de QuickScan chat (1 min)
+                        <span
+                            class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce text-white/50">
+            <span class="material-symbols-outlined text-4xl">keyboard_arrow_down</span>
+        </div>
+    </section>
+    <!-- Over Omar Section -->
+    <section class="py-24 bg-background-alt relative" id="over">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="relative order-2 md:order-1">
+                    <div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-50"></div>
+                    <div class="relative rounded-2xl overflow-hidden aspect-[4/5] border border-white/10 shadow-2xl">
+                        <div class="w-full h-full bg-cover bg-center"
+                            data-alt="Portrait of Omar Ellis, a fit personal trainer, standing confidently with arms crossed in a modern gym"
+                            style="background-image: url('./img/omar.jpg');">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-6 order-1 md:order-2">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-white leading-tight">
+                        Over <span class="text-primary">Omar Ellis</span>
+                    </h2>
+                    <h3 class="font-display text-xl text-white/80 font-medium">Jouw Personal Trainer in Olen</h3>
+                    <div class="space-y-4 text-gray-400 text-lg leading-relaxed">
+                        <p>
+                            Met jarenlange ervaring in de fitnessindustrie help ik mensen niet alleen om fysiek sterker
+                            te worden, maar ook mentaal onoverwinnelijk. Mijn aanpak is gebaseerd op wetenschap,
+                            discipline en persoonlijke aandacht.
+                        </p>
+                        <p>
+                            Of je nu wilt afvallen, spiermassa wilt opbouwen of je algemene conditie wilt verbeteren,
+                            bij Kratos vind je de begeleiding die je nodig hebt om je doelen te bereiken en te
+                            overtreffen.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-6 mt-6 border-t border-white/10 pt-8">
+                        <div>
+                            <p class="font-display text-3xl font-bold text-white">50</p>
+                            <p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Clienten</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-3xl font-bold text-white">4</p>
+                            <p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Jaar Ervaring</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-3xl font-bold text-white">100%</p>
+                            <p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Toewijding</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Voordelen Section -->
+    <section class="py-24 bg-background-dark" id="voordelen">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">Voordelen</h2>
+                <p class="text-gray-400">Waarom kiezen voor Kratos Personal Training? Wij bieden een totaalpakket voor
+                    jouw transformatie.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: Afvallen -->
+                <div class="group perspective-1000 h-[320px] w-full cursor-pointer">
+                    <div class="relative w-full h-full transform-style-3d flip-card-inner rounded-2xl shadow-xl">
+                        <!-- Front Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden glass-panel p-8 rounded-2xl flex flex-col items-start gap-4 bg-[#1A1A1A] border border-white/10">
+                            <div
+                                class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2 transition-all">
+                                <span class="material-symbols-outlined">monitor_weight</span>
+                            </div>
+                            <h3 class="font-display text-xl font-bold text-white">Afvallen</h3>
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Effectieve methodes om vet te verliezen en je ideale gewicht te bereiken en te behouden.
+                            </p>
+                        </div>
+                        <!-- Back Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden shadow-2xl border border-primary/30">
+                            <div class="w-full h-full bg-cover bg-center"
+                                style="background-image: url('./img/anatomy_afvallen_notext.png');">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
+                                    <p class="text-white font-display font-bold text-lg drop-shadow-md">Vetverlies &
+                                        Spierdefinitie</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2: Spieropbouw -->
+                <div class="group perspective-1000 h-[320px] w-full cursor-pointer">
+                    <div class="relative w-full h-full transform-style-3d flip-card-inner rounded-2xl shadow-xl">
+                        <!-- Front Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden glass-panel p-8 rounded-2xl flex flex-col items-start gap-4 bg-[#1A1A1A] border border-white/10">
+                            <div
+                                class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2 transition-all">
+                                <span class="material-symbols-outlined">fitness_center</span>
+                            </div>
+                            <h3 class="font-display text-xl font-bold text-white">Spieropbouw</h3>
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Gerichte krachttraining programma's voor maximale hypertrofie en krachttoename.
+                            </p>
+                        </div>
+                        <!-- Back Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden shadow-2xl border border-primary/30">
+                            <div class="w-full h-full bg-cover bg-center"
+                                style="background-image: url('./img/anatomy_spieropbouw_notext.png');">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
+                                    <p class="text-white font-display font-bold text-lg drop-shadow-md">Spiergroei &
+                                        Hypertrofie</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3: In vorm komen -->
+                <div class="group perspective-1000 h-[320px] w-full cursor-pointer">
+                    <div class="relative w-full h-full transform-style-3d flip-card-inner rounded-2xl shadow-xl">
+                        <!-- Front Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden glass-panel p-8 rounded-2xl flex flex-col items-start gap-4 bg-[#1A1A1A] border border-white/10">
+                            <div
+                                class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2 transition-all">
+                                <span class="material-symbols-outlined">favorite</span>
+                            </div>
+                            <h3 class="font-display text-xl font-bold text-white">In vorm komen</h3>
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Verbeter je uithoudingsvermogen, mobiliteit en algehele gezondheid met functionele
+                                training.
+                            </p>
+                        </div>
+                        <!-- Back Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden shadow-2xl border border-primary/30">
+                            <div class="w-full h-full bg-cover bg-center"
+                                style="background-image: url('./img/anatomy_invorm_notext.png');">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
+                                    <p class="text-white font-display font-bold text-lg drop-shadow-md">Conditie &
+                                        Functionaliteit</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 4: Voedingsadvies -->
+                <div class="group perspective-1000 h-[320px] w-full cursor-pointer">
+                    <div class="relative w-full h-full transform-style-3d flip-card-inner rounded-2xl shadow-xl">
+                        <!-- Front Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden glass-panel p-8 rounded-2xl flex flex-col items-start gap-4 bg-[#1A1A1A] border border-white/10">
+                            <div
+                                class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2 transition-all">
+                                <span class="material-symbols-outlined">restaurant</span>
+                            </div>
+                            <h3 class="font-display text-xl font-bold text-white">Voedingsadvies</h3>
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Op maat gemaakte voedingsschema's die passen bij jouw levensstijl en doelen.
+                            </p>
+                        </div>
+                        <!-- Back Face -->
+                        <div
+                            class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden shadow-2xl border border-primary/30">
+                            <div class="w-full h-full bg-cover bg-center"
+                                style="background-image: url('./img/anatomy_voeding_notext.png');">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
+                                    <p class="text-white font-display font-bold text-lg drop-shadow-md">Voeding &
+                                        Energie flow</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Pricing Section -->
+    <section class="py-24 bg-background-alt relative overflow-hidden" id="prijzen">
+        <!-- Background decorative blur -->
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none">
+        </div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">Prijzen</h2>
+                <p class="text-gray-400">Investeer in jezelf. Kies het pakket dat bij jou past.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <!-- Basic Plan -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col h-full border-t border-white/5">
+                    <div class="mb-6">
+                        <h3 class="font-display text-2xl font-bold text-white">1 Sessie</h3>
+                        <p class="text-gray-400 text-sm mt-2">Perfect om kennis te maken</p>
+                    </div>
+                    <div class="mb-8">
+                        <span class="text-4xl font-display font-bold text-white">€50</span>
+                    </div>
+                    <ul class="flex flex-col gap-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Personal Training 1-op-1
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Intake gesprek
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Basis voedingsadvies
+                        </li>
+                    </ul>
+                    <button data-package-id="pakket_1"
+                        class="stripe-checkout-btn w-full flex items-center justify-center gap-2 rounded-full h-12 bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-colors cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-primary"
+                        aria-label="Afrekenen — 1 Sessie">
+                        <span class="btn-label">Afrekenen</span>
+                        <span class="btn-loader hidden" aria-live="polite">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span class="sr-only">Even laden…</span>
+                        </span>
+                    </button>
+                </div>
+                <!-- Popular Plan (Highlighted) -->
+                <div
+                    class="bg-[#151515] p-8 rounded-3xl flex flex-col h-full border border-primary relative transform md:-translate-y-4 shadow-2xl shadow-primary/10">
+                    <div
+                        class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                        Populair
+                    </div>
+                    <div class="mb-6 mt-2">
+                        <h3 class="font-display text-2xl font-bold text-white">5 Sessies</h3>
+                        <p class="text-gray-400 text-sm mt-2">Voor serieuze resultaten</p>
+                    </div>
+                    <div class="mb-8">
+                        <span class="text-5xl font-display font-bold text-white">€35 <span
+                                class="text-2xl text-gray-400 font-normal ml-1 tracking-normal font-sans">P/SESSIE</span></span>
+                    </div>
+                    <ul class="flex flex-col gap-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-gray-200">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Personal Training 1-op-1
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-200">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Uitgebreide intake &amp; meting
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-200">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Gepersonaliseerd voedingsschema
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-200">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            24/7 WhatsApp support
+                        </li>
+                    </ul>
+                    <button data-package-id="pakket_5"
+                        class="stripe-checkout-btn w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-colors cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-white"
+                        aria-label="Afrekenen — 5 Sessies">
+                        <span class="btn-label">Afrekenen</span>
+                        <span class="btn-loader hidden" aria-live="polite">
+                            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span class="sr-only">Even laden…</span>
+                        </span>
+                    </button>
+                </div>
+                <!-- Premium Plan -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col h-full border-t border-white/5">
+                    <div class="mb-6">
+                        <h3 class="font-display text-2xl font-bold text-white">10 Sessies</h3>
+                        <p class="text-gray-400 text-sm mt-2">De complete transformatie</p>
+                    </div>
+                    <div class="mb-8">
+                        <span class="text-4xl font-display font-bold text-white">€30 <span
+                                class="text-xl text-gray-400 font-normal ml-1 tracking-normal font-sans">P/SESSIE</span></span>
+                    </div>
+                    <ul class="flex flex-col gap-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Personal Training 1-op-1
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Maandelijkse progressie meting
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Volledige lifestyle coaching
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300">
+                            <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                            Toegang tot Kratos app
+                        </li>
+                    </ul>
+                    <button data-package-id="pakket_10"
+                        class="stripe-checkout-btn w-full flex items-center justify-center gap-2 rounded-full h-12 bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-colors cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-primary"
+                        aria-label="Afrekenen — 10 Sessies">
+                        <span class="btn-label">Afrekenen</span>
+                        <span class="btn-loader hidden" aria-live="polite">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span class="sr-only">Even laden…</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Macro QuickScan Card -->
+            <div id="quickscan"
+                class="mt-16 w-full max-w-4xl mx-auto bg-[#1A1A1A]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
+                <!-- Decorative element -->
+                <div
+                    class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[60px] pointer-events-none">
+                </div>
+
+                <div class="text-center mb-8 relative z-10">
+                    <h3 class="font-display text-3xl font-bold text-white mb-2">Macro QuickScan</h3>
+                    <p class="text-gray-400">Krijg in 30 seconden inzicht in jouw ideale calorieën en macro's.</p>
+                </div>
+
+                <form id="quickscan-form" class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                    <!-- Doel -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-doel">Wat is je doel?</label>
+                        <select id="qs-doel" required
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>Kies een doel</option>
+                            <option value="afvallen">Afvallen</option>
+                            <option value="onderhouden">In vorm komen (Onderhouden)</option>
+                            <option value="spieropbouw">Spieropbouw</option>
+                        </select>
+                    </div>
+                    <!-- Geslacht -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-geslacht">Geslacht (optioneel)</label>
+                        <select id="qs-geslacht"
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>Kies een optie</option>
+                            <option value="man">Man</option>
+                            <option value="vrouw">Vrouw</option>
+                            <option value="anders">Liever niet te zeggen</option>
+                        </select>
+                    </div>
+                    <!-- Leeftijd -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-leeftijd">Leeftijd</label>
+                        <input type="number" id="qs-leeftijd" min="16" max="99" required placeholder="Bijv. 28"
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+                    </div>
+                    <!-- Lengte -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-lengte">Lengte (cm)</label>
+                        <input type="number" id="qs-lengte" min="140" max="230" required placeholder="Bijv. 182"
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+                    </div>
+                    <!-- Gewicht -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-gewicht">Gewicht (kg)</label>
+                        <input type="number" id="qs-gewicht" min="40" max="200" required placeholder="Bijv. 80"
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+                    </div>
+                    <!-- Activiteit -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-activiteit">Activiteitenniveau (buiten
+                            sporten)</label>
+                        <select id="qs-activiteit" required
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>Kies je niveau</option>
+                            <option value="laag">Laag (Zittend beroep)</option>
+                            <option value="gemiddeld">Gemiddeld (Licht actief / Staan)</option>
+                            <option value="hoog">Hoog (Fysiek zwaar werk)</option>
+                        </select>
+                    </div>
+                    <!-- Dagen trainen -->
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="text-sm font-medium text-gray-300" for="qs-dagen">Trainingsdagen (1-6)</label>
+                        <input type="number" id="qs-dagen" min="1" max="6" required placeholder="Bijv. 3"
+                            class="w-full bg-background-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+                    </div>
+
+                    <div class="md:col-span-2 mt-4 text-center">
+                        <button type="submit"
+                            class="w-full md:w-auto inline-flex items-center justify-center rounded-full h-14 px-10 bg-primary hover:bg-primary-hover text-background-dark text-lg font-bold transition-all shadow-lg hover:shadow-primary/20">
+                            Bereken mijn macro's
+                        </button>
+                        <p class="text-xs text-gray-500 mt-4 flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">lock</span>
+                            Geen gegevens worden opgeslagen; alles blijft op je toestel.
+                        </p>
+                    </div>
+                </form>
+
+                <!-- QuickScan Results (Hidden by default) -->
+                <div id="quickscan-results" class="hidden mt-8 pt-8 border-t border-white/10 relative z-10 w-full">
+                    <h4 class="font-display text-2xl font-bold text-white mb-6 text-center">Jouw Resultaat</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 w-full max-w-2xl mx-auto">
+                        <div
+                            class="bg-background-dark/60 rounded-2xl p-6 border border-white/5 text-center flex flex-col justify-center">
+                            <p class="text-gray-400 text-sm mb-2">Dagelijkse Calorieën</p>
+                            <p id="qs-res-cals" class="text-4xl font-display font-bold text-primary">0 <span
+                                    class="text-lg text-white font-normal">kcal</span></p>
+                        </div>
+                        <div class="bg-background-dark/60 rounded-2xl p-6 border border-white/5">
+                            <p class="text-gray-400 text-sm mb-4 text-center">Macronutriënten</p>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-white text-sm">Proteïne</span>
+                                <span id="qs-res-p" class="text-primary font-bold">0g</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-white text-sm">Koolhydraten</span>
+                                <span id="qs-res-c" class="text-primary font-bold">0g</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-white text-sm">Vetten</span>
+                                <span id="qs-res-f" class="text-primary font-bold">0g</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center w-full max-w-2xl mx-auto flex flex-col items-center">
+                        <p class="text-gray-400 text-sm mb-6 w-full text-center">Dit is een schatting. Voor maximaal
+                            resultaat is een gepersonaliseerd plan nodig gebaseerd op een fysieke meting.</p>
+                        <a id="qs-whatsapp-btn" href="#" target="_blank"
+                            class="inline-flex items-center justify-center rounded-full h-14 px-8 bg-[#25D366] hover:bg-[#20bd5a] text-white text-base font-bold transition-all shadow-lg hover:shadow-[#25D366]/20 gap-2 w-full md:w-auto">
+                            <span class="material-symbols-outlined">chat</span>
+                            Bespreek via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Meal Plan & Essentials Section -->
+    <section class="py-24 bg-background-dark relative overflow-hidden" id="mealplan">
+        <div
+            class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none">
+        </div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">Meal Plan & Boodschappenlijst
+                </h2>
+                <p class="text-gray-400">Gratis. Snel. Praktisch. Maak een plan dat je écht kan volhouden.</p>
+            </div>
+
+            <!-- Meal Plan Form -->
+            <div class="glass-panel p-8 rounded-3xl border-t border-white/5 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Doel -->
+                    <div>
+                        <label for="mp-goal" class="text-white text-sm font-medium mb-2 block">Wat is je doel?</label>
+                        <select id="mp-goal"
+                            class="w-full bg-background-dark/60 border border-white/10 rounded-xl px-4 h-12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="afvallen">Afvallen</option>
+                            <option value="spieropbouw">Spieropbouw</option>
+                            <option value="invorm" selected>In vorm komen</option>
+                        </select>
+                    </div>
+                    <!-- Dieetvoorkeur -->
+                    <div>
+                        <label for="mp-diet" class="text-white text-sm font-medium mb-2 block">Dieetvoorkeur
+                            (optioneel)</label>
+                        <select id="mp-diet"
+                            class="w-full bg-background-dark/60 border border-white/10 rounded-xl px-4 h-12 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Geen voorkeur</option>
+                            <option value="vegetarian">Vegetarisch</option>
+                            <option value="vegan">Veganistisch</option>
+                            <option value="gluten free">Glutenvrij</option>
+                            <option value="dairy free">Lactosevrij</option>
+                        </select>
+                    </div>
+                    <!-- Calorieën slider -->
+                    <div class="md:col-span-2">
+                        <label for="mp-calories" class="text-white text-sm font-medium mb-2 block">Dagelijks calorie
+                            doel: <span id="mp-cal-display" class="text-primary font-bold">2000</span> kcal</label>
+                        <input type="range" id="mp-calories" min="1200" max="3500" step="50" value="2000"
+                            class="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#A9CF68] bg-white/10"
+                            aria-label="Calorie doel slider" />
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1200 kcal</span>
+                            <span>3500 kcal</span>
+                        </div>
+                    </div>
+                    <!-- Allergieën -->
+                    <div class="md:col-span-2">
+                        <label for="mp-exclude" class="text-white text-sm font-medium mb-2 block">Allergieën /
+                            uitsluiten (optioneel)</label>
+                        <input type="text" id="mp-exclude" placeholder="bijv. noten, schaaldieren"
+                            class="w-full bg-background-dark/60 border border-white/10 rounded-xl px-4 h-12 text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary" />
+                    </div>
+                </div>
+                <!-- Generate buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
+                    <button id="mp-btn-day"
+                        class="mealplan-gen-btn inline-flex items-center justify-center gap-2 rounded-full h-14 px-10 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-all shadow-lg hover:shadow-primary/20 cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-white"
+                        data-timeframe="day" aria-label="Genereer 1 dag meal plan">
+                        <span class="material-symbols-outlined text-lg">restaurant</span>
+                        Genereer 1 dag
+                    </button>
+                    <button id="mp-btn-week"
+                        class="mealplan-gen-btn inline-flex items-center justify-center gap-2 rounded-full h-14 px-10 bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-all cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-primary"
+                        data-timeframe="week" aria-label="Genereer 7 dagen meal plan">
+                        <span class="material-symbols-outlined text-lg">calendar_month</span>
+                        Genereer 7 dagen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Meal Plan Results (hidden by default) -->
+            <div id="mealplan-results" class="hidden">
+                <!-- Loading state -->
+                <div id="mp-loading" class="hidden text-center py-12" aria-live="polite">
+                    <svg class="animate-spin h-8 w-8 text-primary mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z">
+                        </path>
+                    </svg>
+                    <p class="text-gray-400">Even je meal plan maken…</p>
+                </div>
+
+                <!-- Results content -->
+                <div id="mp-content" class="hidden space-y-6">
+                    <!-- Macro summary -->
+                    <div class="glass-panel p-6 rounded-2xl border-t border-white/5">
+                        <h3 class="font-display text-xl font-bold text-white mb-4">Macro Overzicht</h3>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="bg-background-dark/40 rounded-xl p-4">
+                                <p class="text-gray-400 text-xs mb-1">Calorieën</p>
+                                <p id="mp-total-cal" class="text-2xl font-bold text-primary">0</p>
+                            </div>
+                            <div class="bg-background-dark/40 rounded-xl p-4">
+                                <p class="text-gray-400 text-xs mb-1">Proteïne</p>
+                                <p id="mp-total-protein" class="text-2xl font-bold text-white">0g</p>
+                            </div>
+                            <div class="bg-background-dark/40 rounded-xl p-4">
+                                <p class="text-gray-400 text-xs mb-1">Vet</p>
+                                <p id="mp-total-fat" class="text-2xl font-bold text-white">0g</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meals list -->
+                    <div id="mp-meals-list" class="space-y-4"></div>
+
+                    <!-- WhatsApp CTA -->
+                    <div class="text-center pt-4">
+                        <a id="mp-whatsapp-btn" href="#" target="_blank"
+                            class="inline-flex items-center justify-center rounded-full h-14 px-8 bg-[#25D366] hover:bg-[#20bd5a] text-white text-base font-bold transition-all shadow-lg hover:shadow-[#25D366]/20 gap-2">
+                            <span class="material-symbols-outlined">chat</span>
+                            Stuur dit naar Omar
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Error state -->
+                <div id="mp-error" class="hidden text-center py-8 px-4" role="alert">
+                    <span class="material-symbols-outlined text-red-400 text-4xl mb-3 block">error</span>
+                    <p id="mp-error-msg" class="text-gray-300"></p>
+                </div>
+            </div>
+
+            <!-- Coach Omar's Essentials (collapsible) -->
+            <div id="essentials-section" class="mt-12">
+                <button id="essentials-toggle"
+                    class="w-full flex items-center justify-between glass-panel px-6 py-4 rounded-2xl border-t border-white/5 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary"
+                    aria-expanded="false" aria-controls="essentials-content">
+                    <div>
+                        <h3 class="font-display text-xl font-bold text-white">Coach Omar's essentials</h3>
+                        <p class="text-gray-400 text-sm mt-1">Hulpmiddelen die consistentie makkelijker maken
+                            (optioneel)</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-400 transition-transform duration-200"
+                        id="essentials-chevron">expand_more</span>
+                </button>
+                <div id="essentials-content" class="hidden mt-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Card 1: Meal Prep -->
+                        <div class="glass-panel rounded-2xl overflow-hidden border-t border-white/5 flex flex-col">
+                            <div class="bg-white/95 p-4 flex items-center justify-center h-48">
+                                <img src="./img/essential_mealprep.png" alt="Glazen meal prep bakjes set" width="200"
+                                    height="150" class="h-full w-auto object-contain" loading="lazy" decoding="async" />
+                            </div>
+                            <div class="p-5 flex flex-col flex-1">
+                                <h4 class="text-white font-bold mb-2">Meal Prep Bakjes</h4>
+                                <p class="text-gray-400 text-sm flex-1">Meal prep maakt je week makkelijker en verhoogt
+                                    je consistentie.</p>
+                                <a href="https://www.amazon.com.be/-/nl/Igluu-Meal-Prep-Vaatwasserbestendig-Verschillende/dp/B08DYF9GXP?tag={{AMAZON_ASSOCIATE_TAG}}"
+                                    target="_blank" rel="noopener noreferrer sponsored"
+                                    class="mt-4 inline-flex items-center justify-center gap-2 rounded-full h-10 px-6 bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors">
+                                    Bekijk op Amazon
+                                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Card 2: Keukenweegschaal -->
+                        <div class="glass-panel rounded-2xl overflow-hidden border-t border-white/5 flex flex-col">
+                            <div class="bg-white/95 p-4 flex items-center justify-center h-48">
+                                <img src="./img/essential_scale.png" alt="Digitale keukenweegschaal" width="200"
+                                    height="150" class="h-full w-auto object-contain" loading="lazy" decoding="async" />
+                            </div>
+                            <div class="p-5 flex flex-col flex-1">
+                                <h4 class="text-white font-bold mb-2">Digitale Keukenweegschaal</h4>
+                                <p class="text-gray-400 text-sm flex-1">Portiecontrole zonder stress: snel wegen =
+                                    sneller leren.</p>
+                                <a href="https://www.amazon.com.be/-/nl/keukenweegschaal-nauwkeurige-voedselweegschaal-weegoppervlak-lcd-display/dp/B0DFGSZ62B?tag={{AMAZON_ASSOCIATE_TAG}}"
+                                    target="_blank" rel="noopener noreferrer sponsored"
+                                    class="mt-4 inline-flex items-center justify-center gap-2 rounded-full h-10 px-6 bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors">
+                                    Bekijk op Amazon
+                                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Card 3: Shaker -->
+                        <div class="glass-panel rounded-2xl overflow-hidden border-t border-white/5 flex flex-col">
+                            <div class="bg-white/95 p-4 flex items-center justify-center h-48">
+                                <img src="./img/essential_shaker.png" alt="Premium eiwitshaker" width="200" height="150"
+                                    class="h-full w-auto object-contain" loading="lazy" decoding="async" />
+                            </div>
+                            <div class="p-5 flex flex-col flex-1">
+                                <h4 class="text-white font-bold mb-2">Shaker</h4>
+                                <p class="text-gray-400 text-sm flex-1">Makkelijker eiwitten halen onderweg: 1 tool,
+                                    minder excuses.</p>
+                                <a href="https://www.amazon.com.be/-/nl/PROMiXX-Pro-Shaker-Bottle-supplementopslag/dp/B09LDDFK4R?tag={{AMAZON_ASSOCIATE_TAG}}"
+                                    target="_blank" rel="noopener noreferrer sponsored"
+                                    class="mt-4 inline-flex items-center justify-center gap-2 rounded-full h-10 px-6 bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors">
+                                    Bekijk op Amazon
+                                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Affiliate disclosure -->
+                    <p class="text-gray-500 text-xs mt-6 text-center italic">
+                        <span class="material-symbols-outlined text-[12px] align-middle mr-1">info</span>
+                        Tip: Als je via deze links iets koopt, kan Kratos een kleine commissie ontvangen zonder extra
+                        kosten voor jou.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- E-Books Section -->
+    <section class="py-24 bg-background-alt relative overflow-hidden" id="ebooks">
+        <!-- Background decorative blur -->
+        <div
+            class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[80px] pointer-events-none">
+        </div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 mb-6">
+                    <span class="material-symbols-outlined text-primary text-sm">menu_book</span>
+                    <span class="text-xs font-bold text-primary tracking-wider uppercase">Digitale E-Books</span>
+                </div>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">Kennis die je verder helpt</h2>
+                <p class="text-gray-400">Praktische gidsen vol bewezen strategieën. Direct te downloaden na aankoop.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- E-Book Card 1: Meal Prep Mastery -->
+                <div
+                    class="group glass-panel rounded-3xl overflow-hidden border-t border-white/5 flex flex-col transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5">
+                    <div class="relative h-64 overflow-hidden bg-gradient-to-b from-[#1a3a0a]/40 to-background-dark/20">
+                        <img src="./img/ebook_mealprep.svg" alt="Meal Prep Mastery e-book cover" width="360"
+                            height="480"
+                            class="h-full w-auto mx-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy" decoding="async" />
+                        <!-- Price badge -->
+                        <div
+                            class="absolute top-4 right-4 bg-primary text-background-dark text-sm font-bold px-3 py-1.5 rounded-full shadow-lg">
+                            €19
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <h3 class="font-display text-xl font-bold text-white mb-2">Meal Prep Mastery</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed flex-1">7 dagen plannen +
+                            boodschappenlijst + macro's. Alles wat je nodig hebt om consistent te eten.</p>
+                        <ul class="flex flex-col gap-2 my-4 text-xs text-gray-400">
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                7-daagse meal prep planning
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Complete boodschappenlijst
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Macro-berekeningen per maaltijd
+                            </li>
+                        </ul>
+                        <button data-ebook-id="ebook_1" id="ebook-btn-1"
+                            class="ebook-buy-btn w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-all cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-white"
+                            aria-label="Koop Meal Prep Mastery e-book">
+                            <span class="btn-label">Koop nu — €19</span>
+                            <span class="btn-loader hidden" aria-live="polite">
+                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <span class="sr-only">Even laden…</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <!-- E-Book Card 2: Kracht & Spieropbouw -->
+                <div
+                    class="group glass-panel rounded-3xl overflow-hidden border-t border-white/5 flex flex-col transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 relative">
+                    <!-- Bestseller badge -->
+                    <div
+                        class="absolute top-4 left-4 z-10 bg-white/10 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-white/10">
+                        Populair
+                    </div>
+                    <div class="relative h-64 overflow-hidden bg-gradient-to-b from-[#0a2a1a]/40 to-background-dark/20">
+                        <img src="./img/ebook_kracht.svg" alt="Kracht & Spieropbouw e-book cover" width="360"
+                            height="480"
+                            class="h-full w-auto mx-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy" decoding="async" />
+                        <div
+                            class="absolute top-4 right-4 bg-primary text-background-dark text-sm font-bold px-3 py-1.5 rounded-full shadow-lg">
+                            €25
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <h3 class="font-display text-xl font-bold text-white mb-2">Kracht & Spieropbouw</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed flex-1">4-week trainingsschema's +
+                            progressie & techniek. Gebouwd voor serieuze resultaten.</p>
+                        <ul class="flex flex-col gap-2 my-4 text-xs text-gray-400">
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                4-weekse trainingsschema's
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Progressie tracking systeem
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Techniek uitleg per oefening
+                            </li>
+                        </ul>
+                        <button data-ebook-id="ebook_2" id="ebook-btn-2"
+                            class="ebook-buy-btn w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-all cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-white"
+                            aria-label="Koop Kracht & Spieropbouw e-book">
+                            <span class="btn-label">Koop nu — €25</span>
+                            <span class="btn-loader hidden" aria-live="polite">
+                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <span class="sr-only">Even laden…</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <!-- E-Book Card 3: Vetverlies Zonder Gedoe -->
+                <div
+                    class="group glass-panel rounded-3xl overflow-hidden border-t border-white/5 flex flex-col transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5">
+                    <div class="relative h-64 overflow-hidden bg-gradient-to-b from-[#2a1a0a]/40 to-background-dark/20">
+                        <img src="./img/ebook_vetverlies.svg" alt="Vetverlies Zonder Gedoe e-book cover" width="360"
+                            height="480"
+                            class="h-full w-auto mx-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy" decoding="async" />
+                        <div
+                            class="absolute top-4 right-4 bg-primary text-background-dark text-sm font-bold px-3 py-1.5 rounded-full shadow-lg">
+                            €17
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                        <h3 class="font-display text-xl font-bold text-white mb-2">Vetverlies Zonder Gedoe</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed flex-1">Realistische aanpak + habits +
+                            voeding. Geen crash diëten, wel duurzaam resultaat.</p>
+                        <ul class="flex flex-col gap-2 my-4 text-xs text-gray-400">
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Realistische voedingsaanpak
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Habit-building framework
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                Duurzame vetverlies tips
+                            </li>
+                        </ul>
+                        <button data-ebook-id="ebook_3" id="ebook-btn-3"
+                            class="ebook-buy-btn w-full flex items-center justify-center gap-2 rounded-full h-12 bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-all cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-primary"
+                            aria-label="Koop Vetverlies Zonder Gedoe e-book">
+                            <span class="btn-label">Koop nu — €17</span>
+                            <span class="btn-loader hidden" aria-live="polite">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <span class="sr-only">Even laden…</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Trust signals -->
+            <div class="flex flex-wrap items-center justify-center gap-6 mt-12 text-gray-500 text-xs">
+                <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-primary text-sm">lock</span>
+                    Veilig betalen via Stripe
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-primary text-sm">download</span>
+                    Direct downloaden na betaling
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-primary text-sm">picture_as_pdf</span>
+                    PDF formaat
+                </span>
+            </div>
+        </div>
+    </section>
+    <!-- Reviews & FAQ Section -->
+    <section class="py-24 bg-background-dark" id="reviews">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <!-- Reviews -->
+            <div class="flex flex-col gap-10">
+                <h2 class="font-display text-3xl font-bold text-white">Wat anderen zeggen</h2>
+                <div class="flex flex-col gap-6">
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex gap-1 text-primary mb-4">
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                        </div>
+                        <p class="text-gray-300 text-lg italic mb-4">"Dankzij Omar ben ik 15kg afgevallen en voel ik me
+                            sterker dan ooit. Zijn aanpak is no-nonsense en effectief."</p>
+                        <p class="font-bold text-white">— Thomas V.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex gap-1 text-primary mb-4">
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                        </div>
+                        <p class="text-gray-300 text-lg italic mb-4">"De trainingen zijn zwaar, maar de voldoening
+                            achteraf is enorm. Kratos heeft mijn leven veranderd."</p>
+                        <p class="font-bold text-white">— Sarah D.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- FAQ -->
+            <div class="flex flex-col gap-10">
+                <h2 class="font-display text-3xl font-bold text-white">Veelgestelde vragen</h2>
+                <div class="space-y-4">
+                    <details class="group glass-panel rounded-xl overflow-hidden">
+                        <summary
+                            class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-white group-open:text-primary transition-colors">
+                            <span>Waar vinden de trainingen plaats?</span>
+                            <span class="transition group-open:rotate-180">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </span>
+                        </summary>
+                        <div class="text-gray-400 mt-0 px-6 pb-6 leading-relaxed">
+                            De trainingen vinden plaats in mijn privéstudio in Olen, volledig uitgerust met
+                            professionele apparatuur.
+                        </div>
+                    </details>
+                    <details class="group glass-panel rounded-xl overflow-hidden">
+                        <summary
+                            class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-white group-open:text-primary transition-colors">
+                            <span>Is personal training geschikt voor beginners?</span>
+                            <span class="transition group-open:rotate-180">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </span>
+                        </summary>
+                        <div class="text-gray-400 mt-0 px-6 pb-6 leading-relaxed">
+                            Absoluut. Ik begeleid iedereen op zijn eigen niveau. We bouwen de intensiteit rustig op
+                            zodat je veilig en effectief resultaat boekt.
+                        </div>
+                    </details>
+                    <details class="group glass-panel rounded-xl overflow-hidden">
+                        <summary
+                            class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-white group-open:text-primary transition-colors">
+                            <span>Kan ik ook voedingsadvies krijgen zonder training?</span>
+                            <span class="transition group-open:rotate-180">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </span>
+                        </summary>
+                        <div class="text-gray-400 mt-0 px-6 pb-6 leading-relaxed">
+                            Ja, dat is mogelijk. Neem contact op voor de mogelijkheden rondom losse voedingsbegeleiding.
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer / Contact -->
+    <footer class="bg-black pt-24 pb-12 border-t border-white/10" id="contact">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start gap-12 mb-16">
+                <!-- CTA Area -->
+                <div class="flex-1">
+                    <h2 class="font-display text-5xl font-black text-white mb-6 uppercase tracking-tight">Klaar voor de
+                        start?</h2>
+                    <p class="text-gray-400 text-xl max-w-lg mb-8">
+                        Wacht niet op het "juiste moment". Maak vandaag de keuze voor een sterker en gezonder leven.
+                    </p>
+                    <a class="inline-flex items-center justify-center rounded-full h-14 px-10 bg-primary hover:bg-primary-hover text-background-dark text-lg font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40"
+                        href="mailto:info@kratostraining.be">
+                        Neem contact op
+                    </a>
+                </div>
+                <!-- Contact Info -->
+                <div class="flex flex-col gap-6 min-w-[300px]">
+                    <div>
+                        <h4 class="font-display font-bold text-white text-lg mb-4">Contact</h4>
+                        <ul class="flex flex-col gap-3 text-gray-400">
+                            <li class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">mail</span>
+                                info@kratostraining.be
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">call</span>
+                                +32 412 34 56 78
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">location_on</span>
+                                Olen, België
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-display font-bold text-white text-lg mb-4">Volg Kratos</h4>
+                        <div class="flex gap-4">
+                            <a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-black transition-colors"
+                                href="#">
+                                <!-- Instagram Icon stub using text for simplicity or replace with svg -->
+                                <span class="font-bold text-lg">Ig</span>
+                            </a>
+                            <a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-black transition-colors"
+                                href="#">
+                                <span class="font-bold text-lg">Fb</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+                <p>© 2024 Kratos Personal Training. Alle rechten voorbehouden.</p>
+                <div class="flex gap-6">
+                    <a class="hover:text-white transition-colors" href="#">Privacybeleid</a>
+                    <a class="hover:text-white transition-colors" href="#">Algemene voorwaarden</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Floating Dock -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        <a class="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-white hover:text-primary hover:bg-white/10 transition-all shadow-lg border border-white/10"
+            href="#" title="Instagram">
+            <!-- Simplified icon representation -->
+            <span class="font-bold text-xs">IG</span>
+        </a>
+        <button onclick="toggleCoachChat()"
+            class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-background-dark hover:bg-primary-hover transition-all shadow-lg hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-background-dark"
+            title="Coach Chat">
+            <span class="material-symbols-outlined text-2xl pointer-events-none">chat</span>
+        </button>
+    </div>
+
+    <!-- Coach Chat Drawer Extension -->
+    <div id="coach-chat-overlay"
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"
+        aria-hidden="true" onclick="toggleCoachChat()"></div>
+
+    <div id="coach-chat-drawer"
+        class="fixed inset-y-0 right-0 w-full sm:w-[400px] z-[60] transform translate-x-full transition-transform duration-300 ease-in-out bg-[#1A1A1A]/95 backdrop-blur-2xl border-l border-white/10 flex flex-col shadow-2xl"
+        aria-label="Coach Chat" role="dialog" aria-hidden="true">
+        <!-- Header -->
+        <div class="p-6 border-b border-white/10 flex items-center justify-between bg-black/20">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary shrink-0 relative flex items-center justify-center bg-black">
+                    <!-- Backup icon if image fails -->
+                    <span class="material-symbols-outlined text-primary absolute">fitness_center</span>
+                    <!-- User profile pic -->
+                    <div class="absolute inset-0 bg-cover bg-center z-10"
+                        style="background-image: url('./img/omar.jpg');">
+                    </div>
+                    <!-- Status dot -->
+                    <div
+                        class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#1A1A1A] z-20">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-display font-bold text-white text-lg leading-tight">Coach Omar</h3>
+                    <p class="text-primary text-xs font-semibold uppercase tracking-wider">Vind jouw traject (1 min)</p>
+                </div>
+            </div>
+            <button onclick="toggleCoachChat()"
+                class="text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-white">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chat-messages"
+            class="flex-1 overflow-y-auto p-6 flex flex-col gap-4 custom-scrollbar bg-background-dark/30">
+            <!-- Messages injected here via JS -->
+        </div>
+
+        <!-- Input / Actions Area -->
+        <div id="chat-actions" class="p-6 border-t border-white/10 bg-background-dark/80">
+            <!-- Dynamic option buttons injected here -->
+        </div>
+    </div>
+
+    <script defer src="./js/app.js"></script>
+    <script defer src="./js/ebooks.js"></script>
+
+
+</body>
+
+</html>
