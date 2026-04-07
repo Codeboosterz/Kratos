@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="nl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Kratos Diensten — Personal Training, Coaching & Voeding</title>
+    <meta name="description" content="Ontdek alle Kratos diensten: personal training, coaching, voedingsschema's, boodschappen service, e-books, groepslessen, duo training en smoothies & detox dranken." />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a9cf68",
+                        "primary-hover": "#9ec45d",
+                        "background-light": "#f7f8f6",
+                        "background-dark": "#0B090A",
+                        "background-alt": "#21201F",
+                        "text-main": "#F2F3EF",
+                        "surface": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(33, 32, 31, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B090A; }
+        ::-webkit-scrollbar-thumb { background: #21201F; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+
+        /* Service card hover */
+        .dienst-card {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        }
+        .dienst-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(169, 207, 104, 0.08);
+        }
+        .dienst-card:focus-within {
+            outline: 2px solid #a9cf68;
+            outline-offset: 2px;
+        }
+
+        /* Icon container glow on hover */
+        .dienst-card:hover .dienst-icon {
+            background: rgba(169, 207, 104, 0.18);
+            box-shadow: 0 0 20px rgba(169, 207, 104, 0.12);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .dienst-card { transition: none; }
+            .dienst-card:hover { transform: none; }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-dark text-text-main font-body antialiased selection:bg-primary selection:text-background-dark">
+
+    <!-- Sticky Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-panel border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 text-white">
+                <img src="./img/Transparent logo.png" alt="Kratos Logo"
+                    class="h-12 w-auto transition-transform duration-75 ease-out" />
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="/#over">Over Omar</a>
+                <a class="text-sm font-medium text-primary transition-colors" href="/diensten.html">Diensten</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="/#voordelen">Voordelen</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="/#prijzen">Prijzen</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="/#reviews">Reviews</a>
+            </div>
+            <a class="hidden md:flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-all transform hover:scale-105"
+                href="/#contact">
+                Start vandaag nog
+            </a>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white" id="mobileMenuBtn" aria-label="Open menu">
+                <span class="material-symbols-outlined text-3xl">menu</span>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-background-dark/95 backdrop-blur-xl border-t border-white/5 px-6 py-6 flex flex-col gap-4">
+            <a class="text-base font-medium hover:text-primary transition-colors py-2" href="/#over">Over Omar</a>
+            <a class="text-base font-medium text-primary transition-colors py-2" href="/diensten.html">Diensten</a>
+            <a class="text-base font-medium hover:text-primary transition-colors py-2" href="/#voordelen">Voordelen</a>
+            <a class="text-base font-medium hover:text-primary transition-colors py-2" href="/#prijzen">Prijzen</a>
+            <a class="text-base font-medium hover:text-primary transition-colors py-2" href="/#reviews">Reviews</a>
+            <a class="flex items-center justify-center rounded-full h-12 px-6 bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-all mt-2"
+                href="/#contact">Start vandaag nog</a>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <section class="pt-32 pb-16 md:pt-40 md:pb-20 relative overflow-hidden">
+        <!-- Background glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-[1120px] mx-auto px-6 relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 mb-6">
+                <span class="material-symbols-outlined text-primary text-sm">star</span>
+                <span class="text-xs font-bold text-primary tracking-wider uppercase">9 Diensten</span>
+            </div>
+            <h1 class="font-display font-black text-5xl md:text-7xl leading-[0.95] tracking-tighter text-white mb-6">
+                Kratos <span class="text-primary">Diensten</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                Alles wat je nodig hebt om sterker, fitter en consistenter te worden — met begeleiding die bij jou past.
+            </p>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="pb-24 relative" id="diensten-grid">
+        <div class="max-w-[1120px] mx-auto px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Personal Training -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_personal_training" aria-label="Personal Training">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">fitness_center</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Personal Training</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            1-op-1 begeleiding gericht op jouw persoonlijke doelen zoals afvallen, spieropbouw en conditieverbetering
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Personal Coaching -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_personal_coaching" aria-label="Personal Coaching">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">psychology</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Personal Coaching</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Begeleiding op het gebied van mindset, discipline en levensstijl voor blijvende resultaten
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Online Coaching -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_online_coaching" aria-label="Online Coaching">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">laptop_mac</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Online Coaching</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Volledige begeleiding op afstand met schema's, opvolging en contactmomenten waar je ook bent
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Voedingsschema's -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_voedingsschemas" aria-label="Voedingsschema's">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">restaurant</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Voedingsschema's</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Persoonlijk afgestemde voedingsplannen die passen bij jouw lichaam en doelstellingen
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Boodschappen Service -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_boodschappen" aria-label="Boodschappen Service">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">shopping_basket</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Boodschappen Service</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Praktische hulp en advies bij het doen van gezonde en doelgerichte boodschappen
+                        </p>
+                    </div>
+                </article>
+
+                <!-- E-books -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_ebooks" aria-label="E-books">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">menu_book</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">E-books</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Digitale gidsen over training, voeding en mindset om zelfstandig aan de slag te gaan
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Groepslessen -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_groepslessen" aria-label="Groepslessen">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">groups</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Groepslessen</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Motiverende trainingen in groepsverband voor extra energie en consistentie
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Duo Training -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_duo_training" aria-label="Duo Training">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">group</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Duo Training (Lessen met 2)</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Train samen met een partner of vriend voor extra motivatie en een voordeligere optie
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Smoothies en detox dranken -->
+                <article class="dienst-card glass-panel rounded-2xl p-8 flex flex-col gap-5 border border-white/[0.08]"
+                    id="dienst_smoothies_detox" aria-label="Smoothies en detox dranken">
+                    <div class="dienst-icon w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300">
+                        <span class="material-symbols-outlined text-primary text-[28px]">local_cafe</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-white mb-2">Smoothies en detox dranken</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Verse, voedzame smoothies en detox dranken die je lichaam ondersteunen bij herstel, energie en reiniging, perfect als aanvulling op jouw fitness- en gezondheidsdoelen
+                        </p>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-background-alt relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="max-w-[1120px] mx-auto px-6 relative z-10 text-center">
+            <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">Klaar om te starten?</h2>
+            <p class="text-gray-400 text-lg max-w-xl mx-auto mb-10">
+                Plan je intake of stuur Omar meteen een bericht. Dan bekijken we samen wat het beste werkt voor jouw doel.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a class="flex items-center justify-center rounded-full h-14 px-10 bg-primary hover:bg-primary-hover text-background-dark text-base font-bold transition-all transform hover:scale-105 shadow-lg shadow-primary/20"
+                    href="/#contact">
+                    Plan je intake
+                </a>
+                <a class="flex items-center justify-center rounded-full h-14 px-10 border border-white/20 hover:border-white/50 bg-white/5 backdrop-blur-sm text-white text-base font-bold transition-all"
+                    href="/#contact">
+                    Neem contact op
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black pt-16 pb-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start gap-12 mb-12">
+                <div class="flex-1">
+                    <a href="/" class="inline-block mb-6">
+                        <img src="./img/Transparent logo.png" alt="Kratos Logo" class="h-12 w-auto" />
+                    </a>
+                    <p class="text-gray-400 max-w-sm">Professionele personal training die verder gaat dan alleen fysiek. Bouw de mindset van een krijger.</p>
+                </div>
+                <div class="flex flex-col gap-6 min-w-[300px]">
+                    <div>
+                        <h4 class="font-display font-bold text-white text-lg mb-4">Contact</h4>
+                        <ul class="flex flex-col gap-3 text-gray-400">
+                            <li class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">mail</span>
+                                KRATOS_FITNESS2025@outlook.com
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">call</span>
+                                +32 493 38 16 58
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">location_on</span>
+                                Belgium
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+                <p>© 2024 Kratos Personal Training. Alle rechten voorbehouden.</p>
+                <div class="flex gap-6">
+                    <a class="hover:text-white transition-colors" href="#">Privacybeleid</a>
+                    <a class="hover:text-white transition-colors" href="#">Algemene voorwaarden</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile menu toggle -->
+    <script>
+        var menuBtn = document.getElementById('mobileMenuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', function () {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+
+</html>
