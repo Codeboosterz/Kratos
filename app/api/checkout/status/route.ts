@@ -1,0 +1,8 @@
+import Stripe from "stripe";
+import { checkoutSessionIdSchema, normalizeStripeCheckoutStatus } from "@/src/schemas/checkout";
+import { fixtureMode } from "@/src/server/environment";
+import { getFixtureOrder } from "@/src/server/fixture-store";
+import { resolveIntegrationSecret } from "@/src/operations/secrets";
+
+export const dynamic = "force-dynamic";
+export async function GET(request: Request) { const id = new URL(request.url).searchParams.get("session_id"); const parsed = checkoutSessionIdSchema.safeParse(id); if (!parsed.success) return Response.json({ status: "unknown", demo: false }, { status: 400, headers: { "cache-control": "no-store" } }); if (fixtureMode && id?.startsWith("demo_cs_")) { const order = getFixtureOrder(id); return order ? Response.json({ status: order.status, demo: true, productSlug: order.productSlug }, { headers: { "cache-control": "no-store" } }) : Response.json({ status: "unknown", demo: true }, { status: 404, headers: { "cache-control": "no-store" } }); } const secretKey = await resolveIntegrationSecret("stripe", "secret_key").catch(() => null); if (!secretKey || id?.startsWith("demo_")) return Response.json({ status: "unknown", demo: false }, { status: 503, headers: { "cache-control": "no-store" } }); try { const stripe = new Stripe(secretKey); const session = await stripe.checkout.sessions.retrieve(id!); return Response.json({ status: normalizeStripeCheckoutStatus(session), demo: false }, { headers: { "cache-control": "no-store" } }); } catch { return Response.json({ status: "unknown", demo: false }, { status: 404, headers: { "cache-control": "no-store" } }); } }

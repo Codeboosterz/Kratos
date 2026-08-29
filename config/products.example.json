@@ -1,0 +1,94 @@
+{
+  "status": "design_fixture_not_production_catalog",
+  "currency": "EUR",
+  "products": [
+    {
+      "slug": "transformatie-pack-10-sessies",
+      "name": "Transformation Pack",
+      "category": "personal_training",
+      "priceCents": 30000,
+      "priceStatus": "current_site_claim_verify_before_publish",
+      "checkoutMode": "stripe_internal_planned",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/04-transformation-pack-10-sessions.jpg"
+    },
+    {
+      "slug": "premium-online-coaching",
+      "name": "Premium Online Coaching",
+      "category": "online",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/03-premium-online-coaching.jpg"
+    },
+    {
+      "slug": "training-voeding-bundle",
+      "name": "Training + Voeding Bundle",
+      "category": "bundle",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/02-training-voeding-bundle.jpg"
+    },
+    {
+      "slug": "duo-coaching",
+      "name": "Duo Coaching",
+      "category": "duo",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/05-duo-coaching.jpg"
+    },
+    {
+      "slug": "jouw-trainingsschema",
+      "name": "Jouw Trainingsschema",
+      "category": "digital_program",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/01-training-schema.jpg"
+    },
+    {
+      "slug": "hwo-beginners",
+      "name": "HWO for Beginners",
+      "category": "home_workout",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/06-hwo-beginners-room.jpg"
+    },
+    {
+      "slug": "hwo-lower-body-glutes",
+      "name": "HWO Lower Body & Glutes",
+      "category": "home_workout",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/07-hwo-lower-body-glutes.jpg"
+    },
+    {
+      "slug": "12-weken-transformatie",
+      "name": "12 Weken Transformatie",
+      "category": "transformation",
+      "priceCents": null,
+      "priceStatus": "verification_required",
+      "checkoutMode": "trainerize_external_after_mapping",
+      "stripePriceId": null,
+      "trainerizePlanId": null,
+      "image": "/assets/reference-campaigns/09-12-week-transformation.jpg"
+    }
+  ]
+}

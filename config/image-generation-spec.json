@@ -1,0 +1,34 @@
+{
+  "generationMode": "chatgpt_builtin_image_generator_new_generation",
+  "identityStatus": "canonical_omar_reference_required",
+  "productionPhotoRule": "no_embedded_text_logo_ui_price_badge_or_watermark",
+  "palette": {
+    "carbon": "#080A08",
+    "charcoal": "#121510",
+    "offWhite": "#F4F6EF",
+    "kratosLime": "#A9CF68",
+    "equipmentOrange": "#F06A22"
+  },
+  "limeFrameCoverageTarget": "5-10%",
+  "masterOutputs": [
+    { "use": "desktop_hero", "width": 2400, "height": 1500, "aspect": "8:5" },
+    { "use": "mobile_hero", "width": 1440, "height": 1920, "aspect": "3:4" },
+    { "use": "product_card", "width": 1600, "height": 1200, "aspect": "4:3" },
+    { "use": "product_detail", "width": 2200, "height": 1375, "aspect": "8:5" },
+    { "use": "about_portrait", "width": 1600, "height": 2000, "aspect": "4:5" }
+  ],
+  "negativeConstraints": [
+    "embedded text",
+    "logo or watermark",
+    "UI or dashboard",
+    "poster collage",
+    "fake testimonial",
+    "before-and-after transformation",
+    "exaggerated anatomy",
+    "plastic skin",
+    "neon-green fog",
+    "malformed hands",
+    "duplicated equipment",
+    "unsafe exercise form"
+  ]
+}

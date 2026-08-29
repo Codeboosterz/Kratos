@@ -1,0 +1,98 @@
+{
+  "source": "client_supplied_2026-08-19",
+  "profile": "kratoscoaching1",
+  "inspectionStatus": "dynamic_plan_details_unverified",
+  "duplicateInputRemoved": "d88de104776240209064501fb8260dfb",
+  "plans": [
+    {
+      "id": "trainerize-plan-01",
+      "planGUID": "d88de104776240209064501fb8260dfb",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=d88de104776240209064501fb8260dfb",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-02",
+      "planGUID": "c41894155fe74fc7b895e08a8fc5d988",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=c41894155fe74fc7b895e08a8fc5d988",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-03",
+      "planGUID": "c88c79ae54ad4751be594de0a01f1156",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=c88c79ae54ad4751be594de0a01f1156",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-04",
+      "planGUID": "0f313f62a8c94f0fa47f09070c3e02a9",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=0f313f62a8c94f0fa47f09070c3e02a9",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-05",
+      "planGUID": "e5682fcf5e8540b5b308c7769c1d8e4d",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=e5682fcf5e8540b5b308c7769c1d8e4d",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-06",
+      "planGUID": "c7c25c9fee464b978dbcb14e854cd960",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=c7c25c9fee464b978dbcb14e854cd960",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-07",
+      "planGUID": "0e617145e8a44f819057aa62bf3d5e21",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=0e617145e8a44f819057aa62bf3d5e21",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-08",
+      "planGUID": "c62f2a4dbf0a45f8ad18b203e8262dfa",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=c62f2a4dbf0a45f8ad18b203e8262dfa",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-09",
+      "planGUID": "f458a5b4b28746ad9faeb0610a005651",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=f458a5b4b28746ad9faeb0610a005651",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    },
+    {
+      "id": "trainerize-plan-10",
+      "planGUID": "428c9f0211d74043aa389274e4c5c70f",
+      "url": "https://www.trainerize.me/profile/kratoscoaching1/?planGUID=428c9f0211d74043aa389274e4c5c70f",
+      "productSlug": null,
+      "displayName": null,
+      "price": null,
+      "status": "mapping_required"
+    }
+  ]
+}

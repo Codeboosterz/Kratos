@@ -1,0 +1,41 @@
+{
+  "identityStatus": "canonical_omar_reference_required",
+  "references": [
+    {
+      "file": "01-training-schema.jpg",
+      "role": "training_schema_offer_and_four_step_flow"
+    },
+    {
+      "file": "02-training-voeding-bundle.jpg",
+      "role": "bundle_offer_food_and_training_art_direction"
+    },
+    {
+      "file": "03-premium-online-coaching.jpg",
+      "role": "online_coaching_devices_and_feature_set"
+    },
+    {
+      "file": "04-transformation-pack-10-sessions.jpg",
+      "role": "known_ten_session_product_artwork"
+    },
+    {
+      "file": "05-duo-coaching.jpg",
+      "role": "duo_coaching_offer"
+    },
+    {
+      "file": "06-hwo-beginners-room.jpg",
+      "role": "home_workout_beginner_environment"
+    },
+    {
+      "file": "07-hwo-lower-body-glutes.jpg",
+      "role": "lower_body_program_offer"
+    },
+    {
+      "file": "08-hwo-beginners-duo.jpg",
+      "role": "home_workout_people_and_equipment"
+    },
+    {
+      "file": "09-12-week-transformation.jpg",
+      "role": "omar_portrait_and_transformation_offer"
+    }
+  ]
+}

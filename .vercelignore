@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.*.local
+*.log
+coverage/
+playwright-report/
+test-results/
+artifacts/qa/
+private/
+testsprite_tests/
