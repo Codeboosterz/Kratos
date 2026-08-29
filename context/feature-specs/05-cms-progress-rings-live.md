@@ -74,6 +74,6 @@ application to the production Git/Vercel flow.
 - [x] The public Faith & Fitness rail remains unchanged.
 - [x] Typecheck, lint, unit tests, E2E tests, and production build pass.
 - [x] Local preview launches; route health was inspected, while the protected dashboard visual requires the authenticated production surface.
-- [ ] Release is committed and pushed to `main`.
-- [ ] Production deployment is verified.
-- [ ] `context/progress-tracker.md` is updated.
+- [x] Release is committed and pushed to `main` as `cf1397b`.
+- [x] Production deployment is verified at `https://kratosfitness.be/beheer`.
+- [x] `context/progress-tracker.md` is updated.

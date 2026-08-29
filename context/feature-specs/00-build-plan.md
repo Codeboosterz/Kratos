@@ -17,11 +17,11 @@ configuration is optional and outside this delivery.
 | 02 | Four-stage public intake | Unit 01 | Complete |
 | 03 | CMS intake inbox and calendar | Units 01–02 | Complete |
 | 04 | Unscheduled intake visibility | Unit 03 | Complete |
-| 05 | CMS progress rings and live release | Unit 04 | In progress |
+| 05 | CMS progress rings and live release | Unit 04 | Complete |
 
 ## Ordering Notes
 
 - Tests precede implementation in each unit.
 - Migration is committed but not applied to production.
 - Preview follows implementation and full validation.
-- Production deployment follows Unit 05 validation; Supabase migrations remain a separate operation.
+- Production deployment completed from `main`; Supabase migrations remain a separate operation.

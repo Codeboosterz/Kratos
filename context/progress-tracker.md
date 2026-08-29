@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-- CMS progress-ring release
+- Live release complete
 
 ## Current Goal
 
-- Unit 05: enhance all CMS dashboard progress indicators and publish the validated application.
+- Keep the validated Kratos application stable while provider setup remains pending.
 
 ## Completed
 
@@ -16,10 +16,11 @@
 - Unit 02 complete: four-stage public intake, safe session recovery, accessible step transitions, authoritative submission, and optional Calendly/fallback states.
 - Unit 03 complete: intake-first CMS inbox, workflow actions, Resend conversation handoff, searchable month/agenda calendar, and intake/appointment deep links.
 - Unit 04 complete: local fixture submissions are explicitly labeled and real intakes without a booked date are shown in the calendar's `Wacht op datum` queue.
+- Unit 05 complete: four CMS dashboard percentages now use one accessible server-rendered SVG ring, the public Faith & Fitness rail remains unchanged, and the application release was deployed from commit `cf1397b`.
 
 ## In Progress
 
-- Unit 05 CMS progress rings and live release.
+- None.
 
 ## Next Up
 
@@ -57,13 +58,16 @@
 - `npm test` — 72 tests passed across 24 files after Unit 05.
 - `npm run lint`, `npm run typecheck`, and `npm run build` — passed after Unit 05.
 - `npm run test:e2e` — all 19 browser tests passed; the public Faith & Fitness rail remained synchronized.
+- Vercel production deployment for commit `cf1397b` — completed successfully.
+- Authenticated production CMS inspection — four SVG progress bars rendered with values 11%, 0%, 20%, and 20%; no browser warnings or errors were recorded.
 
 ## Preview History
 
 - Local fixture preview: `http://127.0.0.1:3200/intake?product=transformatie-pack-10-sessies&source=product-detail`.
 - Desktop steps 1/4 and mobile step 2 visually inspected in `artifacts/qa/`.
 - Unit 04's local intake confirmation was verified through its Chromium acceptance test; the in-app browser declined the loopback URL during the final interactive re-open.
-- Unit 05 preview started at `http://127.0.0.1:3200`; `/` returned 200 and the protected CMS correctly redirected to configuration/login locally. Authenticated visual verification is deferred to the live deployment.
+- Unit 05 preview started at `http://127.0.0.1:3200`; `/` returned 200 and the protected CMS correctly redirected to configuration/login locally.
+- Production CMS visual verification completed at `https://kratosfitness.be/beheer`; three 74px compact rings and one 148px readiness ring rendered from live CMS data.
 
 ## Session Notes
 
