@@ -66,9 +66,9 @@ validated Unit 06 mobile treatment and Unit 07 Faith & Fitness stepper.
 
 - [x] Release staging excludes unrelated user files.
 - [x] Typecheck, lint, unit tests, browser tests, and production build pass.
-- [ ] Scoped release commit is created on `main`.
-- [ ] `origin/main` receives the commit without force.
-- [ ] Vercel production deployment reaches `READY`.
-- [ ] `https://kratosfitness.be/` serves the new release.
-- [ ] CMS entry point remains reachable/protected.
-- [ ] Progress tracker records the production release.
+- [x] Scoped release commit `6518a38` is created on `main`.
+- [x] `origin/main` receives the commit without force.
+- [x] Vercel production deployment `dpl_A8di1A2eVcaCKHHdM2La8QKuuEse` reaches `READY`.
+- [x] `https://kratosfitness.be/` serves the new release.
+- [x] CMS entry point remains reachable/protected.
+- [x] Progress tracker records the production release.

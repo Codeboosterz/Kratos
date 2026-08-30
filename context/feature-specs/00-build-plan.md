@@ -18,9 +18,9 @@ configuration is optional and outside this delivery.
 | 03 | CMS intake inbox and calendar | Units 01–02 | Complete |
 | 04 | Unscheduled intake visibility | Unit 03 | Complete |
 | 05 | CMS progress rings and live release | Unit 04 | Complete |
-| 06 | Mobile responsive optimization | Unit 05 | Complete locally |
-| 07 | Faith story stepper and layout | Existing Faith story | Complete locally |
-| 08 | Production release | Units 06–07 | In progress |
+| 06 | Mobile responsive optimization | Unit 05 | Complete / Deployed |
+| 07 | Faith story stepper and layout | Existing Faith story | Complete / Deployed |
+| 08 | Production release | Units 06–07 | Complete / Deployed |
 
 ## Ordering Notes
 

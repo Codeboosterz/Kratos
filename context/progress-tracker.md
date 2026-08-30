@@ -2,12 +2,12 @@
 
 ## Current Phase
 
-- Units 06–07 production release in progress
+- Units 06–08 complete and live in production
 
 ## Current Goal
 
-- Push the validated mobile responsive and Faith & Fitness stepper changes to
-  `origin/main`, wait for Vercel production readiness, and verify the live site.
+- Maintain the verified production release while leaving optional provider and
+  database activation work isolated until the client supplies credentials.
 
 ## Completed
 
@@ -18,20 +18,24 @@
 - Unit 03 complete: intake-first CMS inbox, workflow actions, Resend conversation handoff, searchable month/agenda calendar, and intake/appointment deep links.
 - Unit 04 complete: local fixture submissions are explicitly labeled and real intakes without a booked date are shown in the calendar's `Wacht op datum` queue.
 - Unit 05 complete: four CMS dashboard percentages now use one accessible server-rendered SVG ring, the public Faith & Fitness rail remains unchanged, and the application release was deployed from commit `cf1397b`.
-- Unit 06 complete locally: public and CMS phone overflow boundaries, swipe rails,
+- Unit 06 complete and deployed: public and CMS phone overflow boundaries, swipe rails,
   form typography, touch targets, the intake first viewport, and repeatable CMS
   editor layouts were refined without data or desktop behavior changes.
-- Unit 07 complete locally: the legacy Faith story rail was replaced by a
+- Unit 07 complete and deployed: the legacy Faith story rail was replaced by a
   reusable controlled stepper, desktop cards use larger height-led geometry,
   and the six-chapter GSAP sequence and adjacent pin handoff remain intact.
+- Unit 08 complete: scoped release commit `6518a38` was pushed to `origin/main`;
+  Vercel deployment `dpl_A8di1A2eVcaCKHHdM2La8QKuuEse` reached `READY` and was
+  assigned to `https://kratosfitness.be/`.
 
 ## In Progress
 
-- Unit 08: production release of Units 06–07.
+- None.
 
 ## Next Up
 
-- Complete Vercel readiness and live-site verification for Unit 08.
+- Configure Calendly or apply the prepared Supabase migration only when the
+  client supplies credentials and explicitly requests that provider work.
 
 ## Open Questions
 
@@ -86,6 +90,13 @@
 - Unit 08 release gate: `npm run typecheck`, `npm run lint`, `npm test`,
   `npm run build`, and `npm run test:e2e` all passed immediately before the
   scoped production commit; 78 unit and 20 browser tests passed.
+- Release commit `6518a38` pushed to `origin/main` without force; the connected
+  Vercel production build completed in 37 seconds with status `READY`.
+- Live homepage returned 200 and exposed the new `.faith-story__stepper` markup;
+  the unauthenticated CMS route redirected to `/beheer/login` as expected.
+- In-browser production inspection recorded zero console errors on desktop,
+  mobile homepage, and authenticated mobile CMS views; both mobile documents
+  reported equal client and scroll widths with no horizontal overflow.
 
 ## Preview History
 
@@ -101,6 +112,10 @@
   viewport: chapter 03 and chapter 06 showed the larger contained active card,
   two/five completed step states respectively, the correct current label, and
   zero horizontal overflow.
+- Unit 08 production preview verified at `https://kratosfitness.be/`: the desktop
+  hero and new Faith story stepper rendered cleanly, the 375px public and CMS
+  layouts had no horizontal overflow, and the authenticated CMS dashboard
+  remained usable at the mobile breakpoint.
 
 ## Session Notes
 

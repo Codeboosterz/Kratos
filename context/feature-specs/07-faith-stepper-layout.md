@@ -1,5 +1,9 @@
 # Unit 07: Faith Story Stepper and Layout
 
+## Status
+
+Complete and deployed to production from release commit `6518a38`.
+
 ## Goal
 
 Replace the Faith & Fitness story's legacy progress rail with a reusable
@@ -30,7 +34,7 @@ excess empty space.
 - New images, copy, chapters, routes, or provider integrations.
 - Changes to the community reveal, Omar section, hero, intake, or admin UI.
 - Click-to-jump story navigation; scrolling remains the only story controller.
-- Production deployment.
+- Additional production changes outside this unit.
 
 ## Design
 

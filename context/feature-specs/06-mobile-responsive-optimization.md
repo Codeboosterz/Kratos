@@ -2,7 +2,7 @@
 
 ## Status
 
-Complete locally; not deployed.
+Complete and deployed to production from release commit `6518a38`.
 
 ## Goal
 
