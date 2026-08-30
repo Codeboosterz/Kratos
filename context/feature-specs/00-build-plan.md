@@ -18,6 +18,9 @@ configuration is optional and outside this delivery.
 | 03 | CMS intake inbox and calendar | Units 01–02 | Complete |
 | 04 | Unscheduled intake visibility | Unit 03 | Complete |
 | 05 | CMS progress rings and live release | Unit 04 | Complete |
+| 06 | Mobile responsive optimization | Unit 05 | Complete locally |
+| 07 | Faith story stepper and layout | Existing Faith story | Complete locally |
+| 08 | Production release | Units 06–07 | In progress |
 
 ## Ordering Notes
 
@@ -25,3 +28,8 @@ configuration is optional and outside this delivery.
 - Migration is committed but not applied to production.
 - Preview follows implementation and full validation.
 - Production deployment completed from `main`; Supabase migrations remain a separate operation.
+- Unit 06 is a CSS-first responsive refinement with no data or provider changes.
+- Unit 07 replaces only the public Faith story rail and desktop presentation;
+  its GSAP timing, CMS chapter data, and mobile chapter flow remain intact.
+- Unit 08 releases the validated Unit 06–07 allow-list through the existing
+  GitHub `main` → Vercel production pipeline without applying migrations.

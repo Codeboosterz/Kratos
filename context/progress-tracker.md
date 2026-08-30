@@ -2,11 +2,12 @@
 
 ## Current Phase
 
-- Live release complete
+- Units 06–07 production release in progress
 
 ## Current Goal
 
-- Keep the validated Kratos application stable while provider setup remains pending.
+- Push the validated mobile responsive and Faith & Fitness stepper changes to
+  `origin/main`, wait for Vercel production readiness, and verify the live site.
 
 ## Completed
 
@@ -17,14 +18,20 @@
 - Unit 03 complete: intake-first CMS inbox, workflow actions, Resend conversation handoff, searchable month/agenda calendar, and intake/appointment deep links.
 - Unit 04 complete: local fixture submissions are explicitly labeled and real intakes without a booked date are shown in the calendar's `Wacht op datum` queue.
 - Unit 05 complete: four CMS dashboard percentages now use one accessible server-rendered SVG ring, the public Faith & Fitness rail remains unchanged, and the application release was deployed from commit `cf1397b`.
+- Unit 06 complete locally: public and CMS phone overflow boundaries, swipe rails,
+  form typography, touch targets, the intake first viewport, and repeatable CMS
+  editor layouts were refined without data or desktop behavior changes.
+- Unit 07 complete locally: the legacy Faith story rail was replaced by a
+  reusable controlled stepper, desktop cards use larger height-led geometry,
+  and the six-chapter GSAP sequence and adjacent pin handoff remain intact.
 
 ## In Progress
 
-- None.
+- Unit 08: production release of Units 06–07.
 
 ## Next Up
 
-- Apply the Supabase migration and provider credentials later when explicitly requested.
+- Complete Vercel readiness and live-site verification for Unit 08.
 
 ## Open Questions
 
@@ -37,6 +44,11 @@
 - 2026-08-30: Default PII access to owner/super-admin membership.
 - 2026-08-30: A submitted intake without a provider-confirmed date is a queue item, not a calendar appointment.
 - 2026-08-30: CMS percentage indicators share one server-rendered SVG primitive; public scroll-story progress remains separate.
+- 2026-08-30: Preserve intentional horizontal rails on mobile but hide their native scrollbars; prevent document-level overflow at the container boundary.
+- 2026-08-30: Keep the Faith story stepper controlled by the existing GSAP
+  chapter index; it is not a click-to-seek control.
+- 2026-08-30: Reuse installed Lucide icons in the stepper and avoid a shadcn
+  initializer so the established global Kratos styles are not rewritten.
 
 ## Validation History
 
@@ -60,6 +72,20 @@
 - `npm run test:e2e` — all 19 browser tests passed; the public Faith & Fitness rail remained synchronized.
 - Vercel production deployment for commit `cf1397b` — completed successfully.
 - Authenticated production CMS inspection — four SVG progress bars rendered with values 11%, 0%, 20%, and 20%; no browser warnings or errors were recorded.
+- `npm test -- tests/unit/mobile-responsive.test.ts` — 3 mobile CSS contracts passed after an initial red run.
+- `npm test` — 75 tests passed across 25 files after Unit 06.
+- `npm run lint` and `npm run typecheck` — passed after Unit 06.
+- `npm run build` — passed; all 47 generated pages and dynamic CMS routes compiled.
+- `npm run test:e2e` — all 20 browser tests passed, including 320px and 375px mobile contracts.
+- `npm test -- tests/unit/faith-stepper.test.ts` — 3 TDD contracts passed after the expected missing-component red run.
+- `npm test` — 78 tests passed across 26 files after Unit 07.
+- `npm run typecheck` and `npm run lint` — passed after Unit 07.
+- `npm run build` — passed; all 47 generated pages and dynamic CMS routes compiled after Unit 07.
+- `npx playwright test tests/e2e/faith-story.spec.ts tests/e2e/pinned-handoff.spec.ts` — all 6 focused scroll and pin-handoff tests passed.
+- `npm run test:e2e` — all 20 browser tests passed after Unit 07.
+- Unit 08 release gate: `npm run typecheck`, `npm run lint`, `npm test`,
+  `npm run build`, and `npm run test:e2e` all passed immediately before the
+  scoped production commit; 78 unit and 20 browser tests passed.
 
 ## Preview History
 
@@ -68,6 +94,13 @@
 - Unit 04's local intake confirmation was verified through its Chromium acceptance test; the in-app browser declined the loopback URL during the final interactive re-open.
 - Unit 05 preview started at `http://127.0.0.1:3200`; `/` returned 200 and the protected CMS correctly redirected to configuration/login locally.
 - Production CMS visual verification completed at `https://kratosfitness.be/beheer`; three 74px compact rings and one 148px readiness ring rendered from live CMS data.
+- Unit 06 local production preview verified at `http://127.0.0.1:3200`: no
+  overflow on representative public routes at phone, tablet, or landscape widths;
+  the intake first-step heading begins around 488px in the phone viewport.
+- Unit 07 local dev preview verified at `http://127.0.0.1:3200` in a 1754×1604
+  viewport: chapter 03 and chapter 06 showed the larger contained active card,
+  two/five completed step states respectively, the correct current label, and
+  zero horizontal overflow.
 
 ## Session Notes
 

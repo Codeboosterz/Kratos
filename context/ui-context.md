@@ -31,18 +31,27 @@ Reuse existing CSS variables and approved tokens:
 - Calendar: desktop month/week/agenda controls; mobile agenda-first layout.
 - Lead detail: list/detail pattern with explicit statuses and contact actions.
 - CMS percentages: accessible SVG progress rings with a visible numeric value; compact and large variants share one primitive.
+- Faith & Fitness desktop story: a six-step numbered/check stepper reflects the
+  scroll position; the stepper does not independently navigate the pinned scene.
 
 ## Motion
 
 - 150–300ms transform/opacity transitions only.
 - Motion communicates step or panel state and respects reduced motion.
 - Progress-ring entry animation may animate SVG stroke offset for up to 700ms and becomes static under `prefers-reduced-motion`.
+- Faith story cards use height-led responsive sizing so tall desktop viewports
+  receive a larger filmstrip without changing the mobile chapter stack.
 
 ## Responsive Rules
 
-- Verify 375, 768, 1024, and 1440px widths.
+- Verify 320, 375, 430, 768, 1024, and 1440px widths plus a short mobile landscape viewport.
 - No horizontal page overflow.
 - Touch targets are at least 44px high.
+- Intentional horizontal rails remain swipeable but hide native scrollbars.
+- Phone text inputs and selects use at least 16px type to prevent iOS zoom.
+- Repeatable CMS editor grids collapse to one column at phone widths.
+- The mobile intake introduction stays compact enough to reveal the active form
+  step in the first viewport.
 
 ## Accessibility
 

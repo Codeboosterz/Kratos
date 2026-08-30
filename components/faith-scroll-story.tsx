@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { Stepper, StepperIndicator, StepperItem, StepperSeparator } from "@/components/ui/stepper";
 import { MOTION } from "@/motion/animation-tokens";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -34,6 +35,7 @@ function stepNumber(index: number) {
 
 export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Props) {
   const scope = useRef<HTMLElement>(null);
+  const [activeStep, setActiveStep] = useState(1);
 
   useGSAP(() => {
     const root = scope.current;
@@ -44,11 +46,9 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
     const track = root.querySelector<HTMLElement>(".faith-story__track");
     const copyPanels = gsap.utils.toArray<HTMLElement>(".faith-story__copy-panel", root);
     const cards = gsap.utils.toArray<HTMLElement>(".faith-story__card", root);
-    const progressItems = gsap.utils.toArray<HTMLElement>(".faith-story__progress li", root);
-    const progressFill = root.querySelector<HTMLElement>(".faith-story__progress-fill");
-    if (!pin || !viewport || !track || !progressFill || copyPanels.length !== steps.length || cards.length !== steps.length) return;
+    if (!pin || !viewport || !track || copyPanels.length !== steps.length || cards.length !== steps.length) return;
 
-    const setActiveStep = (activeIndex: number) => {
+    const applyActiveStep = (activeIndex: number) => {
       copyPanels.forEach((panel, index) => {
         const active = index === activeIndex;
         panel.dataset.storyActive = String(active);
@@ -57,17 +57,14 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
       cards.forEach((card, index) => {
         card.dataset.storyActive = String(index === activeIndex);
       });
-      progressItems.forEach((item, index) => {
-        if (index === activeIndex) item.setAttribute("aria-current", "step");
-        else item.removeAttribute("aria-current");
-      });
       root.dataset.storyStep = String(activeIndex + 1);
+      setActiveStep(activeIndex + 1);
     };
 
     root.dataset.storyMode = "static";
     root.dataset.storyStep = "1";
     root.dataset.storyProgress = "0.000";
-    setActiveStep(0);
+    applyActiveStep(0);
 
     const media = gsap.matchMedia();
     // Keep the approved editorial composition on every desktop. The in-app
@@ -87,19 +84,18 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
       gsap.set(cards, {
         clipPath: "inset(0% 0% 42% 0% round 24px)",
         opacity: 0.68,
-        scale: 0.78,
+        scale: 0.84,
         transformOrigin: "center center",
         zIndex: 1,
       });
       gsap.set(cards[0], {
         clipPath: "inset(0% 0% 0% 0% round 24px)",
         opacity: 1,
-        scale: 1.3,
+        scale: 1.18,
         zIndex: 8,
       });
       gsap.set(track, { x: () => centerCard(0), force3D: true });
-      gsap.set(progressFill, { scaleX: 0, transformOrigin: "left center" });
-      setActiveStep(0);
+      applyActiveStep(0);
 
       let lastActiveIndex = 0;
       const syncVisualState = (visualProgress: number) => {
@@ -107,7 +103,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
         root.dataset.storyProgress = visualProgress.toFixed(3);
         if (activeIndex !== lastActiveIndex) {
           lastActiveIndex = activeIndex;
-          setActiveStep(activeIndex);
+          applyActiveStep(activeIndex);
         }
       };
 
@@ -140,7 +136,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
         },
       });
 
-      timeline.to(progressFill, { scaleX: 1, duration: steps.length, ease: "none" }, 0);
+      timeline.to({}, { duration: steps.length }, 0);
 
       steps.forEach((_, index) => {
         if (index === 0) return;
@@ -160,7 +156,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
           .to(previousCard, {
             clipPath: "inset(0% 0% 42% 0% round 24px)",
             opacity: 0.68,
-            scale: 0.78,
+            scale: 0.84,
             zIndex: 1,
             duration: 0.44,
             ease: "power2.inOut",
@@ -168,7 +164,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
           .to(currentCard, {
             clipPath: "inset(0% 0% 0% 0% round 24px)",
             opacity: 1,
-            scale: 1.3,
+            scale: 1.18,
             zIndex: 8,
             duration: 0.5,
             ease: "power3.out",
@@ -185,7 +181,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
         delete root.dataset.storyPinStart;
         delete root.dataset.storyPinEnd;
         root.dataset.storyProgress = "0.000";
-        setActiveStep(0);
+        applyActiveStep(0);
       };
     });
 
@@ -238,15 +234,25 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
           </div>
 
           <div className="faith-story__progress-shell">
-            <ol className="faith-story__progress" aria-label="Voortgang van het Faith & Fitness-verhaal">
-              {steps.map((step, index) => (
-                <li key={`${step.title}-progress`} aria-current={index === 0 ? "step" : undefined}>
-                  <span>{stepNumber(index)}</span>
-                  <i aria-hidden="true" />
-                </li>
-              ))}
-            </ol>
-            <span className="faith-story__progress-fill" aria-hidden="true" />
+            <Stepper value={activeStep} className="faith-story__stepper" aria-label="Voortgang van het Faith & Fitness-verhaal">
+              {steps.map((step, index) => {
+                const stepValue = index + 1;
+                return (
+                  <StepperItem
+                    className="faith-story__step"
+                    step={stepValue}
+                    aria-current={stepValue === activeStep ? "step" : undefined}
+                    aria-label={`${stepNumber(index)} ${step.title}`}
+                    key={`${step.title}-progress`}
+                  >
+                    <StepperIndicator className="faith-story__step-indicator">
+                      {stepNumber(index)}
+                    </StepperIndicator>
+                    {index < steps.length - 1 ? <StepperSeparator className="faith-story__step-separator" /> : null}
+                  </StepperItem>
+                );
+              })}
+            </Stepper>
           </div>
 
           <div className="faith-story__mobile-chapters">

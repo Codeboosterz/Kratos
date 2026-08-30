@@ -2,13 +2,14 @@
 
 ## Approach
 
-Implement the approved intake-to-calendar flow in three isolated feature units:
-data/security, public intake, and CMS operations.
+Implement approved work in isolated feature units: data/security, public intake,
+CMS operations, responsive refinement, and the scoped Faith story presentation.
 
 ## Scoping Rules
 
 - Work from one feature spec at a time.
-- Do not touch public animations, hero frames, product imagery, or pricing.
+- Do not touch public animations outside the current Faith story feature spec,
+  hero frames, product imagery, or pricing.
 - Do not apply production migrations or configure provider credentials without a separate request.
 
 ## Missing Requirements

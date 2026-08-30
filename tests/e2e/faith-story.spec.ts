@@ -24,7 +24,7 @@ async function scrollStoryTo(page: Page, progress: number) {
   await expect.poll(async () => Number(await story.getAttribute("data-story-progress"))).toBeGreaterThan(progress - 0.03);
 }
 
-test("Faith & Fitness keeps the rolling copy, filmstrip and progress rail synchronized", async ({ page }) => {
+test("Faith & Fitness keeps the rolling copy, filmstrip and stepper synchronized", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
@@ -41,8 +41,23 @@ test("Faith & Fitness keeps the rolling copy, filmstrip and progress rail synchr
   await expect(story).toHaveAttribute("data-story-pin-end", /\d/);
   await expect(copyPanels).toHaveCount(chapterTitles.length);
   await expect(cards).toHaveCount(chapterTitles.length);
-  await expect(story.locator(".faith-story__progress li")).toHaveCount(chapterTitles.length);
+  await expect(story.locator(".faith-story__step")).toHaveCount(chapterTitles.length);
+  await expect(story.locator(".faith-story__stepper button")).toHaveCount(0);
   await expect(filmstrip).toHaveCSS("overflow", "hidden");
+
+  const geometry = await story.evaluate((element) => {
+    const card = element.querySelector<HTMLElement>(".faith-story__card");
+    const filmstrip = element.querySelector<HTMLElement>(".faith-story__filmstrip");
+    const stepper = element.querySelector<HTMLElement>(".faith-story__stepper");
+    return {
+      cardHeight: card?.getBoundingClientRect().height ?? 0,
+      filmstripHeight: filmstrip?.getBoundingClientRect().height ?? 0,
+      stepperHeight: stepper?.getBoundingClientRect().height ?? 0,
+    };
+  });
+  expect(geometry.cardHeight).toBeGreaterThan(420);
+  expect(geometry.filmstripHeight).toBeGreaterThan(540);
+  expect(geometry.stepperHeight).toBeGreaterThanOrEqual(34);
 
   let pinnedTop = 0;
   let previousTrackX = Number.POSITIVE_INFINITY;
@@ -57,7 +72,7 @@ test("Faith & Fitness keeps the rolling copy, filmstrip and progress rail synchr
     await expect(activeCard).toHaveAttribute("data-story-active", "true");
     await expect(activeCopy.locator("h4")).toHaveText(chapterTitles[index]);
     await expect(activeCard.locator("figcaption")).toContainText(chapterTitles[index]);
-    await expect(story.locator(".faith-story__progress li").nth(index)).toHaveAttribute("aria-current", "step");
+    await expect(story.locator(".faith-story__step").nth(index)).toHaveAttribute("aria-current", "step");
 
     const fullyVisibleCopy = await copyPanels.evaluateAll((elements) => elements.filter((element) => {
       const style = getComputedStyle(element);

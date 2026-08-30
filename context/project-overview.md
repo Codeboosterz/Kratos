@@ -3,9 +3,9 @@
 ## Overview
 
 Kratos Fitness is a conversion-first coaching website with an owner CMS. The
-current unit connects public intake requests to an operational lead inbox and a
-Calendly-backed appointments calendar without making Calendly a prerequisite
-for collecting leads.
+current local release includes the intake-to-operations flow and a refined
+Faith & Fitness scroll story whose CMS-managed chapters use a larger filmstrip
+and an accessible, scroll-controlled stepper.
 
 ## Target Users
 
@@ -18,6 +18,8 @@ for collecting leads.
 2. Surface every submitted intake inside the protected CMS.
 3. Link confirmed Calendly appointments to their originating intake.
 4. Continue accepting leads when Calendly is not configured.
+5. Keep the six Faith & Fitness chapters visually synchronized while making
+   better use of tall desktop viewports.
 
 ## Core User Flow
 
@@ -42,12 +44,14 @@ for collecting leads.
 - Lead read/status/note workflow in the CMS.
 - Linked appointment details, filtering, and responsive calendar/list views.
 - Optional Calendly fallback until credentials are supplied.
+- Faith & Fitness stepper presentation and desktop filmstrip geometry.
 
 ### Out of Scope
 
 - Configuring client Calendly credentials.
 - Native scheduling through the Calendly Scheduling API.
-- Changing marketing animations, product content, pricing, or public media.
+- Changing marketing animations outside the scoped Faith & Fitness stepper,
+  product content, pricing, or public media.
 - Drag-and-drop calendar mutations that bypass Calendly.
 
 ## Success Criteria
@@ -57,3 +61,5 @@ for collecting leads.
 3. Signed booking/cancellation data links to the correct intake.
 4. Owner-facing PII remains protected by auth, grants, and RLS.
 5. Unit, integration, E2E, type, lint, and production-build checks pass.
+6. Faith & Fitness scroll state, stepper state, and active card remain aligned
+   across all six desktop chapters without disturbing the mobile chapter flow.

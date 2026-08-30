@@ -81,6 +81,28 @@ test("320px layout has no horizontal overflow and mobile navigation works", asyn
   await page.setViewportSize({ width: 320, height: 780 }); await page.goto("/"); expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true); await page.getByRole("button", { name: "Menu openen" }).click(); await expect(page.getByRole("navigation", { name: "Mobiele navigatie" })).toBeVisible();
 });
 
+test("375px public routes use legible controls and contained swipe rails", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+
+  for (const route of ["/", "/trajecten", "/intake", "/resultaten", "/gratis-tools", "/contact"]) {
+    await page.goto(route);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), route).toBe(true);
+  }
+
+  await page.goto("/trajecten");
+  await expect(page.locator(".filter-bar")).toHaveCSS("scrollbar-width", "none");
+
+  await page.goto("/gratis-tools");
+  await expect(page.locator(".tool-card--live input").first()).toHaveCSS("font-size", "16px");
+
+  await page.goto("/intake");
+  await expect(page.locator(".intake-step-heading")).toBeInViewport();
+
+  await page.goto("/contact");
+  const footerTargetHeights = await page.locator(".footer-grid a:not(.brand)").evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
+  expect(footerTargetHeights.every((height) => height >= 44)).toBe(true);
+});
+
 test("floating intake CTA is not rendered", async ({ page }) => {
   await page.goto("/"); await expect(page.locator(".community-reveal")).toHaveClass(/is-ready/); await page.evaluate(() => window.scrollTo(0, 1200)); await expect(page.getByTestId("sticky-intake")).toHaveCount(0); await page.goto("/intake"); await expect(page.getByTestId("sticky-intake")).toHaveCount(0);
 });

@@ -55,5 +55,5 @@ committed separately from their production application.
 2. Calendly owns appointment availability and booking mutation.
 3. PII is never exposed through public Data API grants or client secrets.
 4. Intake data is not duplicated into email tables merely for presentation.
-5. Public marketing sections are outside this unit.
+5. Public marketing sections other than the scoped Faith & Fitness presentation remain unchanged.
 6. Static CMS data visualizations remain Server Components unless browser state is genuinely required.

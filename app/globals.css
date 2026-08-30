@@ -226,6 +226,18 @@ img { max-width: 100%; }
 .filter-link { min-height: 48px; display: flex; flex: 0 0 auto; align-items: center; justify-content: center; padding-inline: 1.15rem; border-radius: 11px; color: #d2d3cd; font-size: 0.88rem; font-weight: 800; }
 .filter-link:hover, .filter-link[aria-current="page"] { background: var(--lime); color: var(--carbon); }
 
+/* Horizontal rails stay swipeable without exposing platform scrollbars. */
+.filter-bar, .client-stories-rail, .cms-sidebar nav, .cms-page-tabs, .cms-calendar {
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.filter-bar::-webkit-scrollbar, .client-stories-rail::-webkit-scrollbar, .cms-sidebar nav::-webkit-scrollbar, .cms-page-tabs::-webkit-scrollbar, .cms-calendar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; align-items: stretch; }
 .product-card { height: 100%; display: grid; grid-template-rows: auto 1fr; overflow: hidden; border: 1px solid var(--border); border-radius: 20px; background: #11140f; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.14); isolation: isolate; transition: border-color 260ms ease, box-shadow 260ms ease, transform 260ms ease; }
 .product-card:focus-within { border-color: var(--border-lime); box-shadow: 0 0 0 3px rgba(169, 207, 104, 0.16), 0 20px 54px rgba(0, 0, 0, 0.2); }
@@ -1154,20 +1166,20 @@ img { max-width: 100%; }
 .faith-section.faith-story { padding: 0; }
 .faith-story { position: relative; z-index: 2; overflow: clip; isolation: isolate; background: var(--off-white); color: var(--carbon); }
 .faith-story__pin { height: calc(100svh - var(--site-header-height)); min-height: 720px; display: grid; align-items: stretch; background: var(--off-white); }
-.faith-story__layout { min-width: 0; height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding-block: clamp(2.5rem, 5.5vh, 4.5rem) clamp(2rem, 4vh, 3.25rem); }
+.faith-story__layout { min-width: 0; height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; row-gap: clamp(.6rem, 1.4vh, 1.25rem); padding-block: clamp(1.75rem, 3.2vh, 3rem) clamp(1.25rem, 2.4vh, 2.25rem); }
 .faith-story__intro { position: relative; z-index: 3; display: grid; justify-items: start; }
 .faith-story__intro .section-title { max-width: none; margin-top: .9rem; scroll-margin-top: calc(var(--site-header-height) + 1rem); font-size: clamp(4rem, 5.5vw, 6.4rem); line-height: .83; letter-spacing: -.035em; }
 .faith-story__desktop-stage { min-height: 0; display: grid; grid-template-columns: minmax(280px, .72fr) minmax(0, 1.38fr); gap: clamp(1.5rem, 4vw, 4.5rem); align-items: center; }
-.faith-story__copy-viewport { position: relative; min-width: 0; height: clamp(250px, 35vh, 340px); overflow: hidden; }
+.faith-story__copy-viewport { position: relative; min-width: 0; height: clamp(280px, 39vh, 420px); overflow: hidden; }
 .faith-story__copy-rail { position: absolute; top: 2%; bottom: 2%; left: 0; width: 1px; background: rgba(8,10,8,.18); }
 .faith-story__copy-rail::after { position: absolute; top: 42%; left: -1px; width: 3px; height: 22%; border-radius: 999px; background: #5f841f; content: ""; }
 .faith-story__copy-panel { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding-left: clamp(2rem, 3.2vw, 3.4rem); will-change: transform, opacity; }
 .faith-story__number { color: #577924; font-size: .72rem; font-weight: 900; letter-spacing: .16em; }
 .faith-story__copy-panel h4, .faith-story__mobile-chapter h4 { max-width: 10ch; margin: .9rem 0 .85rem; overflow-wrap: anywhere; font-family: var(--display); font-size: clamp(3rem, 4.4vw, 5.1rem); line-height: .86; letter-spacing: -.025em; text-wrap: balance; text-transform: uppercase; }
 .faith-story__copy-panel p, .faith-story__mobile-chapter p { max-width: 470px; margin: 0; color: #3e443b; font-size: clamp(.98rem, 1.08vw, 1.12rem); line-height: 1.62; }
-.faith-story__filmstrip { min-width: 0; height: clamp(410px, 55vh, 590px); display: flex; align-items: center; overflow: hidden; }
-.faith-story__track { width: max-content; height: 100%; display: flex; align-items: center; gap: clamp(.25rem, .7vw, .7rem); will-change: transform; }
-.faith-story__card { position: relative; flex: 0 0 auto; width: clamp(230px, 18vw, 310px); aspect-ratio: 3 / 4; margin: 0; overflow: hidden; border: 1.5px solid rgba(8,10,8,.18); border-radius: 24px; background: #10130f; box-shadow: 0 22px 62px rgba(8,10,8,.17); will-change: transform, clip-path, opacity; }
+.faith-story__filmstrip { min-width: 0; height: clamp(540px, 68vh, 920px); display: flex; align-items: center; overflow: hidden; }
+.faith-story__track { width: max-content; height: 100%; display: flex; align-items: center; gap: clamp(.5rem, 1.1vw, 1rem); will-change: transform; }
+.faith-story__card { position: relative; flex: 0 0 auto; width: auto; height: clamp(410px, 56vh, 720px); aspect-ratio: 3 / 4; margin: 0; overflow: hidden; border: 1.5px solid rgba(8,10,8,.18); border-radius: 24px; background: #10130f; box-shadow: 0 22px 62px rgba(8,10,8,.17); will-change: transform, clip-path, opacity; }
 .faith-story__card[data-story-active="true"] { border-color: #78a92f; box-shadow: 0 24px 75px rgba(8,10,8,.22), 0 0 0 1px rgba(120,169,47,.24); }
 .faith-story__card img, .faith-story__mobile-image img { object-fit: cover; filter: saturate(.72) contrast(1.045); }
 .faith-story__card::after { position: absolute; inset: 45% 0 0; content: ""; background: linear-gradient(0deg, rgba(8,10,8,.82), transparent); opacity: 0; transition: opacity .24s ease; }
@@ -1175,15 +1187,15 @@ img { max-width: 100%; }
 .faith-story__card figcaption { position: absolute; z-index: 2; right: 1rem; bottom: 1rem; left: 1rem; display: flex; align-items: baseline; gap: .65rem; color: var(--off-white); font-family: var(--display); font-size: clamp(1.25rem, 1.7vw, 1.9rem); line-height: .94; text-transform: uppercase; opacity: 0; transition: opacity .24s ease; }
 .faith-story__card[data-story-active="true"] figcaption { opacity: 1; }
 .faith-story__card figcaption span { color: var(--lime); font-family: var(--body); font-size: .62rem; font-weight: 900; letter-spacing: .12em; }
-.faith-story__progress-shell { position: relative; }
-.faith-story__progress { position: relative; display: flex; margin: clamp(.8rem, 1.8vh, 1.4rem) 0 0; padding: 0; list-style: none; }
-.faith-story__progress li { position: relative; flex: 1 1 0; min-width: 0; display: grid; grid-template-rows: auto 18px; color: #474c44; font-size: .66rem; font-weight: 900; font-variant-numeric: tabular-nums; }
-.faith-story__progress li span { padding-left: 1px; }
-.faith-story__progress li i { position: relative; display: block; align-self: end; height: 1px; background: rgba(8,10,8,.38); }
-.faith-story__progress li i::after { position: absolute; z-index: 2; bottom: -5px; left: 0; width: 11px; height: 11px; border: 2px solid var(--off-white); border-radius: 50%; outline: 2px solid var(--carbon); background: var(--off-white); content: ""; transition: background .22s ease, box-shadow .22s ease, transform .22s ease; }
-.faith-story__progress li[aria-current="step"] { color: #3f6517; }
-.faith-story__progress li[aria-current="step"] i::after { outline-color: #5f841f; background: #9dd650; box-shadow: 0 0 0 4px rgba(120,169,47,.17); transform: scale(1.12); }
-.faith-story__progress-fill { position: absolute; z-index: 1; right: 0; bottom: 5px; left: 0; height: 2px; background: #6f9d2a; pointer-events: none; will-change: transform; }
+.faith-story__progress-shell { position: relative; margin-top: clamp(.15rem, .7vh, .55rem); }
+.faith-story__stepper { position: relative; width: 100%; align-items: center; }
+.faith-story__step { min-width: 0; flex: 1 1 0; color: #474c44; font-size: .66rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.faith-story__step:last-child { flex: 0 0 auto; }
+.faith-story__step-indicator { width: 34px; height: 34px; border: 2px solid rgba(8,10,8,.66); background: var(--off-white); color: var(--carbon); font-size: .62rem; font-weight: 900; letter-spacing: .03em; transition: border-color .24s ease, background .24s ease, box-shadow .24s ease, color .24s ease, transform .24s ease; }
+.faith-story__step[data-state="completed"] .faith-story__step-indicator { border-color: #6f9d2a; background: #9dd650; color: var(--carbon); }
+.faith-story__step[aria-current="step"] .faith-story__step-indicator { border-color: #5f841f; background: var(--off-white); color: #3f6517; box-shadow: 0 0 0 5px rgba(120,169,47,.18); transform: scale(1.08); }
+.faith-story__step-separator { height: 2px; min-width: 0; flex: 1 1 auto; margin-inline: .65rem; background: rgba(8,10,8,.24); transition: background .28s ease; }
+.faith-story__step[data-state="completed"] .faith-story__step-separator { background: #6f9d2a; }
 .faith-story__mobile-chapters { display: none; }
 .faith-story__mobile-context h3 { margin: 0 0 .5rem; font-family: var(--display); font-size: 1.8rem; text-transform: uppercase; }
 .faith-story__mobile-context p { max-width: 620px; margin: 0; color: #4d5349; }
@@ -1542,4 +1554,71 @@ img { max-width: 100%; }
   .cms-calendar-upcoming li { grid-template-columns: 74px minmax(0,1fr); }
   .cms-calendar-agenda li > a { grid-template-columns: 1fr auto; }
   .cms-calendar-agenda li > a > div { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* Phone refinement — preserve desktop composition while removing mobile friction. */
+@media (max-width: 600px) {
+  main#main-content > .section:has(.intake-flow) { padding-block: 2.25rem 4rem; }
+
+  .footer-grid a:not(.brand) { min-height: 44px; display: flex; align-items: center; }
+
+  .intake-flow { gap: 1.25rem; }
+  .intake-flow .form-aside { display: grid; gap: .6rem; }
+  .intake-flow .form-aside .eyebrow-pill { min-height: 32px; width: fit-content; font-size: .68rem; }
+  .intake-flow .form-aside .section-title { margin-top: .1rem; font-size: clamp(2.65rem, 12vw, 3.4rem); }
+  .intake-flow .form-aside .lead { margin: 0; font-size: .9rem; line-height: 1.5; }
+  .intake-flow .form-aside ol { gap: .35rem; margin: .45rem 0 0; }
+  .intake-flow .form-aside li { gap: .2rem; font-size: .7rem; line-height: 1.15; }
+  .intake-flow .form-aside li span { width: 36px; height: 36px; }
+  .intake-flow__main > .eyebrow { display: none; }
+  .intake-step-panel { min-height: 0; }
+  .intake-step-content { gap: 1.2rem; }
+  .intake-step-heading { padding: 0 0 1rem 2.75rem; }
+  .intake-step-heading > span { width: 34px; height: 34px; }
+  .choice-card { min-height: 72px; }
+
+  .tool-card--live form label { font-size: .82rem; }
+  .tool-card--live form input, .tool-card--live form select { font-size: 16px; }
+
+  .cms-main, .cms-main--wide, .cms-workspace { min-width: 0; }
+  .cms-main > *, .cms-page-heading > *, .cms-editor-grid > *, .cms-editor-panel, .cms-editor-form {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .cms-page-heading { gap: 1rem; margin-bottom: 1.35rem; }
+  .cms-page-heading h1, .cms-overview-heading h1 {
+    max-width: 100%;
+    font-size: clamp(2.1rem, 9vw, 2.8rem);
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  .cms-page-heading p { overflow-wrap: anywhere; }
+  .cms-panel, .cms-editor-panel { padding: 1rem; }
+  .cms-editor-form fieldset, .cms-motion-settings { min-width: 0; }
+  .cms-repeat-grid, .cms-image-grid { grid-template-columns: 1fr; }
+  .cms-repeat-heading { align-items: stretch; flex-direction: column; }
+  .cms-repeat-heading button { min-height: 44px; width: 100%; }
+  .cms-health-badge, .cms-status-pill { max-width: 100%; white-space: normal; }
+
+  .cms-sidebar nav { scroll-snap-type: x proximity; }
+  .cms-sidebar nav a, .cms-sidebar nav > span, .cms-page-tabs a { scroll-snap-align: start; }
+  .cms-page-tabs a { min-height: 44px; display: inline-flex; align-items: center; }
+
+  .cms-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  .cms-shell select,
+  .cms-shell textarea,
+  .cms-shell input[type="file"] {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .cms-shell button { min-width: 44px; min-height: 44px; }
+
+  .cms-calendar-layout, .cms-calendar-toolbar, .cms-calendar-upcoming, .cms-calendar-agenda { min-width: 0; max-width: 100%; }
+  .cms-calendar-toolbar nav a,
+  .cms-calendar-toolbar form label,
+  .cms-calendar-toolbar form > a,
+  .cms-calendar-toolbar select,
+  .cms-calendar-toolbar button,
+  .cms-appointment-actions a { min-height: 44px; }
+  .cms-calendar-upcoming .cms-panel__heading > a { width: 44px; height: 44px; }
 }
