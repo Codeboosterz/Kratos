@@ -41,6 +41,12 @@ Reuse existing CSS variables and approved tokens:
 - Progress-ring entry animation may animate SVG stroke offset for up to 700ms and becomes static under `prefers-reduced-motion`.
 - Faith story cards use height-led responsive sizing so tall desktop viewports
   receive a larger filmstrip without changing the mobile chapter stack.
+- Community photos retain their source pixels and use per-image crop focal
+  points. At widths up to 900px the complete unpinned grid is visible immediately;
+  desktop holds a full-height scene below the header, completes the centre-out
+  reveal, then scales the inner composition to fit the viewport before release.
+  The base grid growth is 2.5%; the finishing zoom is separately viewport-fitted.
+  Breakpoint cleanup removes desktop transforms; reduced motion uses direct scrub.
 
 ## Responsive Rules
 

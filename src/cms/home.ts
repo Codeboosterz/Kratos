@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 import { isSupabaseConfigured } from "@/src/supabase/config";
 import { createPublicClient } from "@/src/supabase/public";
+import { communityImageDefaults } from "@/src/content/community-media";
 
 const internalHref = z.string().trim().min(1).max(240).refine((value) => value.startsWith("/"), {
   message: "Gebruik een intern pad dat met / begint.",
@@ -70,7 +71,7 @@ const reviewCardSchema = z.object({
   text: z.string().trim().min(20).max(420),
 });
 
-const communityImageDefaults = [
+const legacyCommunityImageDefaults = [
   "/images/omar-cable.jpg", "/images/omar-deadlift.jpg", "/images/omar-hydrate.jpg",
   "/img/hero-header.jpg", "/img/omar.jpg", "/img/omar-portrait.jpg",
   "/media/programs/05-duo-coaching.jpg", "/images/omar-cable.jpg",
@@ -138,12 +139,19 @@ const homeHeroObjectSchema = z.object({
 export const homeHeroSchema = z.preprocess((input) => {
   if (!input || typeof input !== "object" || Array.isArray(input)) return input;
   const content = input as Record<string, unknown>;
-  if (content.faith_story_layout_version !== undefined) return input;
+  const images = content.community_image_urls;
+  const hasLegacyCommunityDefaults = Array.isArray(images)
+    && images.length === legacyCommunityImageDefaults.length
+    && images.every((url, index) => url === legacyCommunityImageDefaults[index]);
 
   return {
     ...content,
-    faith_story_layout_version: 2,
-    faith_story_steps: defaultFaithStorySteps.map((step) => ({ ...step })),
+    // Replace the old default poster set, not a client's custom image choices.
+    ...(hasLegacyCommunityDefaults ? { community_image_urls: [...communityImageDefaults] } : {}),
+    ...(content.faith_story_layout_version === undefined ? {
+      faith_story_layout_version: 2,
+      faith_story_steps: defaultFaithStorySteps.map((step) => ({ ...step })),
+    } : {}),
   };
 }, homeHeroObjectSchema);
 

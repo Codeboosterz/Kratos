@@ -8,8 +8,9 @@ CMS operations, responsive refinement, and the scoped Faith story presentation.
 ## Scoping Rules
 
 - Work from one feature spec at a time.
-- Do not touch public animations outside the current Faith story feature spec,
-  hero frames, product imagery, or pricing.
+- Do not touch public animations outside the current approved feature spec.
+  Unit 11 permits only the community hold/reveal/finale; preserve Faith story,
+  hero frames, product imagery, pricing, and all approved community photos.
 - Do not apply production migrations or configure provider credentials without a separate request.
 
 ## Missing Requirements

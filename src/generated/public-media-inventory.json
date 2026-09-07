@@ -1,6 +1,6 @@
 {
-  "count": 151,
-  "sizeBytes": 15877906,
+  "count": 165,
+  "sizeBytes": 20360806,
   "files": [
     {
       "path": "/hero-frames/frame_001.jpg",
@@ -485,6 +485,62 @@
     {
       "path": "/hero-frames/frame_121.jpg",
       "sizeBytes": 79241
+    },
+    {
+      "path": "/images/community/agility-drill.jpg",
+      "sizeBytes": 473067
+    },
+    {
+      "path": "/images/community/coach-focus.jpg",
+      "sizeBytes": 294478
+    },
+    {
+      "path": "/images/community/coach-guidance.jpg",
+      "sizeBytes": 300342
+    },
+    {
+      "path": "/images/community/coached-press.jpg",
+      "sizeBytes": 189720
+    },
+    {
+      "path": "/images/community/coached-row.jpg",
+      "sizeBytes": 156237
+    },
+    {
+      "path": "/images/community/medicine-ball.jpg",
+      "sizeBytes": 223569
+    },
+    {
+      "path": "/images/community/outdoor-lunge.jpg",
+      "sizeBytes": 390371
+    },
+    {
+      "path": "/images/community/outdoor-warmup.jpg",
+      "sizeBytes": 332673
+    },
+    {
+      "path": "/images/community/overhead-stretch.jpg",
+      "sizeBytes": 244197
+    },
+    {
+      "path": "/images/community/partner-mobility.jpg",
+      "sizeBytes": 346297
+    },
+    {
+      "path": "/images/community/partner-stretch.jpg",
+      "sizeBytes": 435814
+    },
+    {
+      "path": "/images/community/stretch-smile.jpg",
+      "sizeBytes": 323969
+    },
+    {
+      "path": "/images/community/team-lunges.jpg",
+      "sizeBytes": 380534
+    },
+    {
+      "path": "/images/community/team-recovery.jpg",
+      "sizeBytes": 391632
     },
     {
       "path": "/images/faith/01-prayer.webp",

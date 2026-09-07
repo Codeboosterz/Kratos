@@ -7,7 +7,8 @@ Kratos Fitness intake operations flow.
 ## Strategy
 
 Build the data/security boundary before the public form and owner UI. Calendly
-configuration is optional and outside this delivery.
+configuration remains optional for intake capture; final Calendly activation
+is planned in Unit 09 once client credentials arrive.
 
 ## Units
 
@@ -21,11 +22,16 @@ configuration is optional and outside this delivery.
 | 06 | Mobile responsive optimization | Unit 05 | Complete / Deployed |
 | 07 | Faith story stepper and layout | Existing Faith story | Complete / Deployed |
 | 08 | Production release | Units 06–07 | Complete / Deployed |
+| 09 | Client handover readiness | Units 01–08 | Preflight complete; final build 8 September |
+| 10 | Community photo refresh | Existing community reveal | Complete / Local preview |
+| 11 | Community reveal finale | Unit 10 | Complete / Local preview |
+| 12 | Community release and next animation check | Units 10–11 | In progress |
 
 ## Ordering Notes
 
 - Tests precede implementation in each unit.
-- Migration is committed but not applied to production.
+- Intake workflow migration was applied to production on 7 September during
+  Unit 09 preflight; the source-to-remote version mapping is in `supabase/README.md`.
 - Preview follows implementation and full validation.
 - Production deployment completed from `main`; Supabase migrations remain a separate operation.
 - Unit 06 is a CSS-first responsive refinement with no data or provider changes.

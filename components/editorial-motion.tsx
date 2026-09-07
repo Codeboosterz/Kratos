@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { MOTION } from "@/motion/animation-tokens";
+import { getCommunityImagePosition } from "@/src/content/community-media";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
@@ -99,107 +100,142 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
     const surrounding = gsap.utils.toArray<HTMLElement>(".grid_item:not(.grid_item_middle)", root);
     const caption = root.querySelector<HTMLElement>(".community-reveal__caption");
     const sticky = root.querySelector<HTMLElement>(".grid_sticky");
+    const scene = root.querySelector<HTMLElement>(".community-reveal__scene");
     const stage = root.closest<HTMLElement>(".mission-community__stage");
     const backdrop = stage?.querySelector<HTMLElement>(".mission-community__backdrop");
 
-    if (!center || !sticky) return;
+    if (!center || !sticky || !scene) return;
 
-    const centerX = () => center.offsetLeft + center.offsetWidth / 2;
-    const centerY = () => center.offsetTop + center.offsetHeight / 2;
-    const travelX = (element: HTMLElement) => centerX() - (element.offsetLeft + element.offsetWidth / 2);
-    const travelY = (element: HTMLElement) => centerY() - (element.offsetTop + element.offsetHeight / 2);
-    const distanceFromCenter = (element: HTMLElement) => Math.hypot(travelX(element), travelY(element));
+    const media = gsap.matchMedia();
+    // Compact layouts are not pinned. A desktop-length scrub would reveal the
+    // photos only after this short section has already left the viewport.
+    media.add("(max-width: 900px)", () => {
+      gsap.set([center, ...surrounding], { x: 0, y: 0, scale: 1, autoAlpha: 1 });
+      if (backdrop) gsap.set(backdrop, { autoAlpha: 1 });
+      if (caption) {
+        gsap.set(caption, { color: "#f4f6ef" });
+        caption.textContent = "Niet alleen bij Kratos";
+      }
+      root.dataset.communityProgress = "1.0000";
+      return () => {
+        if (caption) caption.textContent = "Solo missie?";
+        delete root.dataset.communityProgress;
+      };
+    });
 
-    const isCompact = () => window.matchMedia("(max-width: 900px)").matches;
-    const headerOffset = () => Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue("--site-header-height"),
-    ) || 76;
-    const pinDistance = () => isCompact()
-      ? Math.max(window.innerHeight * 1.1, 780)
-      : Math.max(window.innerHeight * 2, 1_800);
-    const initialScale = () => isCompact()
-      ? Math.min(3, Math.max(1.6, (window.innerWidth - 40) / center.offsetWidth))
-      : 3;
-    const orderedSurrounding = [...surrounding].sort((a, b) => distanceFromCenter(a) - distanceFromCenter(b));
-    let captionIsExpanded = false;
-    const setCaption = (expanded: boolean) => {
-      if (!caption || captionIsExpanded === expanded) return;
-      captionIsExpanded = expanded;
-      caption.textContent = expanded ? "Niet alleen bij Kratos" : "Solo missie?";
-    };
+    media.add("(min-width: 901px)", () => {
+      const centerX = () => center.offsetLeft + center.offsetWidth / 2;
+      const centerY = () => center.offsetTop + center.offsetHeight / 2;
+      const travelX = (element: HTMLElement) => centerX() - (element.offsetLeft + element.offsetWidth / 2);
+      const travelY = (element: HTMLElement) => centerY() - (element.offsetTop + element.offsetHeight / 2);
+      const distanceFromCenter = (element: HTMLElement) => Math.hypot(travelX(element), travelY(element));
 
-    root.dataset.communityProgress = "0.0000";
+      const headerOffset = () => Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--site-header-height"),
+      ) || 76;
+      // Use the same measured travel as CSS sticky, including tall viewports.
+      const pinDistance = () => root.offsetHeight - sticky.offsetHeight;
+      const fitSceneScale = () => Math.min(
+        (sticky.clientWidth - 48) / scene.offsetWidth,
+        (sticky.clientHeight - 64) / scene.offsetHeight,
+      );
+      // Short screens start slightly smaller so the finale can still grow
+      // without cropping any photos or the caption.
+      const initialSceneScale = () => Math.min(1, fitSceneScale() / 1.025);
+      const orderedSurrounding = [...surrounding].sort((a, b) => distanceFromCenter(a) - distanceFromCenter(b));
+      let captionIsExpanded = false;
+      const setCaption = (expanded: boolean) => {
+        if (!caption || captionIsExpanded === expanded) return;
+        captionIsExpanded = expanded;
+        caption.textContent = expanded ? "Niet alleen bij Kratos" : "Solo missie?";
+      };
 
-    const timeline = gsap.timeline({
-      scrollTrigger: {
-        id: "home-community-reveal",
-        trigger: root,
-        start: () => `top top+=${headerOffset()}`,
-        end: () => `+=${pinDistance()}`,
-        // Refresh the community range before the adjacent Faith story.
-        refreshPriority: 10,
-        scrub: MOTION.communityScrub,
-        // CSS sticky owns the hold/release geometry. GSAP only scrubs visuals,
-        // avoiding fixed-position activation flicker and generated spacers.
-        invalidateOnRefresh: true,
-        onRefresh: (self) => {
-          root.dataset.communityPinStart = String(Math.round(self.start));
-          root.dataset.communityPinEnd = String(Math.round(self.end));
+      root.dataset.communityProgress = "0.0000";
+
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          id: "home-community-reveal",
+          trigger: root,
+          start: () => `top top+=${headerOffset()}`,
+          end: () => `+=${pinDistance()}`,
+          // Refresh the community range before the adjacent Faith story.
+          refreshPriority: 10,
+          scrub: reducedMotion() ? true : MOTION.communityScrub,
+          // CSS sticky owns the hold/release geometry. GSAP only scrubs visuals,
+          // avoiding fixed-position activation flicker and generated spacers.
+          invalidateOnRefresh: true,
+          onRefresh: (self) => {
+            root.dataset.communityPinStart = String(Math.round(self.start));
+            root.dataset.communityPinEnd = String(Math.round(self.end));
+          },
+          onUpdate: (self) => {
+            root.dataset.communityProgress = self.progress.toFixed(4);
+            setCaption(self.progress >= 0.58);
+          },
+          onLeave: (self) => {
+            self.animation?.progress(1);
+            root.dataset.communityProgress = "1.0000";
+            setCaption(true);
+          },
+          onLeaveBack: (self) => {
+            self.animation?.progress(0);
+            root.dataset.communityProgress = "0.0000";
+            setCaption(false);
+          },
         },
-        onUpdate: (self) => {
-          root.dataset.communityProgress = self.progress.toFixed(4);
-          setCaption(self.progress >= 0.58);
-        },
-        onLeave: (self) => {
-          self.animation?.progress(1);
-          root.dataset.communityProgress = "1.0000";
-          setCaption(true);
-        },
-        onLeaveBack: (self) => {
-          self.animation?.progress(0);
-          root.dataset.communityProgress = "0.0000";
-          setCaption(false);
-        },
-      },
-    })
-      .fromTo(center, {
-        scale: initialScale,
-        zIndex: 25,
-        transformOrigin: "center center",
-      }, {
-        scale: 1,
-        duration: 0.9,
-        ease: "none",
-      }, 0)
-      .fromTo(orderedSurrounding, {
-        x: (_, element: HTMLElement) => travelX(element),
-        y: (_, element: HTMLElement) => travelY(element),
-        scale: 0.2,
-        autoAlpha: 0,
-        transformOrigin: "center center",
-      }, {
-        x: 0,
-        y: 0,
-        scale: 1,
-        autoAlpha: 1,
-        duration: 1.2,
-        stagger: { amount: 0.85, from: "start" },
-        ease: "none",
-        force3D: true,
-      }, 0.22);
+      })
+        .addLabel("reveal", 0.14)
+        .fromTo(center, {
+          scale: 3,
+          zIndex: 25,
+          transformOrigin: "center center",
+        }, {
+          scale: 1,
+          duration: 0.9,
+          ease: "none",
+        }, "reveal")
+        .fromTo(orderedSurrounding, {
+          x: (_, element: HTMLElement) => travelX(element),
+          y: (_, element: HTMLElement) => travelY(element),
+          scale: 0.2,
+          autoAlpha: 0,
+          transformOrigin: "center center",
+        }, {
+          x: 0,
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 1.2,
+          stagger: { amount: 0.85, from: "start" },
+          ease: "none",
+          force3D: true,
+        }, "reveal+=0.22");
 
-    if (backdrop) timeline.to(backdrop, { autoAlpha: 1, duration: 0.72, ease: "none" }, 0.32);
-    if (caption) timeline.to(caption, { color: "#f4f6ef", duration: 0.72, ease: "none" }, 0.32);
+      if (backdrop) timeline.to(backdrop, { autoAlpha: 1, duration: 0.72, ease: "none" }, 0.32);
+      if (caption) timeline.to(caption, { color: "#f4f6ef", duration: 0.72, ease: "none" }, 0.32);
 
-    // Keep the completed community grid pinned briefly before the next section is released.
-    timeline.to({}, { duration: 0.32 });
+      // Finish the entire fan-out before enlarging the complete composition.
+      // Only the inner scene scales; the sticky viewport never moves until release.
+      timeline
+        .addLabel("photos-visible")
+        .fromTo(scene, { scale: initialSceneScale }, {
+          scale: fitSceneScale,
+          duration: 0.64,
+          ease: "none",
+        }, "photos-visible+=0.12")
+        .addLabel("expanded")
+        .to({}, { duration: 0.36 })
+        .addLabel("release");
 
-    return () => {
-      setCaption(false);
-      delete root.dataset.communityProgress;
-      delete root.dataset.communityPinStart;
-      delete root.dataset.communityPinEnd;
-    };
+      return () => {
+        setCaption(false);
+        delete root.dataset.communityProgress;
+        delete root.dataset.communityPinStart;
+        delete root.dataset.communityPinEnd;
+      };
+    });
+
+    return () => media.revert();
   }, { scope, dependencies: [images, centerImage], revertOnUpdate: true });
 
   const surroundingImages = images.filter((_, index) => index !== 7).slice(0, 14);
@@ -212,21 +248,24 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
   return (
     <div ref={scope} className="community-reveal is-ready" role="region" aria-label="Kratos community in beeld">
       <div className="grid_sticky">
-        <div className="community-grid grid_wrap">
-          {tiles.map((src, index) => (
-            <div className={`community-tile grid_item${index === 7 ? " grid_item_middle" : ""}`} key={`${src}-${index}`}>
-              <Image
-                src={src}
-                alt={index === 7 ? "Omar, hoofdcoach van Kratos Fitness" : ""}
-                fill
-                sizes="(max-width: 760px) 30vw, 220px"
-                priority={index === 7}
-                loading={index === 7 ? undefined : src === "/img/hero-header.jpg" ? "eager" : "lazy"}
-              />
-            </div>
-          ))}
+        <div className="community-reveal__scene">
+          <div className="community-grid grid_wrap">
+            {tiles.map((src, index) => (
+              <div className={`community-tile grid_item${index === 7 ? " grid_item_middle" : ""}`} key={`${src}-${index}`}>
+                <Image
+                  src={src}
+                  alt={index === 7 ? "Omar, hoofdcoach van Kratos Fitness" : ""}
+                  fill
+                  sizes={index === 7 ? "(max-width: 900px) 90vw, 680px" : "(max-width: 900px) 30vw, 20vw"}
+                  style={index === 7 ? undefined : { objectPosition: getCommunityImagePosition(src) }}
+                  priority={index === 7}
+                  loading={index === 7 ? undefined : src === "/img/hero-header.jpg" ? "eager" : "lazy"}
+                />
+              </div>
+            ))}
+          </div>
+          <p className="community-reveal__caption" aria-live="polite">Solo missie?</p>
         </div>
-        <p className="community-reveal__caption" aria-live="polite">Solo missie?</p>
       </div>
     </div>
   );

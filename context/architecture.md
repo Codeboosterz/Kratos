@@ -35,7 +35,8 @@
 ## Auth and Access Model
 
 - Public visitors submit only through `/api/intake`.
-- Anonymous/authenticated Data API roles receive no direct intake write access.
+- Anonymous Data API access to intakes is denied. Authenticated users cannot
+  insert/delete intakes; SELECT/UPDATE are restricted by owner-membership RLS.
 - Owner/super-admin CMS membership can read and manage PII workflow fields.
 - Service-role credentials remain server-only.
 
@@ -55,5 +56,6 @@ committed separately from their production application.
 2. Calendly owns appointment availability and booking mutation.
 3. PII is never exposed through public Data API grants or client secrets.
 4. Intake data is not duplicated into email tables merely for presentation.
-5. Public marketing sections other than the scoped Faith & Fitness presentation remain unchanged.
+5. Public marketing changes stay within the active approved unit; Units 10–11
+   update only community media and its reveal finale, preserving the centre image.
 6. Static CMS data visualizations remain Server Components unless browser state is genuinely required.

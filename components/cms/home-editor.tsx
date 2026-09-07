@@ -148,8 +148,16 @@ export function HomeEditor({ initialContent, draftRevisionId, draftVersion, publ
             <div className="field"><label htmlFor="omar_image_url">Omar — afbeelding</label><input id="omar_image_url" name="omar_image_url" list="cms-media-options" value={preview.omar_image_url} onChange={(event) => update("omar_image_url", event.target.value)} /></div>
             <div className="field">
               <label>Community — 15 afbeeldingen</label>
-              <div className="cms-image-grid">{preview.community_image_urls.map((url, index) => <label className="cms-image-field" key={`community-${index}`}><span>Positie {index + 1}</span><span className="cms-image-field__preview" style={{ backgroundImage: `url(${JSON.stringify(url).slice(1, -1)})` }} /><input name={`community_image_url_${index}`} list="cms-media-options" value={url} onChange={(event) => update("community_image_urls", preview.community_image_urls.map((current, imageIndex) => imageIndex === index ? event.target.value : current))} /></label>)}</div>
-              <small>Kies per positie een beeld. De positie en het aantal tegels liggen vast, zodat de scrollanimatie niet kan breken.</small>
+              <div className="cms-image-grid">{preview.community_image_urls.map((url, index) => {
+                const isCentre = index === 7;
+                const imageUrl = isCentre ? preview.mission_image_url : url;
+                return <label className="cms-image-field" key={`community-${index}`}>
+                  <span>Positie {index + 1}{isCentre ? " — middenbeeld (via Missie)" : ""}</span>
+                  <span className="cms-image-field__preview" style={{ backgroundImage: `url(${JSON.stringify(imageUrl).slice(1, -1)})` }} />
+                  <input name={`community_image_url_${index}`} list="cms-media-options" value={imageUrl} readOnly={isCentre} onChange={isCentre ? undefined : (event) => update("community_image_urls", preview.community_image_urls.map((current, imageIndex) => imageIndex === index ? event.target.value : current))} />
+                </label>;
+              })}</div>
+              <small>Kies een beeld voor de 14 omliggende posities. Positie 8 gebruikt altijd ‘Missie — afbeelding’ hierboven. De positie en het aantal tegels liggen vast, zodat de scrollanimatie niet kan breken.</small>
               {saveState.fieldErrors?.community_image_urls?.map((error) => <small className="field-error" key={error}>{error}</small>)}
             </div>
           </fieldset>
