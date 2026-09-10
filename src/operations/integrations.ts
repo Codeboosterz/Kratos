@@ -12,6 +12,10 @@ export type IntegrationDefinition = {
   capabilities: string[];
 };
 
+export function credentialInputType(credential: { name: string; secret: boolean }): "password" | "url" | "text" {
+  return credential.secret ? "password" : credential.name === "scheduling_url" ? "url" : "text";
+}
+
 export const integrationDefinitions: IntegrationDefinition[] = [
   {
     id: "stripe",

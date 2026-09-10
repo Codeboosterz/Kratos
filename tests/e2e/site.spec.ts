@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import catalogue from "../../config/products.json";
 
 const publicRoutes = ["/", "/werkwijze", "/trajecten", "/resultaten", "/over-omar", "/gratis-tools", "/intake", "/contact", "/privacy", "/voorwaarden", "/cookies", "/trajecten/transformatie-pack-10-sessies"];
 
@@ -38,13 +39,74 @@ test("intake validates steps and returns a demo reference", async ({ page }) => 
   await expect(page.getByText("Lokale demo — niet zichtbaar in het live CMS")).toBeVisible();
 });
 
+test("intake retains answers and source after a storage failure and retries safely", async ({ page }) => {
+  const attempts: Array<{ key: string; source: string; idempotencyKey: string }> = [];
+  await page.route("**/api/intake", async (route) => {
+    attempts.push({ key: route.request().headers()["idempotency-key"], ...route.request().postDataJSON() });
+    await route.fulfill({
+      status: attempts.length === 1 ? 503 : 201,
+      contentType: "application/json",
+      body: JSON.stringify(attempts.length === 1
+        ? { ok: false, error: { code: "DATABASE_FAILURE", message: "De intake kon niet veilig worden opgeslagen. Probeer opnieuw.", retryable: true } }
+        : { ok: true, reference: "DEMO-INT-RETRY", demo: true, schedulingUrl: null }),
+    });
+  });
+  await page.goto("/intake?source=about-final");
+  await page.getByRole("radio", { name: "Afvallen" }).check({ force: true });
+  await page.getByRole("radio", { name: "Beginner" }).check({ force: true });
+  await page.getByRole("button", { name: /Volgende stap/ }).click();
+  await page.getByRole("radio", { name: "Online coaching" }).check({ force: true });
+  await page.getByLabel("Wanneer kun je meestal trainen?").fill("Maandagavond");
+  await page.getByRole("button", { name: /Volgende stap/ }).click();
+  await page.getByLabel("Naam").fill("Ada Tester");
+  await page.getByLabel("E-mailadres").fill("ada@example.com");
+  await page.getByRole("checkbox").check();
+  await page.getByTestId("submit-intake").click();
+  await expect(page.locator("form").getByRole("alert")).toContainText("niet veilig worden opgeslagen");
+  await expect(page.getByRole("heading", { name: "Intake ontvangen" })).toHaveCount(0);
+  await expect(page.getByLabel("Naam")).toHaveValue("Ada Tester");
+  await expect(page.getByLabel("E-mailadres")).toHaveValue("ada@example.com");
+  await page.reload();
+  await expect(page.getByLabel("Naam")).toHaveValue("Ada Tester");
+  await expect(page.getByLabel("E-mailadres")).toHaveValue("ada@example.com");
+  await expect(page.getByRole("checkbox")).not.toBeChecked();
+  await page.getByRole("checkbox").check();
+  await page.getByTestId("submit-intake").click();
+  await expect(page.getByRole("heading", { name: "Intake ontvangen" })).toBeVisible();
+  expect(attempts).toHaveLength(2);
+  expect(attempts.every((attempt) => attempt.source === "about-final" && attempt.key === attempt.idempotencyKey)).toBe(true);
+  expect(attempts[1].key).toBe(attempts[0].key);
+});
+
 test("fixture checkout uses a server-owned paid state", async ({ page }) => {
   await page.goto("/checkout/transformatie-pack-10-sessies"); await expect(page.getByText("Testbedrag — geen productieprijs")).toBeVisible(); await page.getByTestId("open-checkout").click();
   await expect(page).toHaveURL(/checkout\/success\?session_id=demo_cs_/); await expect(page.getByTestId("checkout-status")).toContainText("Betaling bevestigd"); await expect(page.getByTestId("checkout-status")).toContainText("geen echte betaling");
 });
 
+test("checkout has one brand header and retries the same logical session", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/checkout/transformatie-pack-10-sessies");
+  await expect(page.locator(".checkout-header")).toHaveCount(1);
+  await expect(page.getByRole("main")).toHaveCount(1);
+  const attempts: string[] = [];
+  await page.route("**/api/checkout/session", async (route) => {
+    attempts.push(route.request().headers()["idempotency-key"]);
+    await route.fulfill({ status: 502, contentType: "application/json", body: JSON.stringify({ error: { message: "De betaalprovider is tijdelijk niet beschikbaar." } }) });
+  });
+  await page.getByTestId("open-checkout").click();
+  await expect(page.locator(".checkout-main").getByRole("alert")).toContainText("tijdelijk niet beschikbaar");
+  await expect(page.getByTestId("open-checkout")).toBeEnabled();
+  await page.getByTestId("open-checkout").click();
+  await expect.poll(() => attempts.length).toBe(2);
+  expect(attempts[1]).toBe(attempts[0]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await page.goto("/checkout/success");
+  await expect(page.locator(".checkout-header")).toHaveCount(1);
+  await expect(page.getByRole("main")).toHaveCount(1);
+});
+
 test("key pages have no serious accessibility violations", async ({ page }) => {
-  for (const route of ["/", "/trajecten", "/intake", "/checkout/transformatie-pack-10-sessies"]) { await page.goto(route); const results = await new AxeBuilder({ page }).analyze(); expect(results.violations.filter((item) => ["serious", "critical"].includes(item.impact || "")), route).toEqual([]); }
+  for (const route of ["/", "/trajecten", "/intake", "/community", "/checkout/transformatie-pack-10-sessies"]) { await page.goto(route); const results = await new AxeBuilder({ page }).analyze(); expect(results.violations.filter((item) => ["serious", "critical"].includes(item.impact || "")), route).toEqual([]); }
 });
 
 test("trajectory cards use the approved editorial artwork and CMS-ready hierarchy", async ({ page }) => {
@@ -63,18 +125,33 @@ test("trajectory cards use the approved editorial artwork and CMS-ready hierarch
   }
 });
 
-test("gratis tools calculate deterministic results before AI explanation", async ({ page }) => {
-  await page.goto("/gratis-tools");
+test("all eight trajectory detail flows lead to the matching checkout", async ({ page }) => {
+  for (const product of catalogue.products.filter((item) => item.active)) {
+    await page.goto("/trajecten?categorie=alle");
+    await page.locator(".product-card").filter({ has: page.locator(`a[href="/trajecten/${product.slug}"]`) }).getByTestId("open-product").click();
+    await expect(page).toHaveURL(new RegExp(`/trajecten/${product.slug}$`));
+    const starts = page.getByTestId("start-product");
+    await expect(starts).toHaveCount(2);
+    for (const link of await starts.all()) await expect(link).toHaveAttribute("href", `/checkout/${product.slug}`);
+    await starts.last().click();
+    await expect(page).toHaveURL(new RegExp(`/checkout/${product.slug}$`));
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(product.name);
+    await expect(page.getByTestId("open-checkout")).toBeVisible();
+  }
+});
 
-  const bmiTool = page.locator(".tool-card--live").filter({ hasText: "BMI-indicatie" });
-  await bmiTool.getByRole("button", { name: "Bereken BMI" }).click();
-  await expect(bmiTool.locator(".tool-result")).toContainText("24.1");
-  await expect(bmiTool.locator(".tool-result")).toContainText("Gezond gewicht");
-
-  const calorieTool = page.locator(".tool-card--live").filter({ hasText: "Caloriebehoefte" });
-  await calorieTool.getByRole("button", { name: "Bereken indicatie" }).click();
-  await expect(calorieTool.locator(".tool-result")).toContainText("2720");
-  await expect(calorieTool.locator(".tool-result")).toContainText("rust 1755 kcal");
+test("community replaces tools and its interest CTA preserves source", async ({ page, request }) => {
+  const redirect = await request.get("/gratis-tools", { maxRedirects: 0 });
+  expect(redirect.status()).toBe(308);
+  expect(redirect.headers().location).toContain("/community");
+  await page.goto("/community");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Faith &");
+  await expect(page.locator(".tool-card--live")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Faith & Fitness", exact: true })).toHaveCount(2);
+  await expect.poll(async () => page.locator("main img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
+  await page.getByTestId("community-interest").first().click();
+  await expect(page).toHaveURL(/intake\?source=community/);
+  await expect(page.getByRole("heading", { name: "Waar wil je naartoe?" })).toBeVisible();
 });
 
 test("320px layout has no horizontal overflow and mobile navigation works", async ({ page }) => {
@@ -93,7 +170,9 @@ test("375px public routes use legible controls and contained swipe rails", async
   await expect(page.locator(".filter-bar")).toHaveCSS("scrollbar-width", "none");
 
   await page.goto("/gratis-tools");
-  await expect(page.locator(".tool-card--live input").first()).toHaveCSS("font-size", "16px");
+  await expect(page).toHaveURL(/\/community$/);
+  await expect(page.getByTestId("community-interest").first()).toBeVisible();
+  expect(await page.getByTestId("community-interest").first().evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
 
   await page.goto("/intake");
   await expect(page.locator(".intake-step-heading")).toBeInViewport();

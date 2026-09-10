@@ -46,10 +46,10 @@ export const actions = {
     retryable: false, idempotency: "not_required", auditEvent: "none", testId: "open-product",
   },
   START_PRODUCT: {
-    labels: ["Bekijk programma", "Veilig betalen", "Nog niet beschikbaar"], inputSchema: "server product",
-    capability: "trainerize_navigation or stripe_checkout", validStates: ["mapped", "configured", "disabled"],
-    serverOperation: "resolveStartAction", loadingResult: "pending", successResult: "allow-listed URL or checkout",
-    normalizedFailure: "visible disabled reason", retryPath: "/intake", retryable: false,
+    labels: ["Bekijk checkout"], inputSchema: "server product",
+    capability: "visible", validStates: ["published_product"],
+    serverOperation: "resolveStartAction", loadingResult: "pending", successResult: "matching internal checkout",
+    normalizedFailure: "not found", retryPath: "/trajecten", retryable: false,
     idempotency: "not_required", auditEvent: "product_start_resolved", testId: "start-product",
   },
   SUBMIT_INTAKE: {

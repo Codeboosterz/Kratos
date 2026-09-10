@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 
-type FooterCopy = { tagline: string; explore: string; policy: string; signature: string; brandTagline: string };
+type FooterCopy = { tagline: string; explore: string; policy: string; signature: string; brandTagline: string; community: string };
 
 export function SiteFooter({ copy }: { copy: FooterCopy }) {
   const pathname = usePathname();
@@ -22,7 +22,7 @@ export function SiteFooter({ copy }: { copy: FooterCopy }) {
           <Link href="/trajecten">Trajecten</Link>
           <Link href="/resultaten">Resultaten</Link>
           <Link href="/over-omar">Over Omar</Link>
-          <Link href="/gratis-tools">Gratis tools</Link>
+          <Link href="/community">{copy.community}</Link>
         </div>
         <div>
           <h2>{copy.policy}</h2>

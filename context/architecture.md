@@ -8,7 +8,7 @@
 | UI | Existing CSS token system, Lucide icons | Kratos public and CMS interfaces |
 | Validation | Zod 4 | Shared client/server boundary validation |
 | Data | Supabase Postgres with RLS | Source of truth for intakes and appointments |
-| Providers | Calendly, Resend | Optional scheduling and owner replies |
+| Providers | Stripe, Calendly, Resend | Checkout, optional scheduling and owner replies |
 
 ## System Boundaries
 
@@ -25,12 +25,21 @@
 - `/intake` — four-stage intake and optional booking.
 - `/beheer/inbox` — intake leads and Resend conversations.
 - `/beheer/afspraken` — appointment calendar and agenda.
+- `/trajecten/[slug]` — both package-start CTAs link to `/checkout/[slug]`.
+- `/checkout/[slug]` — payment readiness requires active CMS product, exact price
+  mapping and valid Stripe configuration; marketing links do not authorize sales.
+- `/community` — Faith & Fitness landing page; `/gratis-tools` redirects with 308.
 
 ## Data Model
 
 - `intake_requests` — structured lead, source, consent, workflow, appointment status.
 - `calendar_appointments` — normalized Calendly invitee event linked by intake reference.
 - `email_threads` / `email_messages` — Resend conversations.
+- Community copy/images retain the registered `content_pages.slug=gratis-tools`
+  identity and revision history. Its definition now publishes `/community` and
+  uses `community_*` fields. Read-time defaults support older revisions while
+  strict owner saves still require valid fields. Shared navigation publication
+  invalidates the root layout.
 
 ## Auth and Access Model
 
@@ -59,3 +68,21 @@ committed separately from their production application.
 5. Public marketing changes stay within the active approved unit; Units 10–11
    update only community media and its reveal finale, preserving the centre image.
 6. Static CMS data visualizations remain Server Components unless browser state is genuinely required.
+7. Intake retries never overwrite the first stored answers or owner workflow;
+   confirmation returns the persisted reference. API uses the existing durable
+   rate limiter, with that limiter's in-memory fallback on configuration/RPC error.
+8. Community interest is an intake source, not a membership or booked appointment.
+
+## Production Activation Gates — 10 September 2026
+
+- Vercel Production now has `SUPABASE_SECRET_KEY`, saved by the user as Secret
+  with Production-only scope. Deployment and live intake verification are pending.
+  The existing intake schema and rollback-only RLS assertions pass, so no
+  additional intake migration is needed.
+- All eight production commerce products remain draft with null price amounts
+  and Stripe price IDs. Approved prices/IDs and activation must be supplied.
+- Production also lacks `STRIPE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_SITE_URL`.
+  Use the canonical HTTPS origin and matching valid live Stripe credentials;
+  the presence of existing secret/webhook variable names is not verification.
+- Verify web-to-database-to-CMS and Stripe/webhook round trips after authorized
+  configuration/deployment. No live payment or customer email was attempted.

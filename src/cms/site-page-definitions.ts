@@ -83,13 +83,25 @@ const aboutFields: CmsFieldDefinition[] = [
   field("Laatste oproep", "final_title", "Titel", "Begin met een helder gesprek."), field("Laatste oproep", "final_text", "Tekst", "Vertel waar jij aan wilt werken."),
 ];
 
-const toolsFields: CmsFieldDefinition[] = [
-  ...hero("Gratis tools", "Inzicht vraagt om", "de juiste context.", "Gebruik informatie als richting, met transparante beperkingen en zonder medisch advies te vervangen.", "/img/omar-portrait.jpg"),
-  field("Hero", "hero_check_1", "Punt 1", "Betere keuzes met de juiste informatie"), field("Hero", "hero_check_2", "Punt 2", "Begrijp je startpunt en stuur bewust bij"), field("Hero", "hero_check_3", "Punt 3", "Geen ruis. Wel richting."),
-  field("Tools", "tool_1_title", "Tool 1 — titel", "BMI-indicatie"), field("Tools", "tool_1_text", "Tool 1 — tekst", "Krijg straks inzicht in de verhouding tussen lengte en gewicht, met passende uitleg over wat BMI wel en niet zegt.", "textarea", 360), field("Tools", "tool_2_title", "Tool 2 — titel", "Caloriebehoefte"), field("Tools", "tool_2_text", "Tool 2 — tekst", "Bereken straks een dagelijkse indicatie op basis van doel en activiteit, met transparante aannames en bronvermelding.", "textarea", 360),
-  field("Beperkingen", "limits_title", "Titel", "Context &"), field("Beperkingen", "limits_accent", "Groen deel", "limitaties."),
-  ...[1,2,3].flatMap((n) => [field("Beperkingen", `limit_${n}_title`, `Punt ${n} — titel`, ["Geen medisch advies","Individueel verschil","Luister naar je lichaam"][n-1]), field("Beperkingen", `limit_${n}_text`, `Punt ${n} — tekst`, ["Deze tools zijn geen vervanging voor medisch advies, diagnose of behandeling.","Resultaten kunnen verschillen door leeftijd, geslacht, genetica en leefstijl.","Gebruik data als richting, maar neem je gevoel en herstel altijd serieus."][n-1], "textarea", 280)]),
-  field("Laatste oproep", "final_title", "Titel", "Bespreek je doel in"), field("Laatste oproep", "final_accent", "Groen deel", "context."), field("Laatste oproep", "final_text", "Tekst", "Een tool vervangt geen persoonlijk gesprek of professioneel medisch advies.", "textarea", 280),
+const communityFields: CmsFieldDefinition[] = [
+  ...hero("Faith & Fitness Community", "Faith &", "Fitness.", "Sterk in lichaam. Geworteld in geloof. Een plek om samen te bewegen, elkaar aan te moedigen en bewust te groeien.", "/images/community/outdoor-lunge.jpg")
+    .map((item) => ({ ...item, key: `community_${item.key}`, defaultValue: item.key === "hero_image_alt" ? "Een deelnemer doet een lunge tijdens een buitentraining" : item.defaultValue })),
+  field("Hero", "community_hero_cta", "Knoptekst", "Ik heb interesse"),
+  field("Hero", "community_hero_note", "Onder de knop", "Vertel ons dat je wilt meedoen. Kratos neemt persoonlijk contact met je op.", "textarea", 260),
+  field("Beelden", "community_image_2_url", "Samen trainen", "/images/community/partner-stretch.jpg", "image"),
+  field("Beelden", "community_image_2_alt", "Beeldbeschrijving", "Twee deelnemers ondersteunen elkaar bij een stretch"),
+  field("Beelden", "community_image_3_url", "Reflectie", "/images/faith/05-reflection.webp", "image"),
+  field("Beelden", "community_image_3_alt", "Beeldbeschrijving", "Omar leest tijdens een rustig moment in de fitnessruimte"),
+  field("De basis", "community_values_title", "Titel", "Samen groeien."),
+  field("De basis", "community_values_accent", "Groen deel", "Op jouw tempo."),
+  ...[1, 2, 3].flatMap((n) => [
+    field("De basis", `community_value_${n}_title`, `Pijler ${n} — titel`, ["Geloof & reflectie", "Beweging & ritme", "Verbinding & steun"][n - 1]),
+    field("De basis", `community_value_${n}_text`, `Pijler ${n} — tekst`, ["Ruimte voor geloof, dankbaarheid en de betekenis achter je volgende stap.", "Aandacht voor je lichaam, kleine gewoonten en de kracht van samen bewegen.", "Elkaar aanmoedigen, ervaringen delen en samen onderweg zijn."][n - 1], "textarea", 320),
+  ]),
+  field("Kennismaken", "community_final_title", "Titel", "Je hoeft het niet"),
+  field("Kennismaken", "community_final_accent", "Groen deel", "alleen te doen."),
+  field("Kennismaken", "community_final_text", "Tekst", "Wil je meer weten over Faith & Fitness? Geef je interesse door via de intake en vermeld dat je voor de community komt.", "textarea", 360),
+  field("Kennismaken", "community_final_note", "Verwachting", "Een interesseaanvraag is geen lidmaatschap, boeking of betaling. Praktische afspraken bespreken we persoonlijk.", "textarea", 300),
 ];
 
 const intakeFields: CmsFieldDefinition[] = [
@@ -101,7 +113,7 @@ const contactFields: CmsFieldDefinition[] = [
 ];
 
 const siteSettingsFields: CmsFieldDefinition[] = [
-  field("Navigatie", "nav_results", "Resultaten", "Resultaten"), field("Navigatie", "nav_method", "Werkwijze", "Werkwijze"), field("Navigatie", "nav_trajectories", "Trajecten", "Trajecten"), field("Navigatie", "nav_about", "Over Omar", "Over Omar"), field("Navigatie", "nav_tools", "Gratis tools", "Gratis tools"), field("Navigatie", "nav_cta", "Intakeknop", "Plan een intake"),
+  field("Navigatie", "nav_results", "Resultaten", "Resultaten"), field("Navigatie", "nav_method", "Werkwijze", "Werkwijze"), field("Navigatie", "nav_trajectories", "Trajecten", "Trajecten"), field("Navigatie", "nav_about", "Over Omar", "Over Omar"), field("Navigatie", "nav_community", "Faith & Fitness", "Faith & Fitness"), field("Navigatie", "nav_cta", "Intakeknop", "Plan een intake"),
   field("Voettekst", "footer_tagline", "Korte omschrijving", "Persoonlijke coaching met aandacht voor jouw doel, ritme en volgende stap.", "textarea", 260), field("Voettekst", "footer_explore", "Kolomtitel ontdekken", "Ontdek"), field("Voettekst", "footer_policy", "Kolomtitel contact", "Contact & beleid"), field("Voettekst", "footer_signature", "Slotregel", "Unleash your power"), field("Merk", "brand_tagline", "Merkregel", "Unleash your power"),
 ];
 
@@ -111,7 +123,7 @@ export const cmsPageDefinitions: CmsPageDefinition[] = [
   { slug: "werkwijze", route: "/werkwijze", title: "Werkwijze", description: "Aanpak, stappen, basis en laatste oproep.", fields: methodFields },
   { slug: "trajecten", route: "/trajecten", title: "Trajecten", description: "Catalogus, productpresentatie en detailteksten. Prijzen en betaalinstellingen blijven beschermd.", fields: catalogueFields },
   { slug: "over-omar", route: "/over-omar", title: "Over Omar", description: "Verhaal, waarden, coaching en werkwijze.", fields: aboutFields },
-  { slug: "gratis-tools", route: "/gratis-tools", title: "Gratis tools", description: "Tooluitleg en medische beperkingen.", fields: toolsFields },
+  { slug: "gratis-tools", route: "/community", title: "Faith & Fitness Community", description: "Communityverhaal, pijlers, beelden en interesseoproep. De bestaande paginageschiedenis blijft behouden.", fields: communityFields },
   { slug: "intake", route: "/intake", title: "Intake", description: "Uitleg rond het intakeformulier. Formuliervalidatie blijft beschermd.", fields: intakeFields },
   { slug: "contact", route: "/contact", title: "Contact", description: "Contactintroductie en gecontroleerd informatiekader.", fields: contactFields },
 ];
@@ -138,4 +150,10 @@ export function parseCmsPageContent(definition: CmsPageDefinition, source: unkno
     shape[item.key] = schema;
   });
   return z.object(shape).safeParse(source);
+}
+
+// Read-time upgrades fill new fields; form submissions still use strict validation.
+export function parseStoredCmsPageContent(definition: CmsPageDefinition, source: unknown) {
+  const stored = z.record(z.string(), z.unknown()).safeParse(source);
+  return parseCmsPageContent(definition, { ...cmsPageDefaults(definition), ...(stored.success ? stored.data : {}) });
 }

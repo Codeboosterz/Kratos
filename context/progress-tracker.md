@@ -2,12 +2,23 @@
 
 ## Current Phase
 
-- Client handover preparation; Units 06–08 remain live
+- Client handover preparation; approved community Units 10–12 are now live
 
 ## Current Goal
 
-- Unit 12: publish the approved community changes and check the following
-  Faith & Fitness animation without redesigning it.
+- Unit 18: user saved `SUPABASE_SECRET_KEY`; Vercel metadata confirms Secret
+  type and Production-only scope. No value was revealed or copied into code.
+  Continuing the authorized scoped release and live intake acceptance. Migration already
+  applied. All 163 unit/integration tests, 30 browser tests, lint, TypeScript
+  and production build pass. Resize test now waits for actual refreshed
+  geometry; animation code is unchanged. No new production writes, commit,
+  deployment or QA intake yet; no price/payment/email/booking changes.
+- 10 September: Units 15–17 implemented locally: intake persistence hardening,
+  all-eight-package checkout routing and CMS-editable Faith & Fitness community.
+  Production activation is gated on separately authorized configuration/release.
+- Unit 14 checkout code is prepared and verified locally, with all package prices
+  unchanged. Activation still needs valid live Stripe credentials and CMS price
+  mappings. The port-3200 preview now runs the production build without fixtures.
 
 ## Completed
 
@@ -38,18 +49,63 @@
   the header through photo reveal, viewport-fit enlargement and final hold,
   then releases normally. Base grid growth is now 2.5%; photos, CMS data,
   compact gallery behavior and the adjacent Faith story remain unchanged.
+- Unit 12 complete: Units 10–11 released in commit `9bd0b17`, verified through
+  Vercel's successful GitHub deployment status and the live domain. Next Faith
+  story checked without code changes; no functional animation defect found.
+- Unit 13 audit and local safety fixes complete: Stripe input types, credential
+  validation, consistent checkout configuration checks, environment/Vault source
+  warnings and non-secret health errors. Resend setup and end-to-end wiring gaps
+  documented in `feature-specs/13-cms-provider-wiring-audit.md`. Not deployed.
+- Unit 14 implementation complete locally: CMS-owned purchase readiness, exact
+  Stripe price/quote validation, live-mode/HTTPS guards, safe session retry,
+  buyer email and final amount, one checkout header, owner-save invalidation.
+  See `feature-specs/14-live-checkout-readiness.md`. No prices changed or deployment.
+- Unit 15 local intake hardening: durable rate limiter, stable insert-only retries,
+  safe database failure and source attribution. Rollback-only production access
+  checks pass; no migration or persistent customer data written.
+- Unit 16 local routing: every package's hero and final start CTA opens the matching
+  checkout, including legacy external-mode products. Eight-package traversal passes;
+  authoritative payment guards and all prices remain unchanged.
+- Unit 17 local community: `/community` replaces public tools, with a 308 legacy
+  redirect, shared navigation and customer-photo layout. Existing CMS record/history
+  retained; legacy reads merge new defaults and owner publication invalidates routes.
 
 ## In Progress
 
-- Unit 12 release gate, production push and next-animation inspection.
-- Unit 09 final build awaits the scheduled 8 September session and Calendly credentials.
+- Unit 15 live intake capture requires `SUPABASE_SECRET_KEY`, confirmed missing
+  from Vercel Production environment metadata. No additional migration needed.
+- Unit 17 community group destination is not yet supplied. `Ik heb interesse`
+  uses `/intake?source=community`; it is not a membership or booking flow.
+- Unit 14 live activation is blocked: read-only production query confirms eight
+  draft products with null prices/Stripe price IDs. They remain unchanged. A real
+  provider round trip and signed webhook/fulfillment acceptance are still needed.
+- Provider activation remains blocked by client setup. The photographed Stripe
+  key returned 401 during a read-only check and was not saved; existing production
+  environment credentials were not replaced. Publishable key is still missing
+  on production, as is `NEXT_PUBLIC_SITE_URL` (required canonical HTTPS origin for
+  live checkout). Resend account and DNS access are not ready (confirmed by user).
+- Unit 09 product-content and final visual work remains outstanding, alongside
+  Calendly credentials and final handover acceptance.
+- Browser release gate resolved in Unit 18: trace evidence showed stale resize
+  geometry. Test synchronization now waits for refreshed measurements; all 30
+  browser tests pass without changing homepage animation behavior.
 
 ## Next Up
 
-- Publish the approved Unit 10–11 allow-list and verify the next animation.
-- 8 September at 09:00: obtain Calendly credentials,
-  build package-specific CMS detail content, remove product coach biography,
-  polish typography/animations/responsiveness, and complete handover checks.
+- Once the user saves the prepared Production secret, continue the authorized
+  scoped release; verify one labeled synthetic intake through the live
+  API, database and CMS Inbox. Do not claim capture is live before that acceptance.
+- Configure approved CMS commerce prices/IDs and valid live keys securely, then
+  verify account/mode, webhook and fulfillment before activating live purchases.
+  Product CTA wiring and commerce-save invalidation are complete locally; broader
+  structured-content invalidation and email webhook retry/error handling remain.
+- Prepare automatic new-intake business notifications separately from CMS intake
+  storage; this notification path does not exist yet.
+- Client supplies a Resend account/DNS access, valid Stripe live credentials and
+  price mappings, and Calendly access. Verify approved provider round trips before
+  activation. No live charges or customer emails for testing.
+- Complete package-specific CMS detail content, remove product coach biography,
+  polish typography/animations/responsiveness, and run scoped release checks.
 
 ## Open Questions
 
@@ -62,6 +118,10 @@
   before handover. Three existing guarded CMS RPC advisor warnings were reviewed.
 - Production runtime-log inspection returned 403; final live verification must
   not assume server-error coverage from the passing local browser tests.
+- Confirm canonical public/business contact: the user supplied
+  `Kratosfitness2025@gmail.com`, while contact/privacy defaults use Outlook.
+  Do not silently replace public details or treat the supplied address as an
+  existing CMS owner account. Review privacy copy against actual data storage.
 
 ## Architecture Decisions
 
@@ -84,9 +144,36 @@
 
 ## Validation History
 
+- Units 15–17: 163 unit/integration tests across 40 files, lint, typecheck,
+  production build (48 pages) and diff whitespace checks pass. Latest browser
+  run: 29/30 pass, including all
+  eight package routes, intake error/reload/same-key recovery, community CMS
+  source/redirect/mobile checks and serious/critical accessibility checks.
+  The unchanged homepage resize test remains a full-suite failure; isolated
+  repeat passed 2/2. Do not describe the whole browser suite as passing.
+- Production intake rollback-only assertions pass for defaults, constraints,
+  owner read/update, non-owner denial and anonymous denial. Row count is zero
+  after rollback; no lead, appointment, email or payment was created.
+- Unit 14: 134 unit/integration tests across 36 files, all 28 browser tests,
+  typecheck, lint and production build (47 pages) passed. Malformed generated dev
+  types were backed up and regenerated; no app workaround. Non-fixture checkout
+  returns an honest unavailable state/API 503; no payment/provider writes.
+- Checkout-availability follow-up: seven Stripe configuration/API regression
+  checks and the fixture checkout browser acceptance test passed. No application
+  source changes; only the local preview runtime was switched to explicit demo
+  mode. Production protections, product records and credentials are unchanged.
+- Unit 13: typecheck, lint, 95 unit/integration tests across 31 files and production
+  build (47 pages) passed. Initial browser run passed 26/27; unchanged community
+  resize test passed alone, and the complete two-worker rerun passed all 27.
+  No animation code/test changes. Production intake/RLS rollback-only assertions
+  passed; no synthetic records remain. No new migration or provider writes.
 - Unit 12 release gate: typecheck, lint, 82 unit tests, production build
   (47 pages) and all 27 browser tests passed. The next Faith story's six
   chapters, mobile flow, reduced motion and community handoff remain correct.
+- Unit 12 production deployment `dpl_ExjBTCJKx9uEPzy6fG8Hx9ofA8v4` completed
+  at 10:01:36 UTC. Live homepage returned 200; all 15 community and six Faith
+  images loaded. New scene/growth confirmed, normal section release verified,
+  and no horizontal overflow observed. Runtime logs returned 403 (not verified).
 - `npm test -- tests/unit/intake.test.ts tests/unit/intake-lead-workflow.test.ts` — 7 tests passed.
 - `npm run typecheck` — passed after Unit 01.
 - `npx playwright test tests/e2e/site.spec.ts --grep "intake validates"` — public intake browser flow passed.
@@ -150,6 +237,30 @@
 
 ## Preview History
 
+- Units 15–17: `http://127.0.0.1:3200/community` inspected on desktop and 375px;
+  three approved photos load and interest/navigation controls are visible.
+  Local intake and Duo detail-to-checkout route inspected. Preview uses a
+  non-fixture production build: unavailable commerce is shown honestly, not as
+  a simulated enabled live payment. New CMS save/publish contracts tested with
+  mocks; no real owner revision was published during QA.
+- Unit 14 current: production build at
+  `http://127.0.0.1:3200/checkout/transformatie-pack-10-sessies`, fixtures off.
+  Desktop and 375px layout inspected: one header/main, no demo or pay button while
+  unconfigured, no horizontal overflow or page errors. Prior demo preview replaced.
+- Checkout availability: local server restarted with `KRATOS_FIXTURE_MODE=true`
+  at `http://127.0.0.1:3200/checkout/transformatie-pack-10-sessies`. Browser shows
+  "Veilige demonstratie", "Testbedrag — geen productieprijs" and an enabled
+  "Start veilige demo" button. Synthetic checkout confirmation passed the browser
+  test; this is not a Stripe test transaction or real purchasing. The fixture
+  flag is ignored in production and no persistent environment file was changed.
+- Unit 13: non-fixture local checkout checked in-browser at
+  `http://127.0.0.1:3200/checkout/transformatie-pack-10-sessies`. Configuration
+  warning and disabled purchasing verified. Updated protected settings need a
+  configured local login for visual verification; live settings inspected read-only.
+- Unit 12: local chapter 3 inspected at 2013×1604, then live community finale,
+  Faith chapters 1 and 6 and final release inspected at `https://kratosfitness.be/`.
+  Live screenshots were viewed inline. Fixture server restarted and available
+  at `http://127.0.0.1:3200/`. No production forms were submitted.
 - Local fixture preview: `http://127.0.0.1:3200/intake?product=transformatie-pack-10-sessies&source=product-detail`.
 - Desktop steps 1/4 and mobile step 2 visually inspected in `artifacts/qa/`.
 - Unit 04's local intake confirmation was verified through its Chromium acceptance test; the in-app browser declined the loopback URL during the final interactive re-open.
@@ -185,6 +296,11 @@
   is active for one occurrence at 09:00 Europe/Brussels on 8 September.
 - Source migration `20260829223429_intake_lead_workflow.sql` maps to remote
   version `20260907021301`; do not reapply based on a filename mismatch.
-- Community photos have been supplied and implemented locally; publication is
-  pending. Calendly verification, product-specific CMS content, removing the
+- Community photos and reveal finale are published in `9bd0b17`.
+  Calendly verification, product-specific CMS content, removing the
   product Omar promo, and final visual polish remain pending for Unit 09.
+- 2026-09-08 Unit 13: no credentials were saved, no live payments or customer
+  emails were created, and no application changes were deployed. Shared Stripe
+  key must be rotated; use test-mode keys for payment acceptance testing. Email
+  integration guidance was used to document sender-domain verification and the
+  separate inbound reply/webhook setup without changing account or DNS settings.

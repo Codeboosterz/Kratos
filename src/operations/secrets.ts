@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 import { createAdminClient } from "@/src/supabase/admin";
 import { integrationIds, integrationDefinitions, type IntegrationId } from "@/src/operations/integrations";
+import { isStripeCredential } from "@/src/operations/stripe-configuration";
 
 const credentialNames = Object.fromEntries(
   integrationDefinitions.map((definition) => [definition.id, definition.credentials.map((credential) => credential.name)]),
@@ -15,6 +16,9 @@ export const integrationCredentialSchema = z.object({
 }).superRefine((value, context) => {
   if (!credentialNames[value.provider].includes(value.credentialName)) {
     context.addIssue({ code: "custom", path: ["credentialName"], message: "Ongeldige credential voor deze integratie." });
+  }
+  if (value.provider === "stripe" && !isStripeCredential(value.credentialName, value.value)) {
+    context.addIssue({ code: "custom", path: ["value"], message: "Deze waarde heeft niet het juiste Stripe-sleuteltype voor dit veld." });
   }
 });
 

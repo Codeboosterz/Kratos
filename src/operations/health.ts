@@ -4,6 +4,7 @@ import Stripe from "stripe";
 import { getOpenRouterOverview } from "@/src/operations/openrouter";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import type { IntegrationId, IntegrationState } from "@/src/operations/integrations";
+import { getStripeReadiness } from "@/src/operations/stripe-configuration";
 
 export type ConnectionCheck = {
   status: IntegrationState;
@@ -29,7 +30,10 @@ export async function checkIntegrationConnection(provider: IntegrationId): Promi
       if (!secretKey) return { status: "configuration_required", message: "Secret key ontbreekt.", checkedAt };
       const stripe = new Stripe(secretKey, { maxNetworkRetries: 0, timeout: 8_000 });
       await stripe.balance.retrieve();
-      return { status: "connected", message: "Stripe API bereikbaar.", checkedAt };
+      const [publishableKey, webhookSecret] = await Promise.all([resolveIntegrationSecret("stripe", "publishable_key"), resolveIntegrationSecret("stripe", "webhook_secret")]);
+      const readiness = getStripeReadiness({ secretKey, publishableKey, webhookSecret });
+      if (!readiness.ready) return { status: "configuration_required", message: "Stripe API bereikbaar; checkout vereist bijpassende secret/publishable keys en een webhook secret.", checkedAt };
+      return { status: "connected", message: `Stripe API bereikbaar (${readiness.mode}); betaling en webhooklevering moeten apart worden getest.`, checkedAt };
     }
 
     if (provider === "resend") {
@@ -79,10 +83,11 @@ export async function checkIntegrationConnection(provider: IntegrationId): Promi
       checkedAt,
       telemetry,
     };
-  } catch (error) {
+  } catch {
     return {
       status: "degraded",
-      message: error instanceof Error ? error.message.slice(0, 500) : "Verbindingscontrole mislukt.",
+      // Provider errors can contain the rejected API key. Never persist or render them.
+      message: "Verbindingscontrole mislukt. Controleer de sleutel, rechten en providerstatus; er zijn geen geheime foutdetails opgeslagen.",
       checkedAt,
     };
   }

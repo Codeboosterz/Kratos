@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireCmsMembership } from "@/src/cms/auth";
 import { checkIntegrationConnection } from "@/src/operations/health";
-import { integrationCredentialSchema } from "@/src/operations/secrets";
+import { environmentCredentialName, integrationCredentialSchema } from "@/src/operations/secrets";
 import { integrationIds, type IntegrationId } from "@/src/operations/integrations";
 
 function settingsStatus(code: string, provider?: string) {
@@ -31,7 +31,9 @@ export async function saveIntegrationCredential(formData: FormData) {
   });
   if (error) redirect(settingsStatus("save-failed", parsed.data.provider));
   revalidatePath("/beheer/instellingen");
-  redirect(settingsStatus("saved", parsed.data.provider));
+  const envName = environmentCredentialName(parsed.data.provider, parsed.data.credentialName);
+  const environmentActive = Boolean(envName && process.env[envName]?.trim());
+  redirect(settingsStatus(environmentActive ? "saved-environment-priority" : "saved", parsed.data.provider));
 }
 
 export async function testIntegration(formData: FormData) {

@@ -33,6 +33,13 @@ Reuse existing CSS variables and approved tokens:
 - CMS percentages: accessible SVG progress rings with a visible numeric value; compact and large variants share one primitive.
 - Faith & Fitness desktop story: a six-step numbered/check stepper reflects the
   scroll position; the stepper does not independently navigate the pinned scene.
+- `/community` replaces the public calculators landing page. It uses a responsive
+  customer-photo collage, three faith/movement/connection pillars and one explicit
+  interest CTA. Copy and photos are editable through the existing CMS page editor.
+  The internal `gratis-tools` page ID/history is preserved; public navigation says
+  Faith & Fitness. No membership counts, schedules or group access are invented.
+- Package hero/final purchase CTAs consistently say `Bekijk checkout` and open
+  the matching internal payment page. Unconfigured commerce stays visibly unavailable.
 
 ## Motion
 
@@ -47,6 +54,8 @@ Reuse existing CSS variables and approved tokens:
   reveal, then scales the inner composition to fit the viewport before release.
   The base grid growth is 2.5%; the finishing zoom is separately viewport-fitted.
   Breakpoint cleanup removes desktop transforms; reduced motion uses direct scrub.
+- The separate community landing page uses static server-rendered layout and
+  scoped CSS; it does not alter the homepage's approved scroll animation.
 
 ## Responsive Rules
 

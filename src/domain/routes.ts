@@ -3,7 +3,7 @@ export const routes = {
   trajectories: "/trajecten",
   results: "/resultaten",
   about: "/over-omar",
-  tools: "/gratis-tools",
+  community: "/community",
   intake: "/intake",
   checkoutSuccess: "/checkout/success",
   contact: "/contact",

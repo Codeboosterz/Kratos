@@ -49,5 +49,9 @@ export async function saveCmsProduct(formData: FormData) {
   }, { onConflict: "id" });
   if (error) redirect("/beheer/producten?status=save-failed");
   revalidatePath("/beheer/producten");
+  revalidatePath("/trajecten");
+  // Include old/new slugs if an owner renames a product.
+  revalidatePath("/trajecten/[slug]", "page");
+  revalidatePath("/checkout/[slug]", "page");
   redirect("/beheer/producten?status=saved");
 }

@@ -18,13 +18,13 @@ export async function getCommerceProduct(slug: string): Promise<CommerceProduct 
         currency: data.currency, stripePriceId: data.stripe_price_id, active: data.status === "active",
       };
     } catch {
-      // The static catalogue remains a safe, non-commercial fallback before migration.
+      // Keep marketing content visible, but never sell a stale static price.
     }
   }
   const fallback = getProduct(slug);
   if (!fallback) return null;
   return {
     id: fallback.id, slug: fallback.slug, name: fallback.name, summary: fallback.summary, priceCents: fallback.priceCents,
-    currency: "eur", stripePriceId: fallback.stripePriceId, active: fallback.checkoutMode === "stripe_internal" && fallback.priceStatus === "verified",
+    currency: "eur", stripePriceId: fallback.stripePriceId, active: false,
   };
 }

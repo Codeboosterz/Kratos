@@ -1,6 +1,6 @@
 import { Activity, ArrowUpRight, CheckCircle2, CircleDollarSign, KeyRound, PlugZap, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
 import { requireCmsMembership } from "@/src/cms/auth";
-import { integrationDefinitions, type IntegrationId, type IntegrationState } from "@/src/operations/integrations";
+import { credentialInputType, integrationDefinitions, type IntegrationId, type IntegrationState } from "@/src/operations/integrations";
 import { getOpenRouterOverview } from "@/src/operations/openrouter";
 import { environmentCredentialName, resolveIntegrationSecret } from "@/src/operations/secrets";
 import { saveIntegrationCredential, testIntegration } from "./actions";
@@ -25,6 +25,7 @@ function formatCheckedAt(value: string | null) {
 }
 
 function statusMessage(status?: string, provider?: string) {
+  if (status === "saved-environment-priority") return `${provider ?? "Integratie"}: veilig opgeslagen in Vault, maar de bestaande serveromgevingswaarde blijft actief. Laat die via de hostinginstellingen vervangen of verwijderen voordat deze CMS-waarde wordt gebruikt.`;
   if (status === "saved") return `${provider ?? "Integratie"}: credential veilig opgeslagen. Test de verbinding om de status te bevestigen.`;
   if (status === "connected") return `${provider ?? "Integratie"} is bereikbaar en gecontroleerd.`;
   if (status === "connection-failed") return `${provider ?? "Integratie"} kon niet volledig worden gecontroleerd. Bekijk de providerkaart.`;
@@ -101,17 +102,23 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                 <div>
                   {definition.credentials.map((credential) => {
                     const envName = environmentCredentialName(definition.id, credential.name);
-                    const configured = refsSet.has(`${definition.id}:${credential.name}`) || Boolean(envName && process.env[envName]?.trim());
+                    const environmentActive = Boolean(envName && process.env[envName]?.trim());
+                    const vaultConfigured = refsSet.has(`${definition.id}:${credential.name}`);
+                    const configured = vaultConfigured || environmentActive;
+                    const inputType = credentialInputType(credential);
                     return (
                       <form action={saveIntegrationCredential} className="cms-credential-form" key={credential.name}>
                         <input type="hidden" name="provider" value={definition.id} />
                         <input type="hidden" name="credentialName" value={credential.name} />
-                        <label htmlFor={`${definition.id}-${credential.name}`}><span>{credential.label}<small>{configured ? "Ingesteld" : "Ontbreekt"}</small></span><em>{credential.helper}</em></label>
-                        <div><input id={`${definition.id}-${credential.name}`} name="value" type={credential.secret ? "password" : "url"} minLength={8} maxLength={8192} autoComplete={credential.secret ? "new-password" : "url"} placeholder={configured ? "Vervang opgeslagen waarde" : credential.secret ? "Plak API-waarde" : "https://calendly.com/..."} disabled={membership.role !== "super_admin" || !schemaReady} required /><button type="submit" disabled={membership.role !== "super_admin" || !schemaReady}>Opslaan</button></div>
+                        <label htmlFor={`${definition.id}-${credential.name}`}><span>{credential.label}<small>{environmentActive ? "Serveromgeving actief" : vaultConfigured ? "Vault actief" : "Ontbreekt"}</small></span><em>{credential.helper}</em></label>
+                        {environmentActive ? <p className="cms-config-note">{envName} heeft voorrang. {vaultConfigured ? "De opgeslagen Vault-waarde wordt nog niet gebruikt." : "Opslaan hieronder vervangt de actieve omgevingswaarde niet."}</p> : null}
+                        <div><input id={`${definition.id}-${credential.name}`} name="value" type={inputType} minLength={8} maxLength={8192} autoComplete={credential.secret ? "new-password" : inputType === "url" ? "url" : "off"} spellCheck={false} autoCapitalize="none" placeholder={configured ? "Vervang opgeslagen waarde" : inputType === "url" ? "https://calendly.com/..." : credential.secret ? "Plak API-waarde" : "pk_test_… of pk_live_…"} disabled={membership.role !== "super_admin" || !schemaReady} required /><button type="submit" disabled={membership.role !== "super_admin" || !schemaReady}>Opslaan</button></div>
                       </form>
                     );
                   })}
                   {definition.id === "trainerize" ? <p className="cms-config-note">Trainerize vereist daarnaast <code>TRAINERIZE_HEALTH_URL</code> en geverifieerde endpointtemplates voor jouw Studio/Enterprise-account.</p> : null}
+                  {definition.id === "stripe" ? <p className="cms-config-note">Gebruik voor betaaltests uitsluitend test-mode sleutels. Checkout vereist secret en publishable key uit dezelfde modus, het webhook secret van <code>/api/stripe/webhook</code> en een actief product met geverifieerde prijs. Een bereikbare API is nog geen geteste betaling.</p> : null}
+                  {definition.id === "resend" ? <p className="cms-config-note">Vereist een geverifieerd eigen verzenddomein en <code>RESEND_FROM_EMAIL</code>. Voor antwoorden in deze inbox: configureer een Resend-ontvangstadres, <code>RESEND_REPLY_TO</code> en de ondertekende webhook op <code>/api/resend/webhook</code>. Een persoonlijk Gmail-adres kan ontvanger zijn, niet de Resend-afzender.</p> : null}
                   {definition.id === "calendly" ? <p className="cms-config-note">Na opslaan activeert <strong>Synchroniseer</strong> op de pagina Afspraken automatisch de ondertekende webhook op <code>/api/calendly/webhook</code>.</p> : null}
                 </div>
               </details>

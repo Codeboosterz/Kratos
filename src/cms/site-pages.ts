@@ -2,7 +2,7 @@ import "server-only";
 
 import { createPublicClient } from "@/src/supabase/public";
 import { isSupabaseConfigured } from "@/src/supabase/config";
-import { cmsPageDefaults, getCmsPageDefinition, parseCmsPageContent } from "@/src/cms/site-page-definitions";
+import { cmsPageDefaults, getCmsPageDefinition, parseStoredCmsPageContent } from "@/src/cms/site-page-definitions";
 
 export async function getPublishedCmsPage(slug: string): Promise<Record<string, string>> {
   const definition = getCmsPageDefinition(slug);
@@ -16,7 +16,7 @@ export async function getPublishedCmsPage(slug: string): Promise<Record<string, 
     if (pageError || !page?.published_revision_id) return fallback;
     const { data: revision, error: revisionError } = await supabase.from("content_revisions").select("content").eq("id", page.published_revision_id).maybeSingle();
     if (revisionError || !revision) return fallback;
-    const parsed = parseCmsPageContent(definition, revision.content);
+    const parsed = parseStoredCmsPageContent(definition, revision.content);
     return parsed.success ? parsed.data : fallback;
   } catch {
     return fallback;

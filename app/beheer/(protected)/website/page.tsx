@@ -3,7 +3,7 @@ import Link from "next/link";
 import { StructuredPageEditor } from "@/components/cms/structured-page-editor";
 import { defaultHomeHero, homeHeroSchema } from "@/src/cms/home";
 import { requireCmsMembership } from "@/src/cms/auth";
-import { cmsPageDefaults, cmsPageDefinitions, getCmsPageDefinition, parseCmsPageContent } from "@/src/cms/site-page-definitions";
+import { cmsPageDefaults, cmsPageDefinitions, getCmsPageDefinition, parseStoredCmsPageContent } from "@/src/cms/site-page-definitions";
 
 type Props = { searchParams: Promise<{ pagina?: string | string[] }> };
 
@@ -26,7 +26,7 @@ export default async function WebsiteEditorPage({ searchParams }: Props) {
   const published = revisions?.find((revision) => revision.id === page?.published_revision_id) || null;
   const source = draft || published;
   const parsedHome = homeHeroSchema.safeParse(source?.content);
-  const parsedStructured = selectedDefinition ? parseCmsPageContent(selectedDefinition, source?.content) : null;
+  const parsedStructured = selectedDefinition ? parseStoredCmsPageContent(selectedDefinition, source?.content) : null;
   const initialStructured = selectedDefinition && parsedStructured?.success ? parsedStructured.data : selectedDefinition ? cmsPageDefaults(selectedDefinition) : null;
 
   return (

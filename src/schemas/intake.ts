@@ -4,7 +4,7 @@ import { goalKeys } from "@/src/domain/products";
 export const experienceLevels = ["beginner", "gemiddeld", "ervaren"] as const;
 export const trainingFormats = ["personal_training", "online", "duo", "home_workout", "nog_onbekend"] as const;
 export const contactChannels = ["email", "telefoon"] as const;
-export const intakeSources = ["home-hero", "home-method", "home-final", "header", "mobile-menu", "sticky", "trajecten-hero", "trajecten-help", "product-detail", "product-fit", "product-start", "results", "about", "tools", "contact", "checkout-success"] as const;
+export const intakeSources = ["home-hero", "home-method", "home-final", "header", "mobile-menu", "sticky", "trajecten-hero", "trajecten-help", "product-detail", "product-fit", "product-start", "results", "results-hero", "about", "about-hero", "about-final", "method-hero", "method-final", "tools", "community", "contact", "checkout-success"] as const;
 
 export const intakeSchema = z.object({
   goal: z.enum(goalKeys, { message: "Kies je belangrijkste doel." }),

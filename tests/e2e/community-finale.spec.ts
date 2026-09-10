@@ -97,12 +97,24 @@ test("community finale refits after resize and removes desktop transforms on mob
   await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
   for (const viewport of [{ width: 2013, height: 1604 }, { width: 1280, height: 600 }]) {
     await page.setViewportSize(viewport);
-    await page.waitForTimeout(350);
+    // Resize refresh is debounced and may take longer under parallel load.
+    // Check the new measured range before seeking, otherwise the old tall-
+    // viewport target can scroll past the entire section on a short viewport.
+    await expect.poll(() => root.evaluate(element => {
+      const sticky = element.querySelector<HTMLElement>(".grid_sticky")!;
+      const header = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue("--site-header-height"));
+      const start = Number(element.dataset.communityPinStart);
+      const end = Number(element.dataset.communityPinEnd);
+      const measuredStart = element.getBoundingClientRect().top + scrollY - header;
+      return Math.abs(start - measuredStart) <= 1
+        && Math.abs(end - start - ((element as HTMLElement).offsetHeight - sticky.offsetHeight)) <= 1;
+    })).toBe(true);
     await root.evaluate(element => {
       const start = Number(element.dataset.communityPinStart);
       window.scrollTo(0, start + (Number(element.dataset.communityPinEnd) - start) * 0.96);
     });
-    await expect.poll(() => root.evaluate(element => Number(element.dataset.communityProgress))).toBeGreaterThan(0.95);
+    await expect.poll(() => root.evaluate(element => Number(element.dataset.communityProgress))).toBeCloseTo(0.96, 2);
     await expect.poll(() => scene.evaluate(element => {
       const rect = element.getBoundingClientRect();
       return rect.top >= 100 && rect.bottom <= innerHeight - 28

@@ -6,13 +6,13 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Brand } from "@/components/brand";
 
-type HeaderCopy = { results: string; method: string; trajectories: string; about: string; tools: string; cta: string };
+type HeaderCopy = { results: string; method: string; trajectories: string; about: string; community: string; cta: string };
 
 export function SiteHeader({ copy }: { copy: HeaderCopy }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const checkout = pathname.startsWith("/checkout");
-  const navItems = [[copy.results, "/resultaten"], [copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.tools, "/gratis-tools"]] as const;
+  const navItems = [[copy.results, "/resultaten"], [copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.community, "/community"]] as const;
 
   if (pathname.startsWith("/beheer")) return null;
 

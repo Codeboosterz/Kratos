@@ -3,6 +3,8 @@ import { z } from "zod";
 export const checkoutSessionSchema = z.object({
   productSlug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   idempotencyKey: z.uuid(),
+  // Comparison only: the server always uses the stored CMS/Stripe price.
+  quote: z.object({ priceCents: z.number().int().positive(), currency: z.string().regex(/^[a-z]{3}$/) }).nullish(),
 });
 
 export const checkoutSessionIdSchema = z.string().regex(/^(?:demo_cs_[a-f0-9]{18}|cs_(?:test|live)_[A-Za-z0-9_]+)$/);

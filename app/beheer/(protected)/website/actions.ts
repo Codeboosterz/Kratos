@@ -91,6 +91,8 @@ export async function publishStructuredPageRevision(_state: CmsActionState, form
   const { data, error } = await supabase.rpc("cms_publish_content_revision", { target_revision_id: revisionId.data });
   const published = data?.[0];
   if (error || !published) return { status: "error", message: error?.message.includes("Only an active CMS owner") ? "Alleen een eigenaar kan publiceren." : "Publiceren is niet gelukt." };
-  revalidatePath(definition.route); revalidatePath("/beheer"); revalidatePath("/beheer/website");
+  if (definition.slug === "site-settings") revalidatePath("/", "layout");
+  else revalidatePath(definition.route);
+  revalidatePath("/beheer"); revalidatePath("/beheer/website");
   return { status: "success", message: `Versie ${published.published_version} staat nu live.`, revisionId: published.published_revision_id, version: published.published_version };
 }

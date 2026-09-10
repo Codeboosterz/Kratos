@@ -41,10 +41,10 @@ None. Reuse installed tools and the configured deployment pipeline.
 
 - [x] Scope reviewed; unrelated work preserved.
 - [x] Typecheck, lint, 82 unit tests, browser suite and production build pass.
-- [ ] Release pushed and production deployment verified.
-- [ ] Live community photos/finale verified.
-- [ ] Next animation desktop/mobile behavior checked; findings recorded.
-- [ ] Local preview available, release status and tracker updated.
+- [x] Release pushed and production deployment verified.
+- [x] Live community photos/finale verified.
+- [x] Next animation desktop/mobile behavior checked; findings recorded.
+- [x] Local preview available, release status and tracker updated.
 
 ## Release gate
 
@@ -56,3 +56,24 @@ None. Reuse installed tools and the configured deployment pipeline.
 - The Vercel connector cannot access the configured team (403). Publication
   uses the existing authorized GitHub integration; deployment confirmation
   must come from its Vercel commit status plus live page/asset inspection.
+
+## Deployed outcome — 7 September 2026
+
+- Commit `9bd0b17` pushed to `origin/main` without force. Vercel deployment
+  `dpl_ExjBTCJKx9uEPzy6fG8Hx9ofA8v4` reported “Deployment has completed” through
+  the GitHub commit status at 10:01:36 UTC (pending at 10:01:01 UTC).
+- `https://kratosfitness.be/` returned 200 with the new scene wrapper and
+  community photo paths, and without the local fixture banner.
+- In-browser production check at 2013×1604: all 15 photos loaded, base growth
+  was 1.025, the expanded scene stayed at header top 76px with ~24px side
+  margins, and no horizontal document overflow occurred.
+- The next Faith story entered only after the community had left the viewport.
+  Chapters 1 and 6 were visually inspected on production: image, copy and
+  stepper matched, all six images loaded, and the completed pin returned to
+  normal flow. Local tests cover every chapter and mobile behavior.
+- No next-animation defect requiring a code change was found in these checks.
+  The previously recorded Faith image LCP-priority warning remains a polish item.
+- Production runtime log scan returned 403, not an empty result. Server logs,
+  drains, exact provider build duration and broader monitoring remain unverified.
+- Local fixture preview restarted at `http://127.0.0.1:3200/`; production tab
+  left open after the final chapter. Unrelated local files remain uncommitted.
