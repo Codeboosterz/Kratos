@@ -9,7 +9,7 @@ describe("community CMS save and publish wiring", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     const chain = { eq: () => chain, maybeSingle: mocks.single };
-    mocks.membership.mockResolvedValue({ supabase: { rpc: mocks.rpc, from: () => ({ select: () => chain }) } });
+    mocks.membership.mockResolvedValue({ membership: { role: "owner" }, supabase: { rpc: mocks.rpc, from: () => ({ select: () => chain }) } });
   });
   it("saves a community draft to the existing page record", async () => {
     const data = new FormData();

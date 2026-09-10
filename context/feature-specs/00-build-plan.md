@@ -26,14 +26,25 @@ is planned in Unit 09 once client credentials arrive.
 | 10 | Community photo refresh | Existing community reveal | Complete / Deployed |
 | 11 | Community reveal finale | Unit 10 | Complete / Deployed |
 | 12 | Community release and next animation check | Units 10–11 | Complete / Deployed |
-| 13 | CMS provider wiring audit and credential safety | Existing operations hub | Audit and local safety fixes verified; not deployed. Stripe credential rejected; Resend account/DNS pending. See wiring gaps in Unit 13. |
-| 14 | Live checkout preparation, prices unchanged | Unit 13 | Code verified locally; activation blocked by live credentials and blank/draft CMS price mappings. No deployment or payment. |
-| 15 | Intake persistence and source audit | Existing intake/CMS | Local hardening and rollback-only database checks verified. Production server secret still missing; no migration/deployment. |
-| 16 | All traject starts route to checkout | Unit 14 | Both start CTAs on all eight packages use matching checkout routes. Prices and payment readiness guards unchanged. |
-| 17 | Faith & Fitness community replaces tools | Existing CMS publishing | CMS-editable local page, navigation and legacy redirect implemented. Interest intake used until a group link is supplied. Not deployed. |
-| 18 | Production intake activation and scoped release | Units 13–17 | Preflight passed; Production-only Supabase Secret saved by user. Scoped deployment and live intake acceptance in progress. No Stripe activation. |
+| 13 | CMS provider wiring audit and credential safety | Existing operations hub | Safety fixes deployed in 3537abe. Stripe credentials and Resend account/DNS still pending. See wiring gaps in Unit 13. |
+| 14 | Live checkout preparation, prices unchanged | Unit 13 | Code deployed; purchase activation still blocked by live credentials and blank/draft CMS price mappings. No payment. |
+| 15 | Intake persistence and source audit | Existing intake/CMS | Deployed and live intake/database/CMS acceptance passed. No new migration required. |
+| 16 | All traject starts route to checkout | Unit 14 | Deployed; both start CTAs and checkout routes verified for all eight packages. Prices/readiness guards unchanged. |
+| 17 | Faith & Fitness community replaces tools | Existing CMS publishing | Deployed: CMS-editable page, navigation and 308 legacy redirect. Interest intake used until a group link is supplied. |
+| 18 | Production intake activation and scoped release | Units 13–17 | Complete: 3537abe live/READY; QA KRA-26-DD450D88 verified in public confirmation, DB, CMS and calendar waiting queue. No Stripe activation. |
+| 19 | Production smoke/security/form audit | Unit 18 | Complete; report and 12 September 10:00 briefing scheduled. |
+| 20 | Framework security patch | Unit 19 | Validated locally; Next 16.3.4, zero npm advisories. |
+| 21 | CMS operation integrity | Unit 19 | Validated locally; Media route, role/row/cache checks. |
+| 22 | Provider message durability | Unit 21 | Validated locally with mocked providers; no email/booking. |
+| 23 | CMS form recovery | Unit 22 | Validated locally; uploads/AI errors and checked writes. |
+| 24 | Public flow polish | Unit 23 | Validated locally; one product purchase action, no coach detour. |
+| 25 | Inbox history access | Unit 24 | Validated locally; filtered pagination and deep links. |
+| 26 | Fulfillment replay safety | Unit 25 | Validated locally; paid-order guards, no token/job resets on replay. |
 
 ## Ordering Notes
+
+- Units 19–26: final 223-test / 30-browser-test acceptance, lint/typecheck/build
+  and audit pass. Release verification pending; provider activation remains gated.
 
 - Tests precede implementation in each unit.
 - Intake workflow migration was applied to production on 7 September during

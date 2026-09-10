@@ -43,9 +43,14 @@ export async function saveHomeRevision(_state: CmsActionState, formData: FormDat
 }
 
 export async function publishHomeRevision(_state: CmsActionState, formData: FormData): Promise<CmsActionState> {
-  const { supabase } = await requireCmsMembership();
+  const { supabase, membership } = await requireCmsMembership();
+  if (membership.role !== "owner" && membership.role !== "super_admin") return { status: "error", message: "Alleen een eigenaar kan publiceren." };
   const revisionId = z.uuid().safeParse(formData.get("revision_id"));
   if (!revisionId.success) return { status: "error", message: "Sla eerst een geldig concept op." };
+
+  const { data: revision, error: revisionError } = await supabase.from("content_revisions").select("page_id").eq("id", revisionId.data).eq("status", "draft").maybeSingle();
+  const { data: page } = !revisionError && revision ? await supabase.from("content_pages").select("slug").eq("id", revision.page_id).maybeSingle() : { data: null };
+  if (page?.slug !== "home") return { status: "error", message: "Dit concept hoort niet bij de homepage." };
 
   const { data, error } = await supabase.rpc("cms_publish_content_revision", { target_revision_id: revisionId.data });
   const published = data?.[0];
@@ -78,7 +83,8 @@ export async function saveStructuredPageRevision(_state: CmsActionState, formDat
 }
 
 export async function publishStructuredPageRevision(_state: CmsActionState, formData: FormData): Promise<CmsActionState> {
-  const { supabase } = await requireCmsMembership();
+  const { supabase, membership } = await requireCmsMembership();
+  if (membership.role !== "owner" && membership.role !== "super_admin") return { status: "error", message: "Alleen een eigenaar kan publiceren." };
   const slugValue = z.string().trim().max(80).safeParse(formData.get("page_slug"));
   const definition = slugValue.success ? getCmsPageDefinition(slugValue.data) : null;
   const revisionId = z.uuid().safeParse(formData.get("revision_id"));
@@ -93,6 +99,10 @@ export async function publishStructuredPageRevision(_state: CmsActionState, form
   if (error || !published) return { status: "error", message: error?.message.includes("Only an active CMS owner") ? "Alleen een eigenaar kan publiceren." : "Publiceren is niet gelukt." };
   if (definition.slug === "site-settings") revalidatePath("/", "layout");
   else revalidatePath(definition.route);
+  if (definition.slug === "trajecten") {
+    revalidatePath("/");
+    revalidatePath("/trajecten/[slug]", "page");
+  }
   revalidatePath("/beheer"); revalidatePath("/beheer/website");
   return { status: "success", message: `Versie ${published.published_version} staat nu live.`, revisionId: published.published_revision_id, version: published.published_version };
 }

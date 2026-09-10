@@ -25,7 +25,8 @@
 - `/intake` — four-stage intake and optional booking.
 - `/beheer/inbox` — intake leads and Resend conversations.
 - `/beheer/afspraken` — appointment calendar and agenda.
-- `/trajecten/[slug]` — both package-start CTAs link to `/checkout/[slug]`.
+- `/trajecten/[slug]` — one final purchase CTA links to `/checkout/[slug]`;
+  secondary hero anchor reveals the package contents.
 - `/checkout/[slug]` — payment readiness requires active CMS product, exact price
   mapping and valid Stripe configuration; marketing links do not authorize sales.
 - `/community` — Faith & Fitness landing page; `/gratis-tools` redirects with 308.
@@ -72,13 +73,18 @@ committed separately from their production application.
    confirmation returns the persisted reference. API uses the existing durable
    rate limiter, with that limiter's in-memory fallback on configuration/RPC error.
 8. Community interest is an intake source, not a membership or booked appointment.
+9. Provider events use durable claims and checked completion; duplicate events
+   never reset completed orders/provisioning or rotate an existing download token.
+   Incomplete digital email delivery is explicit operator follow-up, not assumed.
+10. Inbox search/filter/pagination is server-side with independently resolved
+    direct links; owner publication invalidates dependent product-detail pages.
 
 ## Production Activation Gates — 10 September 2026
 
-- Vercel Production now has `SUPABASE_SECRET_KEY`, saved by the user as Secret
-  with Production-only scope. Deployment and live intake verification are pending.
-  The existing intake schema and rollback-only RLS assertions pass, so no
-  additional intake migration is needed.
+- Vercel Production has `SUPABASE_SECRET_KEY`, saved by the user as Secret
+  with Production-only scope. Commit `3537abe` is live and QA reference
+  `KRA-26-DD450D88` verifies public intake → database → authenticated CMS and
+  the unscheduled calendar queue. No additional intake migration was needed.
 - All eight production commerce products remain draft with null price amounts
   and Stripe price IDs. Approved prices/IDs and activation must be supplied.
 - Production also lacks `STRIPE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_SITE_URL`.

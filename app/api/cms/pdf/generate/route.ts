@@ -7,8 +7,9 @@ import { requestStructuredCompletion } from "@/src/operations/openrouter";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { checkDurableRateLimit } from "@/src/server/rate-limit";
 import { createAdminClient } from "@/src/supabase/admin";
+import { assertPersisted } from "@/src/operations/webhook-events";
 
-const requestSchema = pdfGenerationRequestSchema.omit({ model: true }).extend({ productId: z.string().trim().min(2).max(120) });
+const requestSchema = pdfGenerationRequestSchema.omit({ model: true }).extend({ productId: z.string().trim().min(2).max(120).regex(/^[a-zA-Z0-9_-]+$/) });
 
 export async function POST(request: Request) {
   const authenticated = await getCmsMembership();
@@ -20,9 +21,12 @@ export async function POST(request: Request) {
   try { input = await request.json(); } catch { return Response.json({ error: { code: "INVALID_INPUT", message: "Ongeldige aanvraag." } }, { status: 400 }); }
   const parsed = requestSchema.safeParse(input);
   if (!parsed.success) return Response.json({ error: { code: "INVALID_INPUT", message: "Controleer titel, doelgroep, doel en bronnotities." } }, { status: 400 });
+  const product = await authenticated.supabase.from("cms_products").select("id").eq("id", parsed.data.productId).maybeSingle();
+  if (product.error) return Response.json({ error: { code: "DATABASE_FAILURE", message: "Product kon niet worden gecontroleerd." } }, { status: 503 });
+  if (!product.data) return Response.json({ error: { code: "PRODUCT_NOT_FOUND", message: "Sla het product eerst op en probeer opnieuw." } }, { status: 404 });
 
   const selectedProvider = process.env.AI_PDF_PROVIDER?.trim().toLowerCase() === "sol" ? "sol" : "openrouter";
-  const openRouterKey = selectedProvider === "openrouter" ? await resolveIntegrationSecret("openrouter", "api_key") : null;
+  const openRouterKey = selectedProvider === "openrouter" ? await resolveIntegrationSecret("openrouter", "api_key").catch(() => null) : null;
   const provider = resolvePdfAiProvider(selectedProvider === "openrouter" ? {
     AI_PDF_PROVIDER: "openrouter", OPENROUTER_API_KEY: openRouterKey ?? undefined, OPENROUTER_PDF_MODEL: process.env.OPENROUTER_PDF_MODEL,
   } : {
@@ -55,15 +59,18 @@ export async function POST(request: Request) {
       storage_path: storagePath, filename, mime_type: "application/pdf", size_bytes: pdfBytes.byteLength,
       source: "ai_generated", status: "draft", checksum_sha256: checksum, created_by: authenticated.userId,
     }).select("id").single();
-    if (assetError || !asset) throw new Error(`Assetregistratie mislukt: ${assetError?.message ?? "geen record"}`);
-    await Promise.all([
-      admin.from("cms_products").update({ digital_asset_id: asset.id, updated_by: authenticated.userId, updated_at: new Date().toISOString() }).eq("id", parsed.data.productId),
-      admin.from("ai_usage_events").insert({ ai_job_id: job.id, provider: provider.provider, model: completion.model, prompt_tokens: completion.usage.promptTokens, completion_tokens: completion.usage.completionTokens, cost_usd: completion.usage.costUsd, latency_ms: Date.now() - startedAt }),
-      admin.from("ai_jobs").update({ status: "completed", output_asset_id: asset.id, completed_at: new Date().toISOString() }).eq("id", job.id),
-    ]);
+    if (assetError || !asset) {
+      await admin.storage.from("digital-products").remove([storagePath]);
+      throw new Error("Assetregistratie mislukt.");
+    }
+    const linked = await admin.from("cms_products").update({ digital_asset_id: asset.id, updated_by: authenticated.userId, updated_at: new Date().toISOString() }).eq("id", parsed.data.productId).select("id").maybeSingle();
+    assertPersisted(linked, "Productkoppeling mislukt.");
+    if (!linked.data) throw new Error("Product bestaat niet meer.");
+    assertPersisted(await admin.from("ai_usage_events").insert({ ai_job_id: job.id, provider: provider.provider, model: completion.model, prompt_tokens: completion.usage.promptTokens, completion_tokens: completion.usage.completionTokens, cost_usd: completion.usage.costUsd, latency_ms: Date.now() - startedAt }), "Verbruik kon niet worden opgeslagen.");
+    assertPersisted(await admin.from("ai_jobs").update({ status: "completed", output_asset_id: asset.id, completed_at: new Date().toISOString() }).eq("id", job.id), "Taakresultaat kon niet worden opgeslagen.");
     return Response.json({ message: "Concept-PDF gegenereerd, privé opgeslagen en gekoppeld.", assetId: asset.id, jobId: job.id });
-  } catch (error) {
+  } catch {
     await admin.from("ai_jobs").update({ status: "failed", error_code: "GENERATION_FAILED", completed_at: new Date().toISOString() }).eq("id", job.id);
-    return Response.json({ error: { code: "GENERATION_FAILED", message: error instanceof Error ? error.message.slice(0, 500) : "PDF-generatie mislukt." } }, { status: 502 });
+    return Response.json({ error: { code: "GENERATION_FAILED", message: "PDF-generatie niet voltooid. Controleer de taak in Monitoring en het gekoppelde bestand voordat je opnieuw genereert." } }, { status: 502 });
   }
 }

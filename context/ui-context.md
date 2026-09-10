@@ -38,8 +38,11 @@ Reuse existing CSS variables and approved tokens:
   interest CTA. Copy and photos are editable through the existing CMS page editor.
   The internal `gratis-tools` page ID/history is preserved; public navigation says
   Faith & Fitness. No membership counts, schedules or group access are invented.
-- Package hero/final purchase CTAs consistently say `Bekijk checkout` and open
-  the matching internal payment page. Unconfigured commerce stays visibly unavailable.
+- Package pages have one final `Bekijk checkout` purchase action and a secondary
+  hero `Bekijk wat je krijgt` contents anchor. No coach biography/competing header
+  intake action. Unconfigured commerce stays visibly unavailable.
+- CMS Inbox uses filtered 50-record pages and stable detail links; upload/AI
+  inputs survive failure and loading indicators are released on network errors.
 
 ## Motion
 

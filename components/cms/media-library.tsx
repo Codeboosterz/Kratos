@@ -24,12 +24,14 @@ export function MediaLibrary({ assets, userId }: { assets: Asset[]; userId: stri
   const [copied, setCopied] = useState<string | null>(null);
 
   async function upload() {
+    if (status.kind === "loading") return;
     const file = fileInput.current?.files?.[0];
     if (!file) return setStatus({ kind: "error", message: "Kies eerst een afbeelding." });
     if (!allowedTypes.has(file.type)) return setStatus({ kind: "error", message: "Gebruik JPG, PNG, WebP of AVIF." });
     if (file.size > 8 * 1024 * 1024) return setStatus({ kind: "error", message: "De afbeelding mag maximaal 8 MB zijn." });
 
     setStatus({ kind: "loading", message: "Afbeelding uploaden…" });
+    try {
     const supabase = createClient();
     const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
     const storagePath = `website/${new Date().getUTCFullYear()}/${crypto.randomUUID()}.${extension}`;
@@ -48,20 +50,25 @@ export function MediaLibrary({ assets, userId }: { assets: Asset[]; userId: stri
     });
 
     if (metadataError) {
-      await supabase.storage.from("site-media").remove([storagePath]);
-      return setStatus({ kind: "error", message: "Het bestand is niet geregistreerd en is daarom weer verwijderd." });
+      const { error: cleanupError } = await supabase.storage.from("site-media").remove([storagePath]);
+      return setStatus({ kind: "error", message: cleanupError
+        ? "Registreren en opruimen zijn niet gelukt. Controleer de opslag voordat je opnieuw uploadt."
+        : "Het bestand is niet geregistreerd en is daarom weer verwijderd." });
     }
 
     if (fileInput.current) fileInput.current.value = "";
     setAltText("");
     setStatus({ kind: "success", message: "De afbeelding staat in de mediabibliotheek." });
     router.refresh();
+    } catch { setStatus({ kind: "error", message: "Geen uploadbevestiging ontvangen. Vernieuw de bibliotheek en controleer je verbinding voordat je opnieuw uploadt. Je invoer blijft staan." }); }
   }
 
   async function copyUrl(id: string, url: string) {
+    try {
     await navigator.clipboard.writeText(url);
     setCopied(id);
     window.setTimeout(() => setCopied(null), 1600);
+    } catch { setStatus({ kind: "error", message: "Kopiëren is geblokkeerd. Sta klembordtoegang toe in je browser en probeer opnieuw." }); }
   }
 
   return (

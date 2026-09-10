@@ -15,7 +15,7 @@ supabase/.temp/
 private/ebooks/*.pdf
 private/ebooks/orders.json
 testsprite_tests/
-Media/
+/Media/
 Muscle tech videos/
 
 # Root-level duplicate/source images (served from public/img/)

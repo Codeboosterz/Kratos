@@ -8,6 +8,7 @@ import { ensureCalendlyWebhookSubscription, listCalendlyAppointments } from "@/s
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { trustedSiteOrigin } from "@/src/server/environment";
 import { createAdminClient } from "@/src/supabase/admin";
+import { assertPersisted } from "@/src/operations/webhook-events";
 
 function resultUrl(status: string, count?: number) {
   const query = new URLSearchParams({ status });
@@ -51,10 +52,10 @@ export async function syncCalendlyAppointments() {
         if (appointment.status === "scheduled" || !current) statusByReference.set(appointment.intakeReference, appointment.status);
       }
       for (const [reference, appointmentStatus] of statusByReference) {
-        await admin.from("intake_requests").update({ appointment_status: appointmentStatus, updated_at: new Date().toISOString() }).eq("reference", reference);
+        assertPersisted(await admin.from("intake_requests").update({ appointment_status: appointmentStatus, updated_at: new Date().toISOString() }).eq("reference", reference), "Intake kon niet aan de afspraak worden gekoppeld.");
       }
     }
-    await admin.from("integration_connections").update({ status: "connected", last_checked_at: new Date().toISOString(), last_error: null }).eq("provider", "calendly");
+    assertPersisted(await admin.from("integration_connections").update({ status: "connected", last_checked_at: new Date().toISOString(), last_error: null }).eq("provider", "calendly"), "Synchronisatiestatus kon niet worden opgeslagen.");
     revalidatePath("/beheer");
     revalidatePath("/beheer/afspraken");
     revalidatePath("/beheer/instellingen");

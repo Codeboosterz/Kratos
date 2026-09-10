@@ -20,8 +20,9 @@ export async function resendDigitalDelivery(formData: FormData) {
   const [apiKey, from] = await Promise.all([resolveIntegrationSecret("resend", "api_key").catch(() => null), Promise.resolve(process.env.RESEND_FROM_EMAIL?.trim())]);
   if (!apiKey || !from) redirect("/beheer/bestellingen?status=resend-config-required");
   const admin = createAdminClient();
-  const { data: order } = await admin.from("orders").select("id, customer_email, product_id").eq("id", orderId.data).maybeSingle();
+  const { data: order } = await admin.from("orders").select("id, customer_email, product_id, status").eq("id", orderId.data).maybeSingle();
   if (!order) redirect("/beheer/bestellingen?status=invalid-order");
+  if (order.status !== "paid" && order.status !== "fulfilled") redirect("/beheer/bestellingen?status=order-not-paid");
   const { data: product } = await admin.from("cms_products").select("name, digital_asset_id").eq("id", order.product_id).maybeSingle();
   if (!product?.digital_asset_id) redirect("/beheer/bestellingen?status=no-ready-asset");
   const { data: asset } = await admin.from("digital_assets").select("id, status").eq("id", product.digital_asset_id).maybeSingle();
@@ -34,7 +35,8 @@ export async function resendDigitalDelivery(formData: FormData) {
   const claimUrl = `${process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://kratosfitness.be"}/api/download/${token}`;
   try {
     await sendDigitalDeliveryEmail({ apiKey, from, to: order.customer_email, productName: product.name, claimUrl, orderId: `${order.id}-${Date.now()}` });
-    await admin.from("orders").update({ status: "fulfilled", fulfilled_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", order.id);
+    const saved = await admin.from("orders").update({ status: "fulfilled", fulfilled_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", order.id).eq("status", order.status).select("id").maybeSingle();
+    if (saved.error || !saved.data) throw new Error("Bestelstatus kon niet worden opgeslagen.");
   } catch { redirect("/beheer/bestellingen?status=delivery-failed"); }
   revalidatePath("/beheer/bestellingen");
   redirect("/beheer/bestellingen?status=delivery-sent");
@@ -46,26 +48,34 @@ export async function runTrainerizeProvisioning(formData: FormData) {
   const jobId = idSchema.safeParse(formData.get("jobId"));
   if (!jobId.success) redirect("/beheer/bestellingen?status=invalid-job");
   const admin = createAdminClient();
-  const { data: job } = await admin.from("trainerize_provisioning_jobs").select("id, order_id, trainerize_plan_id, attempts").eq("id", jobId.data).maybeSingle();
+  const { data: job } = await admin.from("trainerize_provisioning_jobs").select("id, order_id, trainerize_plan_id, attempts, status").eq("id", jobId.data).maybeSingle();
   if (!job) redirect("/beheer/bestellingen?status=invalid-job");
-  const { data: order } = await admin.from("orders").select("id, customer_email").eq("id", job.order_id).maybeSingle();
+  if (job.status === "completed") redirect("/beheer/bestellingen?status=trainerize-complete");
+  if (job.status === "running") redirect("/beheer/bestellingen?status=trainerize-busy");
+  const { data: order } = await admin.from("orders").select("id, customer_email, status").eq("id", job.order_id).maybeSingle();
   if (!order) redirect("/beheer/bestellingen?status=invalid-order");
-  await admin.from("trainerize_provisioning_jobs").update({ status: "running", attempts: job.attempts + 1, updated_at: new Date().toISOString() }).eq("id", job.id);
+  if (order.status !== "paid" && order.status !== "fulfilled") redirect("/beheer/bestellingen?status=order-not-paid");
+  const claimed = await admin.from("trainerize_provisioning_jobs").update({ status: "running", attempts: job.attempts + 1, updated_at: new Date().toISOString() })
+    .eq("id", job.id).eq("status", job.status).eq("attempts", job.attempts).select("id").maybeSingle();
+  if (claimed.error || !claimed.data) redirect("/beheer/bestellingen?status=trainerize-busy");
+  let outcome = "trainerize-complete";
   try {
     const apiKey = await resolveIntegrationSecret("trainerize", "api_key").catch(() => null);
     const result = await provisionTrainerizeClient({ externalId: order.id, email: order.customer_email, planId: job.trainerize_plan_id }, apiKey);
     if (result.status === "configuration_required") {
-      await admin.from("trainerize_provisioning_jobs").update({ status: "failed", last_error: "Trainerize endpointconfiguratie ontbreekt.", updated_at: new Date().toISOString() }).eq("id", job.id);
-      redirect("/beheer/bestellingen?status=trainerize-config-required");
+      const saved = await admin.from("trainerize_provisioning_jobs").update({ status: "failed", last_error: "Trainerize endpointconfiguratie ontbreekt.", updated_at: new Date().toISOString() }).eq("id", job.id).select("id").maybeSingle();
+      if (saved.error || !saved.data) throw new Error("Jobstatus kon niet worden opgeslagen.");
+      outcome = "trainerize-config-required";
+    } else {
+      const savedOrder = await admin.from("orders").update({ status: "fulfilled", fulfilled_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", order.id).eq("status", order.status).select("id").maybeSingle();
+      if (savedOrder.error || !savedOrder.data) throw new Error("Bestelstatus kon niet worden opgeslagen.");
+      const savedJob = await admin.from("trainerize_provisioning_jobs").update({ status: "completed", last_error: null, updated_at: new Date().toISOString() }).eq("id", job.id).eq("status", "running").eq("attempts", job.attempts + 1).select("id").maybeSingle();
+      if (savedJob.error || !savedJob.data) throw new Error("Jobstatus kon niet worden opgeslagen.");
     }
-    await Promise.all([
-      admin.from("trainerize_provisioning_jobs").update({ status: "completed", last_error: null, updated_at: new Date().toISOString() }).eq("id", job.id),
-      admin.from("orders").update({ status: "fulfilled", fulfilled_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", order.id),
-    ]);
-  } catch (error) {
-    await admin.from("trainerize_provisioning_jobs").update({ status: "failed", last_error: error instanceof Error ? error.message.slice(0, 500) : "Provisioning mislukt.", updated_at: new Date().toISOString() }).eq("id", job.id);
-    redirect("/beheer/bestellingen?status=trainerize-failed");
+  } catch {
+    const saved = await admin.from("trainerize_provisioning_jobs").update({ status: "failed", last_error: "Provisioning of statusopslag niet bevestigd. Controleer de provider vóór opnieuw proberen.", updated_at: new Date().toISOString() }).eq("id", job.id).eq("status", "running").eq("attempts", job.attempts + 1).select("id").maybeSingle();
+    outcome = saved.error || !saved.data ? "trainerize-status-uncertain" : "trainerize-failed";
   }
   revalidatePath("/beheer/bestellingen");
-  redirect("/beheer/bestellingen?status=trainerize-complete");
+  redirect(`/beheer/bestellingen?status=${outcome}`);
 }

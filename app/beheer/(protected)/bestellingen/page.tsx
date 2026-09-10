@@ -36,8 +36,8 @@ export default async function OrdersPage({ searchParams }: PageProps) {
             <span className={`cms-status-pill is-${order.status === "fulfilled" ? "connected" : order.status === "failed" ? "degraded" : "configuration_required"}`}><i />{order.status}</span>
             <div className="cms-order-delivery"><span><Download aria-hidden="true" />{entitlement ? `${entitlement.download_count} downloads` : "Geen PDF-recht"}</span><span><UsersRound aria-hidden="true" />{job ? `Trainerize: ${job.status}` : "Geen provisioning"}</span>{job?.last_error ? <small>{job.last_error}</small> : null}</div>
             <div className="cms-order-actions">
-              <form action={resendDigitalDelivery}><input type="hidden" name="orderId" value={order.id} /><button disabled={!canOperate}><RefreshCw aria-hidden="true" /> Nieuwe downloadlink</button></form>
-              {job ? <form action={runTrainerizeProvisioning}><input type="hidden" name="jobId" value={job.id} /><button disabled={!canOperate || job.status === "completed"}><UsersRound aria-hidden="true" /> Provisioning uitvoeren</button></form> : null}
+              <form action={resendDigitalDelivery}><input type="hidden" name="orderId" value={order.id} /><button disabled={!canOperate || !["paid", "fulfilled"].includes(order.status)}><RefreshCw aria-hidden="true" /> Nieuwe downloadlink</button></form>
+              {job ? <form action={runTrainerizeProvisioning}><input type="hidden" name="jobId" value={job.id} /><button disabled={!canOperate || !["paid", "fulfilled"].includes(order.status) || job.status === "completed" || job.status === "running"}><UsersRound aria-hidden="true" /> Provisioning uitvoeren</button></form> : null}
             </div>
           </article>;
         })}

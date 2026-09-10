@@ -4,6 +4,7 @@ import { requestStructuredCompletion } from "@/src/operations/openrouter";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { checkDurableRateLimit } from "@/src/server/rate-limit";
 import { createAdminClient } from "@/src/supabase/admin";
+import { assertPersisted } from "@/src/operations/webhook-events";
 
 const requestSchema = z.object({ purpose: z.enum(["rewrite", "headlines", "summary", "email"]), objective: z.string().trim().min(5).max(500), source: z.string().trim().min(20).max(20_000), tone: z.enum(["direct", "warm", "energetic"]).default("direct") });
 const responseSchema = z.object({ title: z.string().min(2).max(140), draft: z.string().min(20).max(8_000), suggestions: z.array(z.string().min(5).max(300)).min(2).max(5), reviewNotes: z.array(z.string().min(5).max(300)).min(1).max(5) });
@@ -29,15 +30,14 @@ export async function POST(request: Request) {
   ].join("\n\n");
   let admin;
   try { admin = createAdminClient(); } catch { return Response.json({ error: { code: "CONFIGURATION_REQUIRED", message: "Supabase server key ontbreekt." } }, { status: 503 }); }
-  const { data: job } = await admin.from("ai_jobs").insert({ job_type: "cms_assist", model, status: "running", created_by: authenticated.userId, input_summary: { purpose: parsed.data.purpose, tone: parsed.data.tone } }).select("id").single();
+  const { data: job, error: jobError } = await admin.from("ai_jobs").insert({ job_type: "cms_assist", model, status: "running", created_by: authenticated.userId, input_summary: { purpose: parsed.data.purpose, tone: parsed.data.tone } }).select("id").single();
+  if (jobError || !job) return Response.json({ error: { code: "DATABASE_FAILURE", message: "AI-taak kon niet veilig worden gestart." } }, { status: 502 });
   const startedAt = Date.now();
   try {
     const completion = await requestStructuredCompletion({ endpoint: "https://openrouter.ai/api/v1/chat/completions", apiKey, model, prompt, schemaName: "cms_assistance", jsonSchema });
     const result = responseSchema.parse(completion.content);
-    if (job) await Promise.all([
-      admin.from("ai_jobs").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", job.id),
-      admin.from("ai_usage_events").insert({ ai_job_id: job.id, provider: "openrouter", model: completion.model, prompt_tokens: completion.usage.promptTokens, completion_tokens: completion.usage.completionTokens, cost_usd: completion.usage.costUsd, latency_ms: Date.now() - startedAt }),
-    ]);
+    assertPersisted(await admin.from("ai_usage_events").insert({ ai_job_id: job.id, provider: "openrouter", model: completion.model, prompt_tokens: completion.usage.promptTokens, completion_tokens: completion.usage.completionTokens, cost_usd: completion.usage.costUsd, latency_ms: Date.now() - startedAt }), "Verbruik kon niet worden opgeslagen.");
+    assertPersisted(await admin.from("ai_jobs").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", job.id), "Taakresultaat kon niet worden opgeslagen.");
     return Response.json({ result, model: completion.model });
   } catch {
     if (job) await admin.from("ai_jobs").update({ status: "failed", error_code: "ASSISTANCE_FAILED", completed_at: new Date().toISOString() }).eq("id", job.id);

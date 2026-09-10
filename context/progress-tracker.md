@@ -2,22 +2,29 @@
 
 ## Current Phase
 
-- Client handover preparation; approved community Units 10–12 are now live
+- Client handover preparation; Units 19–26 audit/repairs validated, release verification next
 
 ## Current Goal
 
-- Unit 18: user saved `SUPABASE_SECRET_KEY`; Vercel metadata confirms Secret
-  type and Production-only scope. No value was revealed or copied into code.
-  Continuing the authorized scoped release and live intake acceptance. Migration already
-  applied. All 163 unit/integration tests, 30 browser tests, lint, TypeScript
-  and production build pass. Resize test now waits for actual refreshed
-  geometry; animation code is unchanged. No new production writes, commit,
-  deployment or QA intake yet; no price/payment/email/booking changes.
-- 10 September: Units 15–17 implemented locally: intake persistence hardening,
-  all-eight-package checkout routing and CMS-editable Faith & Fitness community.
-  Production activation is gated on separately authorized configuration/release.
-- Unit 14 checkout code is prepared and verified locally, with all package prices
-  unchanged. Activation still needs valid live Stripe credentials and CMS price
+- 11 September: Unit 19 smoke/security/form/CTA audit complete. Repair Units
+  20–26 pass 223 tests, 30 browser checks, lint/typecheck/build and zero-advisory
+  npm audit. See `production-smoke-audit-2026-09-11.md`. Release verification is
+  pending; baseline is `3537abe`. Preserve existing dirty files. No real charges, emails,
+  bookings, credential changes or production schema writes during QA.
+- Briefing automation updated to Saturday 12 September 2026 at 10:00
+  Europe/Brussels, one occurrence. Prior 8 September prompt is superseded.
+
+- Unit 18 complete: commit `3537abe` is live on `kratosfitness.be`; Vercel
+  deployment `dpl_Ee7AUjwgEtBmeUM9gvrUmXFWq4Nk` is READY (54-second build).
+  User-saved `SUPABASE_SECRET_KEY` is Secret/Production-only. The live form,
+  Supabase row, CMS Inbox and calendar waiting queue all show QA reference
+  `KRA-26-DD450D88`. Exactly one labeled synthetic record is retained; no
+  appointment, email, payment, new migration or price change was made.
+- Units 13–17 and the test-only resize synchronization fix are deployed.
+  All 163 unit/integration tests, 30 browser tests, lint, TypeScript and
+  production build pass. Eight live detail/checkout route checks pass.
+- Unit 14 checkout code is deployed, with all package prices unchanged.
+  Purchase activation still needs valid live Stripe credentials and CMS price
   mappings. The port-3200 preview now runs the production build without fixtures.
 
 ## Completed
@@ -72,8 +79,23 @@
 
 ## In Progress
 
-- Unit 15 live intake capture requires `SUPABASE_SECRET_KEY`, confirmed missing
-  from Vercel Production environment metadata. No additional migration needed.
+- Unit 20 complete locally: Next 16.3.4 and transitive security patches;
+  full npm audit reports zero known advisories. Final browser suite 30/30.
+- Unit 21 complete locally: Media source restored, publication ownership and
+  invalidation repaired, zero-row lead updates rejected. 13 focused tests pass.
+- Unit 22 complete locally: checked persistence and safe retry handling for
+  Resend/Calendly and CMS replies; 15 mocked-provider tests/typecheck pass.
+- Unit 23 complete locally: missing PDF targets rejected, checked AI/storage
+  writes, recoverable inputs/loading states. 196 tests, typecheck and lint pass.
+- Units 24–25 complete locally: one product purchase CTA, no coach-promo detour,
+  filtered Inbox pagination/deep links. 206 tests and all 30 browser tests pass.
+  Community resize timing stabilized in the test only; animation unchanged.
+- Unit 26 complete locally: preserves access tokens/orders/provisioning state
+  on replay; checked persistence and paid-order recovery guards. 17 new tests
+  pass (14 reproduced failures before implementation). Full suite 223/223.
+
+- Unit 15 live intake capture is verified. Retained QA is labeled not to contact;
+  it is evidence of intake storage, not a booking or email test.
 - Unit 17 community group destination is not yet supplied. `Ik heb interesse`
   uses `/intake?source=community`; it is not a membership or booking flow.
 - Unit 14 live activation is blocked: read-only production query confirms eight
@@ -92,13 +114,12 @@
 
 ## Next Up
 
-- Once the user saves the prepared Production secret, continue the authorized
-  scoped release; verify one labeled synthetic intake through the live
-  API, database and CMS Inbox. Do not claim capture is live before that acceptance.
+- Intake activation/release acceptance is complete. Keep the QA record labeled;
+  remove it only after explicit cleanup approval.
 - Configure approved CMS commerce prices/IDs and valid live keys securely, then
   verify account/mode, webhook and fulfillment before activating live purchases.
-  Product CTA wiring and commerce-save invalidation are complete locally; broader
-  structured-content invalidation and email webhook retry/error handling remain.
+  Product CTA wiring, structured-content invalidation and webhook retry/error
+  handling are repaired and validated locally; release acceptance remains.
 - Prepare automatic new-intake business notifications separately from CMS intake
   storage; this notification path does not exist yet.
 - Client supplies a Resend account/DNS access, valid Stripe live credentials and
@@ -116,8 +137,9 @@
 - Confirm package inclusions from source material; do not invent entitlements.
 - Supabase leaked-password protection is disabled; review account hardening
   before handover. Three existing guarded CMS RPC advisor warnings were reviewed.
-- Production runtime-log inspection returned 403; final live verification must
-  not assume server-error coverage from the passing local browser tests.
+- Vercel runtime logs now work through the CLI: the new deployment records
+  `intake_created` for the QA reference, and the 15-minute error scan is empty.
+  This is a bounded smoke check, not continuous monitoring; drains were not checked.
 - Confirm canonical public/business contact: the user supplied
   `Kratosfitness2025@gmail.com`, while contact/privacy defaults use Outlook.
   Do not silently replace public details or treat the supplied address as an
@@ -144,6 +166,20 @@
 
 ## Validation History
 
+- Unit 18 release: 163 tests, lint and TypeScript rerun successfully. Earlier
+  same-code preflight passed all 30 browser tests and 48-page production build.
+  Commit `3537abe` pushed without force; Vercel production READY and live domain
+  alias verified. All eight package detail/checkout routes return 200 with two
+  matching checkout CTAs each; purchase guards remain active. `/community` is 200,
+  `/gratis-tools` redirects 308, and unauthenticated CMS redirects to login.
+- Live QA: `KRA-26-DD450D88`, row `857d94e3-8314-442f-9b20-d278f71b2747`,
+  source `about-final`, status `new`, appointment status `awaiting_booking`.
+  Public step 4, authenticated CMS and calendar waiting queue agree. Database
+  counts: one matching intake, zero linked appointments, zero QA email threads.
+  Intake browser console is clean; Vercel logs confirm the intake-created event.
+- Supabase advisory recheck: existing three authenticated security-definer CMS
+  RPC warnings and disabled leaked-password protection remain; no RLS or auth
+  setting changes in this release. See Unit 18 for remediation references.
 - Units 15–17: 163 unit/integration tests across 40 files, lint, typecheck,
   production build (48 pages) and diff whitespace checks pass. Latest browser
   run: 29/30 pass, including all

@@ -6,6 +6,7 @@ import {
 } from "@/src/operations/calendly";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { createAdminClient } from "@/src/supabase/admin";
+import { assertPersisted, claimWebhookEvent, finishWebhookEvent } from "@/src/operations/webhook-events";
 
 export async function POST(request: Request) {
   const signature = request.headers.get("calendly-webhook-signature");
@@ -31,21 +32,14 @@ export async function POST(request: Request) {
   try { admin = createAdminClient(); }
   catch { return Response.json({ error: { code: "CONFIGURATION_REQUIRED", message: "Afspraakopslag ontbreekt." } }, { status: 503 }); }
 
-  const { error: eventError } = await admin.from("provider_webhook_events").insert({
-    provider: "calendly",
-    provider_event_id: providerEventId,
-    event_type: eventType,
-    status: "processing",
-    attempts: 1,
-    payload_hash: payloadHash,
-  });
-  if (eventError?.code === "23505") {
-    const { data: existing } = await admin.from("provider_webhook_events").select("status, attempts").eq("provider", "calendly").eq("provider_event_id", providerEventId).maybeSingle();
-    if (existing?.status === "completed" || existing?.status === "processing") return Response.json({ received: true, duplicate: true });
-    await admin.from("provider_webhook_events").update({ status: "processing", attempts: (existing?.attempts ?? 0) + 1, last_error: null }).eq("provider", "calendly").eq("provider_event_id", providerEventId);
-  } else if (eventError) {
-    return Response.json({ error: { code: "DATABASE_FAILURE", message: "Webhook kon niet duurzaam worden geregistreerd." } }, { status: 503 });
-  }
+  const key = { provider: "calendly" as const, provider_event_id: providerEventId };
+  let attempt: number;
+  try {
+    const claim = await claimWebhookEvent(admin, { ...key, event_type: eventType, payload_hash: payloadHash });
+    if (claim.state === "duplicate") return Response.json({ received: true, duplicate: true });
+    if (claim.state === "busy") return Response.json({ error: { code: "RETRY_LATER", message: "Webhook wordt nog verwerkt." } }, { status: 503 });
+    attempt = claim.attempt;
+  } catch { return Response.json({ error: { code: "DATABASE_FAILURE", message: "Webhook kon niet duurzaam worden geregistreerd." } }, { status: 503 }); }
 
   try {
     const { error: appointmentError } = await admin.from("calendar_appointments").upsert(
@@ -55,13 +49,12 @@ export async function POST(request: Request) {
     if (appointmentError) throw new Error(appointmentError.message);
 
     if (appointment.intakeReference) {
-      await admin.from("intake_requests").update({ appointment_status: appointment.status, updated_at: new Date().toISOString() }).eq("reference", appointment.intakeReference);
+      assertPersisted(await admin.from("intake_requests").update({ appointment_status: appointment.status, updated_at: new Date().toISOString() }).eq("reference", appointment.intakeReference), "Intake kon niet aan de afspraak worden gekoppeld.");
     }
-    await admin.from("provider_webhook_events").update({ status: "completed", processed_at: new Date().toISOString() }).eq("provider", "calendly").eq("provider_event_id", providerEventId);
+    await finishWebhookEvent(admin, key, attempt, "completed");
     return Response.json({ received: true });
-  } catch (error) {
-    const message = error instanceof Error ? error.message.slice(0, 1_000) : "Calendly-sync mislukt.";
-    await admin.from("provider_webhook_events").update({ status: "failed", last_error: message }).eq("provider", "calendly").eq("provider_event_id", providerEventId);
+  } catch {
+    await finishWebhookEvent(admin, key, attempt, "failed").catch(() => undefined);
     return Response.json({ error: { code: "SYNC_FAILED", message: "De afspraak kon niet veilig worden gesynchroniseerd." } }, { status: 500 });
   }
 }

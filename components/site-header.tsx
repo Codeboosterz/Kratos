@@ -12,6 +12,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const checkout = pathname.startsWith("/checkout");
+  const focusedFlow = pathname === "/intake" || pathname.startsWith("/trajecten/");
   const navItems = [[copy.results, "/resultaten"], [copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.community, "/community"]] as const;
 
   if (pathname.startsWith("/beheer")) return null;
@@ -35,9 +36,9 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
             </Link>
           ))}
         </nav>
-        <Link className="button button--outline header-cta" href="/intake?source=header">
+        {!focusedFlow ? <Link className="button button--outline header-cta" href="/intake?source=header">
           {copy.cta}
-        </Link>
+        </Link> : null}
         <button
           type="button"
           className="menu-button"
@@ -52,7 +53,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
       {open ? (
         <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobiele navigatie">
           {navItems.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}
-          <Link className="button button--primary" href="/intake?source=mobile-menu" onClick={() => setOpen(false)}>{copy.cta}</Link>
+          {!focusedFlow ? <Link className="button button--primary" href="/intake?source=mobile-menu" onClick={() => setOpen(false)}>{copy.cta}</Link> : null}
         </nav>
       ) : null}
     </header>

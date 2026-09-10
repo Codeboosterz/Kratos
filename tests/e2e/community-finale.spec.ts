@@ -110,16 +110,23 @@ test("community finale refits after resize and removes desktop transforms on mob
       return Math.abs(start - measuredStart) <= 1
         && Math.abs(end - start - ((element as HTMLElement).offsetHeight - sticky.offsetHeight)) <= 1;
     })).toBe(true);
-    await root.evaluate(element => {
-      const start = Number(element.dataset.communityPinStart);
-      window.scrollTo(0, start + (Number(element.dataset.communityPinEnd) - start) * 0.96);
-    });
-    await expect.poll(() => root.evaluate(element => Number(element.dataset.communityProgress))).toBeCloseTo(0.96, 2);
-    await expect.poll(() => scene.evaluate(element => {
-      const rect = element.getBoundingClientRect();
-      return rect.top >= 100 && rect.bottom <= innerHeight - 28
-        && rect.left >= 20 && rect.right <= innerWidth - 20;
-    })).toBe(true);
+    // A second refresh (fonts/adjacent pinned story) can move the range after
+    // the first resize refresh. Seek the current range on each poll, then give
+    // native scroll/GSAP two frames before checking both position and geometry.
+    await expect.poll(async () => {
+      await root.evaluate(async element => {
+        const start = Number(element.dataset.communityPinStart);
+        window.scrollTo(0, start + (Number(element.dataset.communityPinEnd) - start) * 0.96);
+        await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+      });
+      return root.evaluate(element => {
+        const rect = element.querySelector(".community-reveal__scene")!.getBoundingClientRect();
+        const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-height"));
+        return { progress: Number(element.dataset.communityProgress),
+          fits: rect.top >= header + 28 && rect.bottom <= innerHeight - 28
+            && rect.left >= 20 && rect.right <= innerWidth - 20 };
+      });
+    }).toMatchObject({ progress: expect.closeTo(0.96, 2), fits: true });
   }
   await page.setViewportSize({ width: 375, height: 900 });
   await expect(scene).toHaveCSS("transform", "none");

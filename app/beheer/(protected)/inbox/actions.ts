@@ -1,6 +1,6 @@
 "use server";
 
-import { createHash, randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -9,6 +9,7 @@ import { sendCmsReply } from "@/src/operations/resend";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { markIntakeReadSchema, updateIntakeLeadSchema } from "@/src/schemas/intake-lead";
 import { createAdminClient } from "@/src/supabase/admin";
+import { assertPersisted } from "@/src/operations/webhook-events";
 
 const replySchema = z.object({ threadId: z.uuid(), text: z.string().trim().min(2).max(10_000) });
 const intakeReplySchema = z.object({ intakeId: z.uuid(), text: z.string().trim().min(2).max(10_000) });
@@ -24,8 +25,8 @@ export async function markIntakeRead(formData: FormData) {
   const parsed = markIntakeReadSchema.safeParse({ intakeId: formData.get("intakeId") });
   if (!parsed.success) redirect("/beheer/inbox?view=intakes&status=invalid-intake");
   const now = new Date().toISOString();
-  const { error } = await supabase.from("intake_requests").update({ read_at: now, read_by: userId, updated_at: now }).eq("id", parsed.data.intakeId);
-  if (error) redirect(intakeResultUrl(parsed.data.intakeId, "update-failed"));
+  const { data: updated, error } = await supabase.from("intake_requests").update({ read_at: now, read_by: userId, updated_at: now }).eq("id", parsed.data.intakeId).select("id").maybeSingle();
+  if (error || !updated) redirect(intakeResultUrl(parsed.data.intakeId, "update-failed"));
   revalidatePath("/beheer");
   revalidatePath("/beheer/inbox");
   redirect(intakeResultUrl(parsed.data.intakeId, "read"));
@@ -41,14 +42,14 @@ export async function updateIntakeLead(formData: FormData) {
   });
   if (!parsed.success) redirect("/beheer/inbox?view=intakes&status=invalid-intake");
   const now = new Date().toISOString();
-  const { error } = await supabase.from("intake_requests").update({
+  const { data: updated, error } = await supabase.from("intake_requests").update({
     lead_status: parsed.data.leadStatus,
     internal_note: parsed.data.internalNote,
     read_at: now,
     read_by: userId,
     updated_at: now,
-  }).eq("id", parsed.data.intakeId);
-  if (error) redirect(intakeResultUrl(parsed.data.intakeId, "update-failed"));
+  }).eq("id", parsed.data.intakeId).select("id").maybeSingle();
+  if (error || !updated) redirect(intakeResultUrl(parsed.data.intakeId, "update-failed"));
   try {
     const admin = createAdminClient();
     await admin.from("cms_audit_events").insert({
@@ -98,7 +99,7 @@ export async function replyToIntakeLead(formData: FormData) {
       threadId = createdThread.id;
     }
     const now = new Date().toISOString();
-    const { error: messageError } = await admin.from("email_messages").insert({
+    const { error: messageError } = await admin.from("email_messages").upsert({
       thread_id: threadId,
       provider_message_id: providerId,
       direction: "outbound",
@@ -107,9 +108,9 @@ export async function replyToIntakeLead(formData: FormData) {
       subject,
       text_body: parsed.data.text,
       delivery_status: "sent",
-    });
+    }, { onConflict: "provider_message_id", ignoreDuplicates: true });
     if (messageError) throw new Error(messageError.message);
-    await Promise.all([
+    const updates = await Promise.all([
       admin.from("email_threads").update({ status: "waiting", last_message_at: now }).eq("id", threadId),
       admin.from("intake_requests").update({ lead_status: "contacted", read_at: now, read_by: userId, updated_at: now }).eq("id", intake.id),
       admin.from("cms_audit_events").insert({
@@ -120,6 +121,7 @@ export async function replyToIntakeLead(formData: FormData) {
         metadata: { thread_id: threadId },
       }),
     ]);
+    updates.forEach(result => assertPersisted(result, "E-mailopvolging kon niet volledig worden opgeslagen."));
     sentThreadId = threadId;
   } catch {
     redirect(intakeResultUrl(intake.id, "send-failed"));
@@ -139,13 +141,16 @@ export async function replyToInboxThread(formData: FormData) {
   const admin = createAdminClient();
   const { data: thread } = await admin.from("email_threads").select("id, customer_email, subject").eq("id", parsed.data.threadId).maybeSingle();
   if (!thread) redirect("/beheer/inbox?view=email&status=thread-not-found");
-  const idempotencyKey = createHash("sha256").update(`${thread.id}:${parsed.data.text}:${randomUUID()}`).digest("hex");
+  // Stable across retries within Resend's 24-hour idempotency window.
+  const idempotencyKey = createHash("sha256").update(`${thread.id}:${parsed.data.text}`).digest("hex");
+  const subject = thread.subject.startsWith("Re:") ? thread.subject : `Re: ${thread.subject}`;
   try {
-    const providerId = await sendCmsReply({ apiKey, from, to: thread.customer_email, subject: thread.subject.startsWith("Re:") ? thread.subject : `Re: ${thread.subject}`, text: parsed.data.text, idempotencyKey });
-    await Promise.all([
-      admin.from("email_messages").insert({ thread_id: thread.id, provider_message_id: providerId, direction: "outbound", sender: from, recipients: [thread.customer_email], subject: `Re: ${thread.subject}`, text_body: parsed.data.text, delivery_status: "sent" }),
+    const providerId = await sendCmsReply({ apiKey, from, to: thread.customer_email, subject, text: parsed.data.text, idempotencyKey });
+    const updates = await Promise.all([
+      admin.from("email_messages").upsert({ thread_id: thread.id, provider_message_id: providerId, direction: "outbound", sender: from, recipients: [thread.customer_email], subject, text_body: parsed.data.text, delivery_status: "sent" }, { onConflict: "provider_message_id", ignoreDuplicates: true }),
       admin.from("email_threads").update({ status: "waiting", last_message_at: new Date().toISOString() }).eq("id", thread.id),
     ]);
+    updates.forEach(result => assertPersisted(result, "Antwoord kon niet volledig worden opgeslagen."));
   } catch { redirect(`/beheer/inbox?view=email&thread=${thread.id}&status=send-failed`); }
   revalidatePath("/beheer/inbox");
   redirect(`/beheer/inbox?view=email&thread=${thread.id}&status=sent`);

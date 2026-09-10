@@ -38,10 +38,40 @@ CMS/checkout gates continue rejecting unconfigured payment products.
 7. Reuse local preview and inspect it; link both live and preview results.
 
 ## Status
-Preflight passed. The user saved the existing Supabase secret, and Vercel metadata
-confirms `SUPABASE_SECRET_KEY` as Secret, Production only. No key value was read
-back or stored in code. Scoped release and live intake acceptance are in progress;
-no new migration, payment, email or booking is authorized.
+Complete. The user saved the existing Supabase secret, and Vercel metadata confirms
+`SUPABASE_SECRET_KEY` as Secret, Production only. No key value was read back or
+stored in code. Commit `3537abe41bd4d4299d4ba07b833ddf41701a2b5f` is live;
+deployment `dpl_Ee7AUjwgEtBmeUM9gvrUmXFWq4Nk` is READY with the production alias
+`https://kratosfitness.be` (54-second build). No new migration, payment, email or
+booking was performed.
+
+## Production acceptance
+- Public form submitted once using a new QA tab, preserving the user's old draft.
+- Reference `KRA-26-DD450D88`, row `857d94e3-8314-442f-9b20-d278f71b2747`,
+  name `QA Kratos — niet contacteren`, email `kratos-qa-20260910@example.com`.
+  Note explicitly says synthetic QA, no contact/email/appointment.
+- Exactly one DB row, source `about-final`, `lead_status=new`,
+  `appointment_status=awaiting_booking`. Public step 4 confirms saved intake.
+- Authenticated super-admin CMS Inbox shows all submitted fields and the same
+  reference. Calendar shows one `Wacht op datum` queue entry, no dated appointment.
+  Zero linked appointment rows and zero QA email threads. Record retained.
+- All eight package detail/checkout routes return 200, with two correct matching
+  purchase links per detail page; unconfigured commerce stays guarded.
+- `/community` returns 200, `/gratis-tools` returns 308 to `/community`, and an
+  unauthenticated `/beheer/inbox` request redirects to login.
+- Vercel CLI runtime log confirms `intake_created` with the QA reference and
+  scheduling unavailable. A 15-minute deployment error scan returned no errors;
+  intake browser console has no errors/warnings. Continuous monitoring/drains
+  were not audited. Local production preview remains on port 3200 and was inspected.
+
+## Remaining handover gates
+Payment activation still needs live Stripe configuration and approved CMS price
+mappings. Resend/DNS and Calendly are not activated. Existing Supabase advisories
+remain: three deliberately guarded CMS security-definer RPCs and disabled leaked
+password protection. No security setting was changed during this release.
+Remediation references:
+- [Security-definer RPC review](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable)
+- [Leaked-password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)
 
 Verified on 10 September 2026:
 - Supabase dashboard confirms project `anmeoctiwgybbvgwmjho`, Kratos Fitness,
@@ -61,12 +91,11 @@ Verified on 10 September 2026:
   production build (48 pages) and diff whitespace checks pass.
 - Rebuilt non-fixture preview on port 3200; community layout visually inspected.
 
-Resume: use the existing Supabase key only in Kratos Vercel Production's sensitive
-server variable, never in chat or frontend code. Release the reviewed Units 13–17
-files, this unit and the test synchronization fix. Exclude `public/index.html`,
-`next-env.d.ts`, attachments/PDFs, `assets/`, `prompts/`, CLAUDE/CODEX-HANDOFF files
-and unrelated untracked readiness notes. Verify deployment before one marked QA
-intake and owner CMS check. Payment activation remains out of scope.
+Release scope: 59 reviewed files were committed and pushed without force.
+`public/index.html`, `next-env.d.ts`, attachments/PDFs, `assets/`, `prompts/`,
+CLAUDE/CODEX-HANDOFF files and unrelated readiness notes were left untouched.
+Post-release acceptance notes are local documentation changes; no second app
+deployment is needed. Payment activation remains out of scope.
 
 ## Release-gate diagnosis
 The retained Playwright trace proves stale resize measurements: at timestamp

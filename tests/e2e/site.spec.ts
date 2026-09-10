@@ -131,7 +131,11 @@ test("all eight trajectory detail flows lead to the matching checkout", async ({
     await page.locator(".product-card").filter({ has: page.locator(`a[href="/trajecten/${product.slug}"]`) }).getByTestId("open-product").click();
     await expect(page).toHaveURL(new RegExp(`/trajecten/${product.slug}$`));
     const starts = page.getByTestId("start-product");
-    await expect(starts).toHaveCount(2);
+    await expect(starts).toHaveCount(1);
+    await expect(page.locator(".coach-feature")).toHaveCount(0);
+    await expect(page.locator(".header-cta")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Bekijk wat je krijgt" })).toHaveAttribute("href", "#traject-inhoud");
+    await expect(page.locator("#traject-inhoud")).toHaveCount(1);
     for (const link of await starts.all()) await expect(link).toHaveAttribute("href", `/checkout/${product.slug}`);
     await starts.last().click();
     await expect(page).toHaveURL(new RegExp(`/checkout/${product.slug}$`));
