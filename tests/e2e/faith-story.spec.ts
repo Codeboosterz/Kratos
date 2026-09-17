@@ -8,6 +8,7 @@ const chapterTitles = [
   "Voed je geest",
   "Ga met betekenis",
 ] as const;
+const photoChapters = [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5];
 
 async function scrollStoryTo(page: Page, progress: number) {
   const story = page.getByTestId("faith-scroll-story");
@@ -40,7 +41,7 @@ test("Faith & Fitness keeps the rolling copy, filmstrip and stepper synchronized
   await expect(story).toHaveAttribute("data-story-pin-start", /\d/);
   await expect(story).toHaveAttribute("data-story-pin-end", /\d/);
   await expect(copyPanels).toHaveCount(chapterTitles.length);
-  await expect(cards).toHaveCount(chapterTitles.length);
+  await expect(cards).toHaveCount(photoChapters.length);
   await expect(story.locator(".faith-story__step")).toHaveCount(chapterTitles.length);
   await expect(story.locator(".faith-story__stepper button")).toHaveCount(0);
   await expect(filmstrip).toHaveCSS("overflow", "hidden");
@@ -61,18 +62,21 @@ test("Faith & Fitness keeps the rolling copy, filmstrip and stepper synchronized
 
   let pinnedTop = 0;
   let previousTrackX = Number.POSITIVE_INFINITY;
-  for (const index of chapterTitles.keys()) {
-    const progress = (index + 0.62) / chapterTitles.length;
+  for (const index of photoChapters.keys()) {
+    const chapter = photoChapters[index];
+    const progress = (index + 0.75) / photoChapters.length;
     await scrollStoryTo(page, progress);
-    await expect(story).toHaveAttribute("data-story-step", String(index + 1));
+    await expect(story).toHaveAttribute("data-story-step", String(chapter + 1));
+    await expect(story).toHaveAttribute("data-story-photo", String(index + 1));
 
-    const activeCopy = copyPanels.nth(index);
+    const activeCopy = copyPanels.nth(chapter);
     const activeCard = cards.nth(index);
     await expect(activeCopy).toHaveAttribute("data-story-active", "true");
     await expect(activeCard).toHaveAttribute("data-story-active", "true");
-    await expect(activeCopy.locator("h4")).toHaveText(chapterTitles[index]);
-    await expect(activeCard.locator("figcaption")).toContainText(chapterTitles[index]);
-    await expect(story.locator(".faith-story__step").nth(index)).toHaveAttribute("aria-current", "step");
+    await expect(activeCopy.locator("h4")).toHaveText(chapterTitles[chapter]);
+    await expect(activeCard.locator("figcaption")).toContainText(chapterTitles[chapter]);
+    await expect(story.locator(".faith-story__step").nth(chapter)).toHaveAttribute("aria-current", "step");
+    await expect.poll(() => activeCard.locator("img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
 
     const fullyVisibleCopy = await copyPanels.evaluateAll((elements) => elements.filter((element) => {
       const style = getComputedStyle(element);
@@ -97,6 +101,12 @@ test("Faith & Fitness keeps the rolling copy, filmstrip and stepper synchronized
     else expect(Math.abs(currentTop - pinnedTop)).toBeLessThan(2);
   }
 
+  // Rewinding must restore the first chapter and its first photo as well.
+  const start = Number(await story.getAttribute("data-story-pin-start"));
+  await page.evaluate((y) => window.scrollTo(0, y), start + 1);
+  await expect(story).toHaveAttribute("data-story-photo", "1");
+  await expect(story.locator(".faith-story__step").first()).toHaveAttribute("aria-current", "step");
+
   const pinEnd = Number(await story.getAttribute("data-story-pin-end"));
   await page.evaluate((end) => window.scrollTo(0, end + 300), pinEnd);
   await expect.poll(async () => pinnedTop - await pin.evaluate((element) => element.getBoundingClientRect().top)).toBeGreaterThan(100);
@@ -111,7 +121,7 @@ test("Faith & Fitness keeps the approved desktop filmstrip when reduced motion i
   await expect(story).toHaveAttribute("data-story-mode", "pinned");
   await expect(story.locator(".faith-story__desktop-stage")).toHaveCSS("display", "grid");
   await expect(story.locator(".faith-story__mobile-chapters")).toHaveCSS("display", "none");
-  await expect(story.locator(".faith-story__card")).toHaveCount(chapterTitles.length);
+  await expect(story.locator(".faith-story__card")).toHaveCount(photoChapters.length);
   await expect(story.locator(".faith-story__copy-panel")).toHaveCount(chapterTitles.length);
 });
 
@@ -125,7 +135,16 @@ test("Faith & Fitness uses a readable non-pinned chapter flow on mobile", async 
   await expect(story).toHaveAttribute("data-story-mode", "static");
   await expect(chapters).toHaveCount(chapterTitles.length);
   await expect(story.locator(".faith-story__desktop-stage")).toHaveCSS("display", "none");
-  await expect(story.locator(".faith-story__mobile-image")).toHaveCount(chapterTitles.length);
+  await expect(story.locator(".faith-story__mobile-image")).toHaveCount(photoChapters.length);
+  const mobileSources = await story.locator(".faith-story__mobile-image img").evaluateAll((images) => images.map((img) => new URL((img as HTMLImageElement).src).searchParams.get("url")));
+  expect(new Set(mobileSources).size).toBe(13);
+  expect(mobileSources).not.toContain("/images/community/coached-row.jpg");
+  expect(mobileSources).not.toContain("/images/omar-deadlift.jpg");
+  const imageBounds = await story.locator(".faith-story__mobile-image").evaluateAll((elements) => elements.map((element) => ({ left: element.getBoundingClientRect().left, right: element.getBoundingClientRect().right })));
+  for (const bounds of imageBounds) {
+    expect(bounds.left).toBeGreaterThanOrEqual(0);
+    expect(bounds.right).toBeLessThanOrEqual(390);
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 
   const chapterTops = await chapters.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().top));

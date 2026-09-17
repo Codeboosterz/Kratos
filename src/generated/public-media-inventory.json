@@ -1,6 +1,6 @@
 {
-  "count": 165,
-  "sizeBytes": 20360806,
+  "count": 179,
+  "sizeBytes": 24516681,
   "files": [
     {
       "path": "/hero-frames/frame_001.jpg",
@@ -505,6 +505,62 @@
     {
       "path": "/images/community/coached-row.jpg",
       "sizeBytes": 156237
+    },
+    {
+      "path": "/images/community/gym/alternating-press.jpg",
+      "sizeBytes": 166673
+    },
+    {
+      "path": "/images/community/gym/assisted-leg-raise.jpg",
+      "sizeBytes": 69020
+    },
+    {
+      "path": "/images/community/gym/battle-ropes.jpg",
+      "sizeBytes": 392113
+    },
+    {
+      "path": "/images/community/gym/coached-cable-row.jpg",
+      "sizeBytes": 156237
+    },
+    {
+      "path": "/images/community/gym/coached-incline-press.jpg",
+      "sizeBytes": 189720
+    },
+    {
+      "path": "/images/community/gym/dumbbell-curl.jpg",
+      "sizeBytes": 499184
+    },
+    {
+      "path": "/images/community/gym/incline-press.jpg",
+      "sizeBytes": 389875
+    },
+    {
+      "path": "/images/community/gym/kneeling-cable.jpg",
+      "sizeBytes": 357702
+    },
+    {
+      "path": "/images/community/gym/overhead-press-monochrome.jpg",
+      "sizeBytes": 294630
+    },
+    {
+      "path": "/images/community/gym/seated-dumbbells.jpg",
+      "sizeBytes": 404576
+    },
+    {
+      "path": "/images/community/gym/standing-deadlift.jpg",
+      "sizeBytes": 360193
+    },
+    {
+      "path": "/images/community/gym/training-focus.jpg",
+      "sizeBytes": 211134
+    },
+    {
+      "path": "/images/community/gym/weighted-pushup-close.jpg",
+      "sizeBytes": 329571
+    },
+    {
+      "path": "/images/community/gym/weighted-pushup-wide.jpg",
+      "sizeBytes": 335247
     },
     {
       "path": "/images/community/medicine-ball.jpg",

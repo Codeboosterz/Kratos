@@ -24,7 +24,7 @@ test("community grid loads all replacement photos and keeps the original centre"
   expect(sources[7]).toBe("/images/omar-deadlift.jpg");
   const surrounding = sources.filter((_, index) => index !== 7);
   expect(new Set(surrounding).size).toBe(14);
-  expect(surrounding.every((src) => src?.startsWith("/images/community/"))).toBe(true);
+  expect(surrounding.every((src) => src?.startsWith("/images/community/gym/"))).toBe(true);
   await expect.poll(() => grid.locator("img").evaluateAll((images: HTMLImageElement[]) => images.every((image) => (
     image.complete && image.naturalWidth > 0
   ))), { timeout: 15_000 }).toBe(true);

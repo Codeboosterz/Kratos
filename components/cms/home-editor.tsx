@@ -28,8 +28,17 @@ export function HomeEditor({ initialContent, draftRevisionId, draftVersion, publ
     setPreview((current) => ({ ...current, [name]: value }) as HomeHeroContent);
   }
 
-  function updateFaithStep(index: number, key: keyof HomeHeroContent["faith_story_steps"][number], value: string) {
+  function updateFaithStep(index: number, key: "title" | "text" | "image_url" | "image_alt", value: string) {
     update("faith_story_steps", preview.faith_story_steps.map((step, stepIndex) => stepIndex === index ? { ...step, [key]: value } : step));
+  }
+
+  function updateFaithPhoto(index: number, photoIndex: number, key: "image_url" | "image_alt", value: string) {
+    update("faith_story_steps", preview.faith_story_steps.map((step, stepIndex) => {
+      if (stepIndex !== index) return step;
+      const photos = Array.from({ length: 2 }, (_, slot) => ({ ...step.additional_images[slot], image_url: step.additional_images[slot]?.image_url ?? "", image_alt: step.additional_images[slot]?.image_alt ?? "" }));
+      photos[photoIndex][key] = value;
+      return { ...step, additional_images: photos };
+    }));
   }
 
   function addFaithStep() {
@@ -42,6 +51,7 @@ export function HomeEditor({ initialContent, draftRevisionId, draftVersion, publ
         text: "Vertel hier het volgende hoofdstuk van het Faith & Fitness-verhaal.",
         image_url: fallbackImage,
         image_alt: "",
+        additional_images: [],
       },
     ]);
   }
@@ -138,6 +148,13 @@ export function HomeEditor({ initialContent, draftRevisionId, draftVersion, publ
                   <div className="field"><label htmlFor={`faith_story_${index}_text`}>Verhaaltekst</label><textarea id={`faith_story_${index}_text`} name={`faith_story_${index}_text`} rows={4} maxLength={420} value={step.text} onChange={(event) => updateFaithStep(index, "text", event.target.value)} /><small>{step.text.length}/420 tekens</small></div>
                   <div className="field"><label htmlFor={`faith_story_${index}_image_url`}>Beeld</label><input id={`faith_story_${index}_image_url`} name={`faith_story_${index}_image_url`} list="cms-media-options" value={step.image_url} onChange={(event) => updateFaithStep(index, "image_url", event.target.value)} /></div>
                   <div className="field"><label htmlFor={`faith_story_${index}_image_alt`}>Beeldbeschrijving</label><input id={`faith_story_${index}_image_alt`} name={`faith_story_${index}_image_alt`} maxLength={240} value={step.image_alt} onChange={(event) => updateFaithStep(index, "image_alt", event.target.value)} /><small>{step.image_alt.length}/240 tekens</small></div>
+                  <small>Maximaal twee extra foto’s binnen dit hoofdstuk. Laat de URL leeg om een extra foto te verwijderen.</small>
+                  {[0, 1].map((photoIndex) => (
+                    <div className="cms-two-column" key={`extra-${photoIndex}`}>
+                      <div className="field"><label htmlFor={`faith_story_${index}_extra_${photoIndex}_url`}>Extra foto {photoIndex + 1}</label><input id={`faith_story_${index}_extra_${photoIndex}_url`} name={`faith_story_${index}_extra_${photoIndex}_url`} list="cms-media-options" value={step.additional_images[photoIndex]?.image_url ?? ""} onChange={(event) => updateFaithPhoto(index, photoIndex, "image_url", event.target.value)} /></div>
+                      <div className="field"><label htmlFor={`faith_story_${index}_extra_${photoIndex}_alt`}>Beschrijving extra foto {photoIndex + 1}</label><input id={`faith_story_${index}_extra_${photoIndex}_alt`} name={`faith_story_${index}_extra_${photoIndex}_alt`} maxLength={240} value={step.additional_images[photoIndex]?.image_alt ?? ""} onChange={(event) => updateFaithPhoto(index, photoIndex, "image_alt", event.target.value)} /></div>
+                    </div>
+                  ))}
                 </fieldset>
               ))}
             </div>

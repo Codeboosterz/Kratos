@@ -1385,7 +1385,7 @@ img { max-width: 100%; }
   .faith-story__mobile-context { padding-bottom: 1.5rem; border-bottom: 1px solid rgba(8,10,8,.14); }
   .faith-story__mobile-chapter { position: relative; display: grid; grid-template-columns: 1fr; gap: 1.4rem; padding-top: 1.5rem; border-top: 1px solid rgba(8,10,8,.14); }
   .faith-story__mobile-chapter h4 { max-width: 12ch; font-size: clamp(2.9rem, 13vw, 4.3rem); }
-  .faith-story__mobile-image { min-height: min(125vw, 590px); }
+  .faith-story__mobile-image { width: 100%; min-height: 0; }
   .omar-band__grid { grid-template-columns: .75fr 1.25fr; }
   .omar-band__story { grid-column: 1 / -1; max-width: 680px; }
   .direction-grid { grid-template-columns: 1fr; }

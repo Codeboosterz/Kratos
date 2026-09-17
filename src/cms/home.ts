@@ -3,7 +3,7 @@ import "server-only";
 import { z } from "zod";
 import { isSupabaseConfigured } from "@/src/supabase/config";
 import { createPublicClient } from "@/src/supabase/public";
-import { communityImageDefaults } from "@/src/content/community-media";
+import { communityImageDefaults, previousCommunityImageDefaults, faithCommunityPhotos } from "@/src/content/community-media";
 
 const internalHref = z.string().trim().min(1).max(240).refine((value) => value.startsWith("/"), {
   message: "Gebruik een intern pad dat met / begint.",
@@ -19,14 +19,20 @@ const safeImageUrl = z.string().trim().min(1).max(1000).refine((value) => {
   }
 }, { message: "Kies een beeld uit de mediabibliotheek of gebruik een intern pad." });
 
+const faithPhotoSchema = z.object({
+  image_url: safeImageUrl,
+  image_alt: z.string().trim().max(240).default(""),
+});
+
 const faithStoryStepSchema = z.object({
   title: z.string().trim().min(2).max(80),
   text: z.string().trim().min(20).max(420),
   image_url: safeImageUrl,
   image_alt: z.string().trim().max(240).default(""),
+  additional_images: z.array(faithPhotoSchema).max(2).default([]),
 });
 
-const defaultFaithStorySteps = [
+const previousFaithStorySteps = [
   {
     title: "Begin met aandacht",
     text: "Geloof en discipline beginnen bij eerlijk stilstaan: waar je bent, wat je draagt en waar je naartoe wilt.",
@@ -64,6 +70,12 @@ const defaultFaithStorySteps = [
     image_alt: "Omar kijkt na zijn training in stilte naar het licht buiten.",
   },
 ] as const;
+
+const defaultFaithStorySteps = previousFaithStorySteps.map((step, index) => {
+  const start = index === 0 ? 0 : index * 2 + 1;
+  const photos = faithCommunityPhotos.slice(start, start + (index === 0 ? 3 : 2));
+  return { ...step, ...photos[0], additional_images: photos.slice(1) };
+});
 
 const reviewCardSchema = z.object({
   label: z.string().trim().min(2).max(60),
@@ -141,13 +153,25 @@ export const homeHeroSchema = z.preprocess((input) => {
   const content = input as Record<string, unknown>;
   const images = content.community_image_urls;
   const hasLegacyCommunityDefaults = Array.isArray(images)
-    && images.length === legacyCommunityImageDefaults.length
-    && images.every((url, index) => url === legacyCommunityImageDefaults[index]);
+    && [legacyCommunityImageDefaults, previousCommunityImageDefaults].some((defaults) =>
+      images.length === defaults.length && images.every((url, index) => url === defaults[index]));
+  const steps = content.faith_story_steps;
+  const hasPreviousFaithPhotos = Array.isArray(steps)
+    && steps.length === previousFaithStorySteps.length
+    && steps.every((step, index) => step && typeof step === "object"
+      && step.image_url === previousFaithStorySteps[index].image_url
+      && step.additional_images === undefined);
 
   return {
     ...content,
     // Replace the old default poster set, not a client's custom image choices.
     ...(hasLegacyCommunityDefaults ? { community_image_urls: [...communityImageDefaults] } : {}),
+    ...(hasPreviousFaithPhotos ? { faith_story_steps: steps.map((step, index) => ({
+      ...step,
+      image_url: defaultFaithStorySteps[index].image_url,
+      image_alt: defaultFaithStorySteps[index].image_alt,
+      additional_images: defaultFaithStorySteps[index].additional_images,
+    })) } : {}),
     ...(content.faith_story_layout_version === undefined ? {
       faith_story_layout_version: 2,
       faith_story_steps: defaultFaithStorySteps.map((step) => ({ ...step })),
@@ -272,6 +296,10 @@ export function homeHeroFromFormData(formData: FormData) {
       text: formData.get(`faith_story_${index}_text`),
       image_url: formData.get(`faith_story_${index}_image_url`),
       image_alt: formData.get(`faith_story_${index}_image_alt`),
+      additional_images: Array.from({ length: 2 }, (_, photoIndex) => ({
+        image_url: formData.get(`faith_story_${index}_extra_${photoIndex}_url`) ?? "",
+        image_alt: formData.get(`faith_story_${index}_extra_${photoIndex}_alt`) ?? "",
+      })).filter((photo) => typeof photo.image_url !== "string" || photo.image_url.trim() !== ""),
     })),
     omar_eyebrow: formData.get("omar_eyebrow"),
     omar_word: formData.get("omar_word"),

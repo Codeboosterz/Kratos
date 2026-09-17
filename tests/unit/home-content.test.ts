@@ -16,6 +16,10 @@ function formDataForFaithSteps(stepCount: number) {
     formData.set(`faith_story_${index}_text`, source.text);
     formData.set(`faith_story_${index}_image_url`, source.image_url);
     formData.set(`faith_story_${index}_image_alt`, source.image_alt);
+    source.additional_images.forEach((photo, photoIndex) => {
+      formData.set(`faith_story_${index}_extra_${photoIndex}_url`, photo.image_url);
+      formData.set(`faith_story_${index}_extra_${photoIndex}_alt`, photo.image_alt);
+    });
   });
 
   defaultHomeHero.community_image_urls.forEach((url, index) => {
@@ -61,6 +65,21 @@ describe("Faith & Fitness CMS content", () => {
     if (!result.success) return;
     expect(result.data.faith_story_steps).toHaveLength(7);
     expect(result.data.faith_story_steps[6].title).toContain("7");
+    expect(result.data.faith_story_steps[0].additional_images).toEqual(defaultHomeHero.faith_story_steps[0].additional_images);
+  });
+
+  it("round-trips all thirteen photos and removes blank optional CMS slots", () => {
+    const form = formDataForFaithSteps(6);
+    const saved = homeHeroFromFormData(form);
+    expect(saved.success).toBe(true);
+    if (!saved.success) return;
+    expect(saved.data.faith_story_steps.flatMap((step) => [step.image_url, ...step.additional_images.map((photo) => photo.image_url)])).toHaveLength(13);
+    form.set("faith_story_0_extra_0_url", "   ");
+    const removed = homeHeroFromFormData(form);
+    expect(removed.success).toBe(true);
+    if (removed.success) expect(removed.data.faith_story_steps[0].additional_images).toEqual([defaultHomeHero.faith_story_steps[0].additional_images[1]]);
+    form.set("faith_story_0_extra_0_url", "https://untrusted.example/photo.jpg");
+    expect(homeHeroFromFormData(form).success).toBe(false);
   });
 
   it("upgrades the former four-step story when loading an unversioned revision", () => {

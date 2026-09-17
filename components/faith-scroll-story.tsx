@@ -1,21 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Stepper, StepperIndicator, StepperItem, StepperSeparator } from "@/components/ui/stepper";
 import { MOTION } from "@/motion/animation-tokens";
+import { getFaithStoryPhotos, type FaithStoryStep } from "@/src/content/faith-story";
+
+export type { FaithStoryStep } from "@/src/content/faith-story";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-export type FaithStoryStep = {
-  title: string;
-  text: string;
-  image_url: string;
-  image_alt: string;
-};
 
 type Props = {
   eyebrow: string;
@@ -36,6 +32,7 @@ function stepNumber(index: number) {
 export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Props) {
   const scope = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(1);
+  const photos = useMemo(() => getFaithStoryPhotos(steps), [steps]);
 
   useGSAP(() => {
     const root = scope.current;
@@ -46,19 +43,21 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
     const track = root.querySelector<HTMLElement>(".faith-story__track");
     const copyPanels = gsap.utils.toArray<HTMLElement>(".faith-story__copy-panel", root);
     const cards = gsap.utils.toArray<HTMLElement>(".faith-story__card", root);
-    if (!pin || !viewport || !track || copyPanels.length !== steps.length || cards.length !== steps.length) return;
+    if (!pin || !viewport || !track || copyPanels.length !== steps.length || cards.length !== photos.length) return;
 
     const applyActiveStep = (activeIndex: number) => {
+      const chapterIndex = photos[activeIndex].stepIndex;
       copyPanels.forEach((panel, index) => {
-        const active = index === activeIndex;
+        const active = index === chapterIndex;
         panel.dataset.storyActive = String(active);
         panel.setAttribute("aria-hidden", String(!active));
       });
       cards.forEach((card, index) => {
         card.dataset.storyActive = String(index === activeIndex);
       });
-      root.dataset.storyStep = String(activeIndex + 1);
-      setActiveStep(activeIndex + 1);
+      root.dataset.storyPhoto = String(activeIndex + 1);
+      root.dataset.storyStep = String(chapterIndex + 1);
+      setActiveStep(chapterIndex + 1);
     };
 
     root.dataset.storyMode = "static";
@@ -99,7 +98,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
 
       let lastActiveIndex = 0;
       const syncVisualState = (visualProgress: number) => {
-        const activeIndex = Math.min(steps.length - 1, Math.floor(visualProgress * steps.length));
+        const activeIndex = Math.min(photos.length - 1, Math.floor(visualProgress * photos.length));
         root.dataset.storyProgress = visualProgress.toFixed(3);
         if (activeIndex !== lastActiveIndex) {
           lastActiveIndex = activeIndex;
@@ -136,22 +135,27 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
         },
       });
 
-      timeline.to({}, { duration: steps.length }, 0);
+      timeline.to({}, { duration: photos.length }, 0);
 
-      steps.forEach((_, index) => {
+      photos.forEach((photo, index) => {
         if (index === 0) return;
-        const previousCopy = copyPanels[index - 1];
-        const currentCopy = copyPanels[index];
+        const previousChapter = photos[index - 1].stepIndex;
+        const chapter = photo.stepIndex;
+        const previousCopy = copyPanels[previousChapter];
+        const currentCopy = copyPanels[chapter];
         const previousCard = cards[index - 1];
         const currentCard = cards[index];
-        const olderCopies = copyPanels.slice(0, Math.max(0, index - 1));
+        const olderCopies = copyPanels.slice(0, Math.max(0, chapter - 1));
         const at = index;
 
-        if (olderCopies.length > 0) timeline.set(olderCopies, { autoAlpha: 0 }, at);
+        if (chapter !== previousChapter) {
+          if (olderCopies.length > 0) timeline.set(olderCopies, { autoAlpha: 0 }, at);
+          timeline
+            .to(previousCopy, { autoAlpha: 0.14, yPercent: -82, duration: 0.34, ease: "power2.inOut" }, at)
+            .to(currentCopy, { autoAlpha: 1, yPercent: 0, duration: 0.42, ease: "power3.out" }, at + 0.05);
+        }
 
         timeline
-          .to(previousCopy, { autoAlpha: 0.14, yPercent: -82, duration: 0.34, ease: "power2.inOut" }, at)
-          .to(currentCopy, { autoAlpha: 1, yPercent: 0, duration: 0.42, ease: "power3.out" }, at + 0.05)
           .to(track, { x: () => centerCard(index), duration: 0.62, ease: "none" }, at)
           .to(previousCard, {
             clipPath: "inset(0% 0% 42% 0% round 24px)",
@@ -171,7 +175,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
           }, at + 0.04);
       });
 
-      timeline.to({}, { duration: 0.42 }, steps.length - 0.42);
+      timeline.to({}, { duration: 0.42 }, photos.length - 0.42);
 
       // Card geometry is fixed by CSS, so image decoding cannot change the pin
       // positions. Refresh once after both sibling effects and fonts settle;
@@ -186,7 +190,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
     });
 
     return () => media.revert();
-  }, { scope, dependencies: [steps], revertOnUpdate: true });
+  }, { scope, dependencies: [steps, photos], revertOnUpdate: true });
 
   return (
     <section
@@ -223,10 +227,10 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
 
             <div className="faith-story__filmstrip">
               <div className="faith-story__track">
-                {steps.map((step, index) => (
-                  <figure className="faith-story__card" data-story-active={String(index === 0)} key={`${step.title}-card-${index}`}>
-                    <Image src={step.image_url} alt={step.image_alt} fill loading={index === 0 ? "eager" : "lazy"} sizes="(max-width: 900px) 90vw, 22vw" />
-                    <figcaption><span>{stepNumber(index)}</span>{step.title}</figcaption>
+                {photos.map((photo, index) => (
+                  <figure className="faith-story__card" data-story-active={String(index === 0)} key={`${photo.image_url}-card-${index}`}>
+                    <Image src={photo.image_url} alt={photo.image_alt} fill loading={index === 0 ? "eager" : "lazy"} sizes="(max-width: 900px) 90vw, 32vw" />
+                    <figcaption><span>{stepNumber(photo.stepIndex)}</span>{photo.title}</figcaption>
                   </figure>
                 ))}
               </div>
@@ -267,9 +271,11 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
                   <h4>{step.title}</h4>
                   <p>{step.text}</p>
                 </div>
-                <figure className="faith-story__mobile-image">
-                  <Image src={step.image_url} alt={step.image_alt} fill sizes="(max-width: 900px) 92vw, 48vw" />
-                </figure>
+                {photos.filter((photo) => photo.stepIndex === index).map((photo, photoIndex) => (
+                  <figure className="faith-story__mobile-image" key={`${photo.image_url}-${photoIndex}`}>
+                    <Image src={photo.image_url} alt={photo.image_alt} fill sizes="(max-width: 900px) 92vw, 48vw" />
+                  </figure>
+                ))}
               </article>
             ))}
           </div>
