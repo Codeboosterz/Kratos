@@ -55,6 +55,26 @@
 - Calendly — optional embed, webhook, reconciliation, reschedule/cancel links.
 - Resend — transactional/inbound email and replies.
 
+## Observability — Unit 28 (local, 19 September 2026)
+
+- `src/observability` normalizes routes to a fixed allow-list. Intake and checkout
+  responses carry a server-generated `X-Request-Id`; structured runtime events
+  record outcome code, HTTP status and duration, not submitted fields or keys.
+- Root `instrumentation.ts` reports Next server exceptions by route category and
+  numeric digest. The route error boundary and browser error/rejection listeners
+  use `/api/telemetry/errors`, with strict same-origin/schema/1KB/rate limits and
+  client deduplication. Reports contain no raw message, stack or URL query.
+- CMS monitoring checks all seven query results independently and distinguishes
+  unreadable data, incomplete product checkout configuration and stale/missing
+  provider checks. Saved checks expire for display after 24 hours; none establish
+  a successful payment, email, booking or fulfillment round trip.
+- Vercel Analytics 2.0.1 / Speed Insights 2.0.0 mount only for a Vercel production
+  build on allowed public routes, subject to essential-only opt-out. Query/hash
+  and dynamic slug values are stripped. CMS, API, download and checkout-success
+  routes are excluded from these optional measurements. Dashboard activation and
+  production event verification remain deployment-time gates; no paid drain or
+  new monitoring vendor is configured.
+
 ## Deployment Model
 
 Next.js on Vercel with Supabase as the production data source. Migrations are

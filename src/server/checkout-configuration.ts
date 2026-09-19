@@ -5,9 +5,11 @@ import type { CommerceProduct } from "@/src/server/commerce-catalogue";
 import { trustedSiteOrigin } from "@/src/server/environment";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { getStripeReadiness } from "@/src/operations/stripe-configuration";
+import { productCheckoutBlockers, type CheckoutReason } from "@/src/operations/checkout-readiness";
+import { logOperationalEvent } from "@/src/observability/server";
 
 type PricedProduct = CommerceProduct & { priceCents: number; stripePriceId: string };
-type CheckoutConfiguration = { ready: false } | {
+type CheckoutConfiguration = { ready: false; reasons: CheckoutReason[] } | {
   ready: true;
   product: PricedProduct;
   secretKey: string;
@@ -18,18 +20,25 @@ type CheckoutConfiguration = { ready: false } | {
 
 // Server-only: never pass this object wholesale to a client component.
 export async function getCheckoutConfiguration(product: CommerceProduct | null): Promise<CheckoutConfiguration> {
-  if (!product?.active || !Number.isSafeInteger(product.priceCents) || !product.priceCents || product.priceCents < 0 ||
-      !product.stripePriceId?.startsWith("price_") || !/^[a-z]{3}$/.test(product.currency) || !trustedSiteOrigin) return { ready: false };
+  const blocked = (reasons: CheckoutReason[]): CheckoutConfiguration => {
+    logOperationalEvent({ event: "checkout_configuration", route: "/checkout/[slug]", code: reasons[0] });
+    return { ready: false, reasons };
+  };
+  const reasons = productCheckoutBlockers(product);
+  if (!trustedSiteOrigin) reasons.push("SITE_ORIGIN_MISSING");
+  if (reasons.length) return blocked(reasons);
+  if (!product || product.priceCents === null || !product.stripePriceId || !trustedSiteOrigin) return blocked(["PRODUCT_MISSING"]);
 
+  let secretReadFailed = false;
+  const readSecret = (slot: string) => resolveIntegrationSecret("stripe", slot).catch(() => { secretReadFailed = true; return null; });
   const [secretKey, publishableKey, webhookSecret] = await Promise.all([
-    resolveIntegrationSecret("stripe", "secret_key").catch(() => null),
-    resolveIntegrationSecret("stripe", "publishable_key").catch(() => null),
-    resolveIntegrationSecret("stripe", "webhook_secret").catch(() => null),
+    readSecret("secret_key"), readSecret("publishable_key"), readSecret("webhook_secret"),
   ]);
+  if (secretReadFailed) return blocked(["SECRET_READ_FAILED"]);
   const { ready, mode } = getStripeReadiness({ secretKey, publishableKey, webhookSecret });
-  if (!ready || !mode || !secretKey || !publishableKey) return { ready: false };
-  if (process.env.NODE_ENV === "production" && mode !== "live") return { ready: false };
-  if (mode === "live" && !trustedSiteOrigin.startsWith("https://")) return { ready: false };
+  if (!ready || !mode || !secretKey || !publishableKey) return blocked(["STRIPE_CONFIGURATION_REQUIRED"]);
+  if (process.env.NODE_ENV === "production" && mode !== "live") return blocked(["LIVE_MODE_REQUIRED"]);
+  if (mode === "live" && !trustedSiteOrigin.startsWith("https://")) return blocked(["HTTPS_REQUIRED"]);
   return {
     ready: true, product: { ...product, priceCents: product.priceCents, stripePriceId: product.stripePriceId },
     secretKey, publishableKey, mode, origin: trustedSiteOrigin,

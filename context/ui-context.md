@@ -43,6 +43,14 @@ Reuse existing CSS variables and approved tokens:
   intake action. Unconfigured commerce stays visibly unavailable.
 - CMS Inbox uses filtered 50-record pages and stable detail links; upload/AI
   inputs survive failure and loading indicators are released on network errors.
+- CMS Monitoring shows unreadable results as `Onbekend`, not zero. Product
+  checkout blockers have a dedicated section; all five provider-check histories
+  remain visible even if missing. Old saved successes require a fresh check.
+  These are configuration diagnostics, not a claim of live provider readiness.
+- Intake next-step and final-submit controls have separate identities and native
+  actions. Opening contact does not validate or submit it; focus moves to its
+  heading. Public contact remains `KRATOS_FITNESS2025@outlook.com` (19 September
+  user confirmation). Cookie preferences disable optional measurement locally.
 
 ## Motion
 

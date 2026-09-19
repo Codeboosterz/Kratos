@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ admin: vi.fn(), upsert: vi.fn(), single: vi.fn(), secret: vi.fn(), limit: vi.fn() }));
 vi.mock("@/src/supabase/admin", () => ({ createAdminClient: mocks.admin }));
@@ -12,6 +12,7 @@ const valid = { goal: "afvallen", experience: "beginner", format: "online", avai
 const submit = (key = valid.idempotencyKey) => POST(new Request("https://kratosfitness.be/api/intake", { method: "POST", headers: { "content-type": "application/json", "idempotency-key": key }, body: JSON.stringify(valid) }));
 
 describe("durable intake capture", () => {
+  afterEach(() => vi.restoreAllMocks());
   beforeEach(() => {
     vi.resetAllMocks();
     mocks.limit.mockResolvedValue({ allowed: true });
@@ -21,12 +22,19 @@ describe("durable intake capture", () => {
     mocks.admin.mockReturnValue({ from: () => ({ upsert: mocks.upsert, select: () => ({ eq: () => ({ single: mocks.single }) }) }) });
   });
   it("stores the lead independently of Calendly and returns only safe confirmation", async () => {
+    const logs = vi.spyOn(console, "info").mockImplementation(() => {});
     const response = await submit();
     expect(response.status).toBe(201);
     expect(await response.json()).toEqual({ ok: true, reference: "KRA-PERSISTED", schedulingUrl: null });
     expect(mocks.limit).toHaveBeenCalledWith(expect.objectContaining({ namespace: "intake" }));
     expect(mocks.upsert).toHaveBeenCalledWith(expect.objectContaining({ source: "about-final", customer_email: valid.email }), { onConflict: "idempotency_key", ignoreDuplicates: true });
     expect(response.headers.get("cache-control")).toContain("no-store");
+    const events = logs.mock.calls.map(([entry]) => JSON.parse(entry));
+    expect(events).toEqual([
+      expect.objectContaining({ event: "intake_request", code: "REQUEST_STARTED", requestId: response.headers.get("x-request-id") }),
+      expect.objectContaining({ event: "intake_request", code: "COMPLETED", status: 201, requestId: response.headers.get("x-request-id") }),
+    ]);
+    for (const privateValue of [valid.name, valid.email, valid.idempotencyKey, "KRA-PERSISTED", valid.source]) expect(JSON.stringify(events)).not.toContain(privateValue);
   });
   it("retries without rewriting the first submission and keeps its reference", async () => {
     const first = await (await submit()).json();
@@ -41,6 +49,7 @@ describe("durable intake capture", () => {
     expect(mocks.secret).not.toHaveBeenCalled();
   });
   it.each(["insert", "read", "transport"])("keeps %s failure retryable without provider calls", async (mode) => {
+    const logs = vi.spyOn(console, "error").mockImplementation(() => {});
     if (mode === "insert") mocks.upsert.mockResolvedValue({ error: { message: "private DB detail" } });
     if (mode === "read") mocks.single.mockResolvedValue({ data: null, error: {} });
     if (mode === "transport") mocks.upsert.mockRejectedValue(new Error("private transport detail"));
@@ -48,6 +57,8 @@ describe("durable intake capture", () => {
     expect(response.status).toBe(503);
     expect(await response.json()).toMatchObject({ ok: false, error: { code: "DATABASE_FAILURE", retryable: true } });
     expect(mocks.secret).not.toHaveBeenCalled();
+    expect(JSON.parse(logs.mock.calls[0][0])).toMatchObject({ code: "DATABASE_FAILURE", status: 503, requestId: response.headers.get("x-request-id") });
+    expect(JSON.stringify(logs.mock.calls)).not.toMatch(/private|intake@example|Test intake/);
   });
   it("rejects mismatched retry keys before a database write", async () => {
     expect((await submit("wrong")).status).toBe(400);

@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FixtureBanner } from "@/components/fixture-banner";
 import { fixtureMode, trustedSiteOrigin } from "@/src/server/environment";
 import { getPublishedCmsPage } from "@/src/cms/site-pages";
+import { SiteTelemetry } from "@/components/site-telemetry";
 
 export const metadata: Metadata = {
   metadataBase: trustedSiteOrigin ? new URL(trustedSiteOrigin) : new URL("https://kratosfitness.be"),
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <SiteHeader copy={{ results: site.nav_results, method: site.nav_method, trajectories: site.nav_trajectories, about: site.nav_about, community: site.nav_community, cta: site.nav_cta }} />
         <main id="main-content">{children}</main>
         <SiteFooter copy={{ tagline: site.footer_tagline, explore: site.footer_explore, policy: site.footer_policy, signature: site.footer_signature, brandTagline: site.brand_tagline, community: site.nav_community }} />
+        <SiteTelemetry enabled={process.env.VERCEL_ENV === "production" && !fixtureMode} />
       </body>
     </html>
   );

@@ -17,7 +17,7 @@ const fixedPrice = { id: "price_fixture", active: true, type: "one_time", curren
 
 describe("checkout API configuration gate", () => {
   beforeEach(() => { vi.clearAllMocks(); mocks.create.mockResolvedValue({ id: "cs_test_fixture", client_secret: "cs_test_client_fixture" }); mocks.price.mockResolvedValue({ ...fixedPrice }); });
-  afterEach(() => vi.unstubAllEnvs());
+  afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
   async function submit(keys: Record<string, string | null | undefined>, quote: unknown = { priceCents: 30000, currency: "eur" }) {
     mocks.resolve.mockImplementation(async (_provider, slot: string) => keys[slot] ?? null);
     const { POST } = await import("@/app/api/checkout/session/route");
@@ -36,10 +36,13 @@ describe("checkout API configuration gate", () => {
     expect(mocks.create).not.toHaveBeenCalled();
   });
   it("passes only a client secret, never API credentials, to a ready checkout", async () => {
+    const logs = vi.spyOn(console, "info").mockImplementation(() => {});
     const response = await submit({ secret_key: "sk_test_fakefixture123", publishable_key: "pk_test_fakefixture123", webhook_secret: "whsec_fakefixture123" });
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ demo: false, sessionId: "cs_test_fixture", clientSecret: "cs_test_client_fixture" });
     expect(mocks.create).toHaveBeenCalledOnce();
+    expect(response.headers.get("x-request-id")).toMatch(/^[a-f0-9-]{36}$/);
+    expect(JSON.stringify(logs.mock.calls)).not.toMatch(/fakefixture|cs_test_|3c30dfd8/);
   });
   it.each([
     { unit_amount: 100 }, { currency: "usd" }, { active: false },
@@ -77,10 +80,13 @@ describe("checkout API configuration gate", () => {
     }, { idempotencyKey: "checkout:fixture:3c30dfd8-96d0-47ac-a009-87521a23b598" });
   });
   it("handles price retrieval failure without leaking provider details", async () => {
+    const logs = vi.spyOn(console, "error").mockImplementation(() => {});
     mocks.price.mockRejectedValue(new Error("private provider diagnostic"));
     const response = await submit(testKeys);
     expect(response.status).toBe(502);
     expect(await response.text()).not.toContain("private provider diagnostic");
     expect(mocks.create).not.toHaveBeenCalled();
+    expect(JSON.parse(logs.mock.calls[0][0])).toMatchObject({ event: "checkout_request", status: 502, requestId: response.headers.get("x-request-id") });
+    expect(JSON.stringify(logs.mock.calls)).not.toMatch(/private provider|fakefixture/);
   });
 });

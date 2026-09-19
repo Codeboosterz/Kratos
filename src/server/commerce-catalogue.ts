@@ -2,6 +2,7 @@ import "server-only";
 
 import { getProduct } from "@/src/server/catalogue";
 import { createAdminClient } from "@/src/supabase/admin";
+import { logOperationalEvent } from "@/src/observability/server";
 
 export type CommerceProduct = {
   id: string; slug: string; name: string; summary: string; priceCents: number | null; currency: string;
@@ -17,9 +18,13 @@ export async function getCommerceProduct(slug: string): Promise<CommerceProduct 
         id: data.id, slug: data.slug, name: data.name, summary: data.description, priceCents: data.price_cents,
         currency: data.currency, stripePriceId: data.stripe_price_id, active: data.status === "active",
       };
+      logOperationalEvent({ event: "catalogue_read", route: "/checkout/[slug]", code: error ? "CATALOGUE_READ_FAILED" : "PRODUCT_MISSING", level: error ? "error" : "warn" });
     } catch {
       // Keep marketing content visible, but never sell a stale static price.
+      logOperationalEvent({ event: "catalogue_read", route: "/checkout/[slug]", code: "CATALOGUE_READ_FAILED", level: "error" });
     }
+  } else {
+    logOperationalEvent({ event: "catalogue_read", route: "/checkout/[slug]", code: "DATABASE_CONFIGURATION_REQUIRED" });
   }
   const fallback = getProduct(slug);
   if (!fallback) return null;

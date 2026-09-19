@@ -4,6 +4,7 @@ import { credentialInputType, integrationDefinitions, type IntegrationId, type I
 import { getOpenRouterOverview } from "@/src/operations/openrouter";
 import { environmentCredentialName, resolveIntegrationSecret } from "@/src/operations/secrets";
 import { saveIntegrationCredential, testIntegration } from "./actions";
+import { isConnectionFresh } from "@/src/operations/monitoring";
 
 type PageProps = { searchParams: Promise<{ status?: string; provider?: string }> };
 type ConnectionRow = { provider: IntegrationId; status: IntegrationState; last_checked_at: string | null; last_error: string | null };
@@ -61,7 +62,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
     }
   }
 
-  const configuredCount = connectionRows.filter((row) => row.status === "connected").length;
+  const configuredCount = connectionRows.filter((row) => row.status === "connected" && isConnectionFresh(row.last_checked_at)).length;
   const message = statusMessage(status, provider);
   const schemaReady = !connectionError && !refsError;
 
@@ -69,14 +70,14 @@ export default async function SettingsPage({ searchParams }: PageProps) {
     <main className="cms-main cms-main--wide cms-operations">
       <div className="cms-page-heading">
         <div><span className="eyebrow">Operations hub</span><h1>Integraties & gezondheid.</h1><p>API-slots, verbindingstests en kosteninzicht. Geheime waarden worden alleen write-only opgeslagen in Supabase Vault.</p></div>
-        <span className={`cms-health-badge ${schemaReady ? "is-healthy" : "is-warning"}`}><ShieldCheck aria-hidden="true" /> {schemaReady ? "Datalaag gereed" : "Migratie nodig"}</span>
+        <span className={`cms-health-badge ${schemaReady ? "is-healthy" : "is-warning"}`}><ShieldCheck aria-hidden="true" /> {schemaReady ? "Datalaag gereed" : "Controle onvolledig"}</span>
       </div>
 
       {message ? <p className={`cms-message ${status?.includes("failed") || status?.includes("required") ? "cms-message--error" : "cms-message--success"}`}>{message}</p> : null}
-      {!schemaReady ? <div className="cms-operations-alert"><TriangleAlert aria-hidden="true" /><div><strong>Operations-migratie is nog niet actief</strong><span>Pas eerst de nieuwe Supabase-migratie toe. Tot die tijd blijven alle formulieren veilig zonder effect.</span></div></div> : null}
+      {!schemaReady ? <div className="cms-operations-alert"><TriangleAlert aria-hidden="true" /><div><strong>Integratiegegevens konden niet worden gelezen</strong><span>Controleer databasebereikbaarheid, rechten en schema. Onbekende gegevens worden niet als een gezonde verbinding beschouwd.</span></div></div> : null}
 
       <section className="cms-ops-metrics" aria-label="Integratie-overzicht">
-        <article><span><PlugZap aria-hidden="true" /> Verbonden</span><strong>{configuredCount}<small>/ {integrationDefinitions.length}</small></strong><p>actief gecontroleerde providers</p></article>
+        <article><span><PlugZap aria-hidden="true" /> Recent verbonden</span><strong>{connectionError ? "—" : configuredCount}<small>/ {integrationDefinitions.length}</small></strong><p>opgeslagen controle van minder dan 24 uur oud; geen live garantie</p></article>
         <article><span><CircleDollarSign aria-hidden="true" /> OpenRouter tegoed</span><strong>{money(telemetry.credits?.remainingCreditsUsd)}</strong><p>{telemetry.credits ? `${money(telemetry.credits.totalUsageUsd)} totaal gebruikt` : "Management key vereist"}</p></article>
         <article><span><Activity aria-hidden="true" /> Deze maand</span><strong>{money(telemetry.keyUsage?.monthlyUsageUsd)}</strong><p>{telemetry.keyUsage?.limitUsd ? `${money(telemetry.keyUsage.remainingLimitUsd)} keylimiet over` : "Geen keylimiet gemeld"}</p></article>
         <article><span><KeyRound aria-hidden="true" /> AI-model</span><strong className="cms-ops-model">Claude<br />4.6</strong><p>server-side structured output</p></article>
@@ -85,13 +86,14 @@ export default async function SettingsPage({ searchParams }: PageProps) {
       <section className="cms-operations-grid">
         {integrationDefinitions.map((definition) => {
           const connection = connectionRows.find((row) => row.provider === definition.id);
-          const state = connection?.status ?? "configuration_required";
+          const stale = connection?.status === "connected" && !isConnectionFresh(connection.last_checked_at);
+          const state = connectionError || stale ? "degraded" : connection?.status ?? "configuration_required";
           return (
             <article className="cms-integration-card" key={definition.id}>
               <header>
                 <div className={`cms-provider-mark cms-provider-mark--${definition.id}`}>{definition.name.slice(0, 2).toUpperCase()}</div>
                 <div><h2>{definition.name}</h2><p>{definition.description}</p></div>
-                <span className={`cms-status-pill is-${state}`}><i />{stateLabels[state]}</span>
+                <span className={`cms-status-pill is-${state}`}><i />{connectionError ? "Onbekend" : stale ? "Opnieuw controleren" : stateLabels[state]}</span>
               </header>
               <div className="cms-capability-row">{definition.capabilities.map((capability) => <span key={capability}>{capability}</span>)}</div>
               {connection?.last_error ? <p className="cms-provider-error"><TriangleAlert aria-hidden="true" />{connection.last_error}</p> : null}

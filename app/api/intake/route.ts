@@ -1,5 +1,5 @@
+import { observeRequest } from "@/src/observability/server";
 import { createHash } from "node:crypto";
-import { NextResponse } from "next/server";
 import { buildCalendlyEmbedUrl } from "@/src/operations/calendly";
 import { resolveIntegrationSecret } from "@/src/operations/secrets";
 import { intakeSchema } from "@/src/schemas/intake";
@@ -15,35 +15,35 @@ function intakeReference(idempotencyKey: string) {
 }
 
 export async function POST(request: Request) {
+  const { respond } = observeRequest("/api/intake", "intake_request");
   const limit = await checkDurableRateLimit({ namespace: "intake", key: requestClientKey(request), limit: 8, windowMs: 60_000 });
   if (!limit.allowed) {
-    return NextResponse.json({ ok: false, error: { code: "RATE_LIMITED", message: "Te veel verzoeken. Probeer het over een minuut opnieuw.", retryable: true } }, { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } });
+    return respond({ ok: false, error: { code: "RATE_LIMITED", message: "Te veel verzoeken. Probeer het over een minuut opnieuw.", retryable: true } }, { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } });
   }
 
   let json: unknown;
   try { json = await request.json(); } catch {
-    return NextResponse.json({ ok: false, error: { code: "INVALID_INPUT", message: "De aanvraag bevat geen geldige gegevens.", retryable: false } }, { status: 400 });
+    return respond({ ok: false, error: { code: "INVALID_INPUT", message: "De aanvraag bevat geen geldige gegevens.", retryable: false } }, { status: 400 });
   }
   const parsed = intakeSchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json({ ok: false, error: { code: "INVALID_INPUT", message: "Controleer de gemarkeerde velden.", retryable: true, fieldErrors: parsed.error.flatten().fieldErrors } }, { status: 400 });
+    return respond({ ok: false, error: { code: "INVALID_INPUT", message: "Controleer de gemarkeerde velden.", retryable: true, fieldErrors: parsed.error.flatten().fieldErrors } }, { status: 400 });
   }
 
   const headerKey = request.headers.get("idempotency-key");
   if (headerKey !== parsed.data.idempotencyKey) {
-    return NextResponse.json({ ok: false, error: { code: "INVALID_INPUT", message: "De aanvraag kon niet veilig worden verwerkt.", retryable: true } }, { status: 400 });
+    return respond({ ok: false, error: { code: "INVALID_INPUT", message: "De aanvraag kon niet veilig worden verwerkt.", retryable: true } }, { status: 400 });
   }
 
   if (fixtureMode) {
     const record = createFixtureIntake(parsed.data.idempotencyKey);
-    console.info(JSON.stringify({ event: "intake_fixture_created", reference: record.reference, source: parsed.data.source, product: parsed.data.product }));
-    return NextResponse.json({ ok: true, reference: record.reference, demo: true, schedulingUrl: null }, { status: 201 });
+    return respond({ ok: true, reference: record.reference, demo: true, schedulingUrl: null }, { status: 201 });
   }
 
   let admin;
   try { admin = createAdminClient(); }
   catch {
-    return NextResponse.json({ ok: false, error: { code: "CONFIGURATION_REQUIRED", message: "De intakebestemming is nog niet gekoppeld. Je antwoorden blijven in dit formulier staan.", retryable: true } }, { status: 503 });
+    return respond({ ok: false, error: { code: "CONFIGURATION_REQUIRED", message: "De intakebestemming is nog niet gekoppeld. Je antwoorden blijven in dit formulier staan.", retryable: true } }, { status: 503 });
   }
 
   let stored: { reference: string; customer_name: string; customer_email: string };
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     if (error || !data) throw new Error("Intake confirmation failed");
     stored = data;
   } catch {
-    return NextResponse.json({ ok: false, error: { code: "DATABASE_FAILURE", message: "De intake kon niet veilig worden opgeslagen. Probeer opnieuw.", retryable: true } }, { status: 503 });
+    return respond({ ok: false, error: { code: "DATABASE_FAILURE", message: "De intake kon niet veilig worden opgeslagen. Probeer opnieuw.", retryable: true } }, { status: 503 });
   }
 
   const reference = stored.reference;
@@ -83,6 +83,5 @@ export async function POST(request: Request) {
     try { bookingUrl = buildCalendlyEmbedUrl(schedulingUrl, { name: stored.customer_name, email: stored.customer_email, reference }); }
     catch { bookingUrl = null; }
   }
-  console.info(JSON.stringify({ event: "intake_created", reference, source: parsed.data.source, product: parsed.data.product, schedulingAvailable: Boolean(bookingUrl) }));
-  return NextResponse.json({ ok: true, reference, schedulingUrl: bookingUrl }, { status: 201, headers: { "Cache-Control": "no-store" } });
+  return respond({ ok: true, reference, schedulingUrl: bookingUrl }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }

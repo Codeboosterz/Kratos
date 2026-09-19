@@ -15,5 +15,5 @@ export function CookiePreferences() {
     () => false,
   );
   function save() { localStorage.setItem(STORAGE_KEY, "essential-only"); window.dispatchEvent(new Event("kratos-cookie-preference")); }
-  return <div className="status-panel"><strong>Essentiële cookies</strong><p className="muted">De huidige site gebruikt alleen lokale voorkeuren die nodig zijn voor deze keuze. Analytics en marketingcookies zijn niet aangesloten.</p><button className="button button--primary" type="button" onClick={save} data-testid="save-cookie-preferences">{saved ? "Voorkeur opgeslagen" : "Voorkeuren opslaan"}</button><div role="status" aria-live="polite">{saved ? "Essentieel-only is op dit apparaat opgeslagen." : ""}</div></div>;
+  return <div className="status-panel"><strong>Alleen essentieel</strong><p className="muted">Bewaar deze keuze om optionele bezoekers- en prestatiemeting op dit apparaat uit te schakelen. Technische foutmeldingen voor de werking en beveiliging bevatten geen formulierinhoud.</p><button className="button button--primary" type="button" onClick={save} data-testid="save-cookie-preferences">{saved ? "Voorkeur opgeslagen" : "Alleen essentieel opslaan"}</button><div role="status" aria-live="polite">{saved ? "Essentieel-only is op dit apparaat opgeslagen." : ""}</div></div>;
 }

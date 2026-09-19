@@ -167,12 +167,16 @@ export function IntakeForm({
     setStep(Math.max(1, Math.min(nextStep, 4)));
   }
 
-  function next() {
+  function next(event: React.MouseEvent<HTMLButtonElement>) {
+    // React may replace this button with the final submit control during the
+    // click. Cancel its native action before advancing the step.
+    event.preventDefault();
     if (validateStep()) moveTo(step + 1);
   }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (step !== 3) return;
     if (status === "submitting" || !validateStep()) return;
     const parsed = intakeSchema.safeParse(draft);
     if (!parsed.success) {
@@ -345,7 +349,7 @@ export function IntakeForm({
 
               <div className="form-actions">
                 {step > 1 ? <button className="button button--outline" type="button" onClick={() => moveTo(step - 1)}><ArrowLeft aria-hidden="true" size={18} /> Terug</button> : <Link className="button button--text" href="/trajecten"><ArrowLeft aria-hidden="true" size={18} /> Terug</Link>}
-                {step < 3 ? <button className="button button--primary" type="button" onClick={next}>Volgende stap <ArrowRight aria-hidden="true" size={18} /></button> : <button className="button button--primary" type="submit" disabled={status === "submitting"} data-testid="submit-intake">{status === "submitting" ? <><LoaderCircle className="spin" aria-hidden="true" size={18} /> Opslaan</> : <>Ga door naar datum & tijd <ArrowRight aria-hidden="true" size={18} /></>}</button>}
+                {step < 3 ? <button key="next-step" className="button button--primary" type="button" onClick={next}>Volgende stap <ArrowRight aria-hidden="true" size={18} /></button> : <button key="submit-intake" className="button button--primary" type="submit" disabled={status === "submitting"} data-testid="submit-intake">{status === "submitting" ? <><LoaderCircle className="spin" aria-hidden="true" size={18} /> Opslaan</> : <>Ga door naar datum & tijd <ArrowRight aria-hidden="true" size={18} /></>}</button>}
               </div>
             </form>
             <div className="status-panel intake-next-note"><strong>{content.status_title}</strong><p className="muted">{statusText}</p></div>

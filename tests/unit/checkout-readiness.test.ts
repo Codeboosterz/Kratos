@@ -16,13 +16,20 @@ describe("shared checkout readiness", () => {
   afterEach(() => vi.unstubAllEnvs());
   it.each(["http://kratosfitness.be", "http://127.0.0.1:3200"])("never prepares live payments on insecure origin %s", async (origin) => {
     mocks.origin = origin;
-    expect(await getCheckoutConfiguration(product)).toEqual({ ready: false });
+    expect(await getCheckoutConfiguration(product)).toEqual({ ready: false, reasons: ["HTTPS_REQUIRED"] });
   });
-  it.each([{ active: false }, { priceCents: null }, { priceCents: 0 }, { priceCents: -1 }, { priceCents: 100.5 }, { stripePriceId: null }])("blocks incomplete product configuration: %j", async (override) => {
-    expect(await getCheckoutConfiguration({ ...product, ...override })).toEqual({ ready: false });
+  it.each([
+    [{ active: false }, "PRODUCT_INACTIVE"],
+    [{ priceCents: null }, "PRICE_MISSING"],
+    [{ priceCents: 0 }, "PRICE_MISSING"],
+    [{ priceCents: -1 }, "PRICE_MISSING"],
+    [{ priceCents: 100.5 }, "PRICE_MISSING"],
+    [{ stripePriceId: null }, "STRIPE_PRICE_MISSING"],
+  ] as const)("blocks incomplete product configuration: %j", async (override, reason) => {
+    expect(await getCheckoutConfiguration({ ...product, ...override })).toEqual({ ready: false, reasons: [reason] });
   });
   it("does not leak an unresolved credential exception", async () => {
     mocks.resolve.mockRejectedValue(new Error("private diagnostic"));
-    expect(await getCheckoutConfiguration(product)).toEqual({ ready: false });
+    expect(await getCheckoutConfiguration(product)).toEqual({ ready: false, reasons: ["SECRET_READ_FAILED"] });
   });
 });
