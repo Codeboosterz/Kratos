@@ -24,7 +24,7 @@ const productSchema = z.object({
   ]),
   goalKeys: z.array(z.enum(goalKeys)).min(1),
   priceCents: z.number().int().positive().nullable(),
-  priceUnit: z.enum(["per_session", "per_person", "per_duo", "per_month", "per_package"]).nullable(),
+  priceUnit: z.enum(["per_session", "per_person", "per_duo", "per_month", "per_package"]).nullable().default(null),
   priceStatus: z.enum(["verification_required", "verified", "archived"]),
   checkoutMode: z.enum(["trainerize_external", "stripe_internal", "disabled"]),
   trainerizePlanId: z.string().nullable(),
@@ -62,17 +62,6 @@ const legacyProductSummaries: Record<string, string> = {
   "hwo-beginners": "Een toegankelijke basis om thuis gericht te leren trainen.",
   "hwo-lower-body-glutes": "Een thuisprogramma met focus op het onderlichaam.",
   "12-weken-transformatie": "Een traject met een duidelijke periode en persoonlijke start.",
-};
-
-const legacyProductHighlights: Record<string, string[]> = {
-  "transformatie-pack-10-sessies": ["10 sessies", "Plan op maat", "Persoonlijke coaching"],
-  "premium-online-coaching": ["Weekstructuur", "Persoonlijke feedback", "Online begeleiding"],
-  "training-voeding-bundle": ["Training", "Voedingskeuzes", "Persoonlijke coaching"],
-  "duo-coaching": ["Voor twee personen", "Gedeelde motivatie", "Persoonlijke begeleiding"],
-  "jouw-trainingsschema": ["Weekstructuur", "Heldere oefeningen", "Zelfstandig trainen"],
-  "hwo-beginners": ["8 weken", "Beginnersniveau", "Thuis trainen"],
-  "hwo-lower-body-glutes": ["8 weken", "Lower body", "Thuis trainen"],
-  "12-weken-transformatie": ["12 weken", "Persoonlijke start", "Voortgang volgen"],
 };
 
 export function getProducts(): Product[] {
@@ -120,10 +109,9 @@ export function applyCmsProductPresentation(product: Product, content: Record<st
     name: content[`product_${key}_name`] || product.name,
     format: content[`product_${key}_format`] || product.format,
     summary,
-    highlights: product.highlights.map((highlight, index) => {
-      const cmsHighlight = content[`product_${key}_highlight_${index + 1}`]?.trim();
-      return cmsHighlight && cmsHighlight !== legacyProductHighlights[product.slug]?.[index] ? cmsHighlight : highlight;
-    }) as Product["highlights"],
+    highlights: product.highlights.map((highlight, index) => (
+      content[`product_${key}_highlight_${index + 1}`] || highlight
+    )) as Product["highlights"],
     image,
     imageAlt: content[`product_${key}_image_alt`] || product.imageAlt,
   };

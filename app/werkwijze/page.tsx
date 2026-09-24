@@ -1,15 +1,27 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { ProcessTimeline } from "@/components/editorial-motion";
+import { ArrowRight, BarChart3, ClipboardCheck, MessageCircle, SlidersHorizontal } from "lucide-react";
+import { EditorialReveal, ProcessTimeline } from "@/components/editorial-motion";
+import { AnimatedMethodHeading } from "@/components/scroll-story";
 import { getPublishedCmsPage } from "@/src/cms/site-pages";
 
-export const metadata: Metadata = { title: "Werkwijze", description: "Van je eerste aanvraag tot training en evaluatie: zo werkt persoonlijke coaching bij KRATOS Fitness." };
+export const metadata: Metadata = { title: "Werkwijze", description: "Ontdek hoe persoonlijke coaching bij Kratos wordt opgebouwd." };
+
 export default async function MethodPage() {
   const content = await getPublishedCmsPage("werkwijze");
-  const steps = [1,2,3,4,5].map(index => ({ title: content[`coaching_step_${index}_title`], text: content[`coaching_step_${index}_text`] }));
-  return <>
-  <section className="page-hero" data-sticky-hero-sentinel><div className="site-container kratos-short-section"><span className="eyebrow-pill">Werkwijze</span><h1 className="display-title">Onze werkwijze.</h1><p className="lead">Van aanvraag tot evaluatie: zo verloopt persoonlijke coaching bij KRATOS.</p><Link className="button button--primary" href="/intake?source=method-hero">Plan een intake <ArrowRight aria-hidden="true" /></Link></div></section>
-  <section className="section section--editorial" aria-labelledby="steps-title"><div className="site-container two-column-editorial"><div><span className="eyebrow">Coaching</span><h2 id="steps-title" className="section-title">Vijf stappen.</h2><p>De precieze begeleiding en het contact verschillen per traject. Zelfstandige programma&apos;s hebben hun eigen start en levering.</p></div><ProcessTimeline items={steps} /></div></section>
-  <section className="section section--tight editorial-light" data-sticky-final-sentinel><div className="site-container kratos-short-section"><h2 className="section-title">Bespreek jouw start.</h2><Link className="button button--dark" href="/intake?source=method-final">Plan een intake <ArrowRight aria-hidden="true" /></Link></div></section>
-</>; }
+  const steps = [1,2,3,4].map((index) => ({ title: content[`step_${index}_title`], text: content[`step_${index}_text`] }));
+  return (
+    <>
+      <section className="page-hero page-hero--split" data-sticky-hero-sentinel>
+        <div className="site-container split-panel">
+          <EditorialReveal className="split-panel__content"><span className="eyebrow-pill">{content.hero_eyebrow}</span><h1 className="display-title">{content.hero_title}<br /><span className="lime">{content.hero_accent}</span></h1><p className="lead">{content.hero_intro}</p><Link className="button button--primary" href="/intake?source=method-hero">Plan een intake <ArrowRight aria-hidden="true" /></Link></EditorialReveal>
+          <div className="split-panel__image"><Image src={content.hero_image_url} alt={content.hero_image_alt} fill priority sizes="(max-width: 800px) 100vw, 52vw" /></div>
+        </div>
+      </section>
+      <section className="section section--editorial"><div className="site-container two-column-editorial"><div><span className="eyebrow">{content.steps_eyebrow}</span><AnimatedMethodHeading firstLineMode="typewriter" secondLineMode="slide_up" firstLine={content.steps_line_1} secondLine={content.steps_line_2} /></div><ProcessTimeline items={steps} /></div></section>
+      <section className="editorial-light section section--editorial"><div className="site-container"><EditorialReveal className="section-heading section-heading--center"><span className="eyebrow">{content.basis_eyebrow}</span><h2 className="section-title">{content.basis_title} <span className="lime">{content.basis_accent}</span></h2></EditorialReveal><div className="feature-grid editorial-features">{[ClipboardCheck,MessageCircle,BarChart3,SlidersHorizontal].map((Icon,index) => <article className="feature-card" key={index}><Icon aria-hidden="true" /><h2>{content[`feature_${index+1}_title`]}</h2><p>{content[`feature_${index+1}_text`]}</p></article>)}</div></div></section>
+      <section className="section section--tight" data-sticky-final-sentinel><div className="site-container final-cta"><span className="eyebrow">{content.final_eyebrow}</span><h2 className="section-title">{content.final_title} <span className="lime">{content.final_accent}</span></h2><Link className="button button--primary" href="/intake?source=method-final">Plan een intake <ArrowRight aria-hidden="true" /></Link></div></section>
+    </>
+  );
+}

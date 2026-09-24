@@ -20,7 +20,7 @@ export function SiteFooter({ copy }: { copy: FooterCopy }) {
         <div>
           <h2>{copy.explore}</h2>
           <Link href="/trajecten">Trajecten</Link>
-          <Link href="/werkwijze">Werkwijze</Link>
+          <Link href="/resultaten">Resultaten</Link>
           <Link href="/over-omar">Over Omar</Link>
           <Link href="/community">{copy.community}</Link>
         </div>

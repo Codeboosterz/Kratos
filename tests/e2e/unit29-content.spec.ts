@@ -28,14 +28,10 @@ test("price request keeps an editable product and intent in the existing lead pa
   expect(String(payload.note)).toContain("Intentie: prijsinformatie.");
 });
 
-test("unknown product selection is empty and event page has no coaching CTA", async ({ page }) => {
+test("unknown product selection safely defaults to no selection", async ({ page }) => {
   await page.goto("/intake?product=does-not-exist&intent=price");
   await page.getByRole("radio", { name: "Afvallen" }).check({ force: true });
   await page.getByRole("radio", { name: "Beginner" }).check({ force: true });
   await page.getByRole("button", { name: /Volgende stap/ }).click();
   await expect(page.getByLabel("Welk traject spreekt je aan?")).toHaveValue("");
-  await page.goto("/community");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("COMMUNITY.");
-  await expect(page.locator('main a[href*="source=community"]')).toHaveCount(0);
-  await expect(page.getByTestId("sticky-intake")).toHaveCount(0);
 });

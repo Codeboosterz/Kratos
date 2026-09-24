@@ -5,10 +5,6 @@
 Preserve the existing premium Kratos carbon/lime visual language. Public intake
 uses clear progressive disclosure; the CMS uses a dense but calm operations UI.
 
-## Unit 29 public revision (24 September 2026)
-
-The homepage now places the compact offer immediately after a shorter scroll-sequence hero, followed by short Omar, method and community sections. The full coaching flow appears only on `/werkwijze`; `/community` has event copy and no coaching-specific event action. The existing visual tokens, logo, fonts and CMS-managed media remain. Duo and online product media use a branded empty slot until the client approves images that meet the requested subject criteria. Product cards show a price request while current prices are unverified. Results and testimonials retain their routes/content but have no empty promotional cards or navigation entry. The hero slogan is fully visible and accessible without first scrolling.
-
 ## Colors
 
 Reuse existing CSS variables and approved tokens:
@@ -94,3 +90,7 @@ Reuse existing CSS variables and approved tokens:
 
 - Existing Kratos public/CMS system is the visual source of truth.
 - 21st.dev Event Manager informs calendar information density and view switching, not provider ownership.
+
+## Unit 29 preservation — 24 September 2026
+
+The latest user instruction preserves all original marketing content, sections, photos and animations from production baseline `8a731da`. Homepage composition, hero distance, community reveal, Faith story and other page scroll effects are unchanged. Only the existing final product action explains and opens a selected price request when unpriced; the intake adds editable product and contact-intent controls.

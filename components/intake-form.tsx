@@ -213,7 +213,7 @@ export function IntakeForm({
       setIsDemo(Boolean(payload.demo));
       setMessage(payload.schedulingUrl
         ? `Je intake is veilig opgeslagen onder referentie ${payload.reference}. Kies nu een beschikbaar moment.`
-        : `Je intake is ontvangen onder referentie ${payload.reference}. We nemen persoonlijk contact met je op.`);
+        : `Je intake is ontvangen onder referentie ${payload.reference}. De agenda is nog niet gekoppeld; we nemen persoonlijk contact met je op.`);
       setStatus("stored");
       setStep(4);
       try { sessionStorage.removeItem(draftKey); } catch { /* Submission remains authoritative. */ }
@@ -228,7 +228,9 @@ export function IntakeForm({
   const heroIntro = content.hero_intro === "In drie stappen verzamelen we wat nodig is om een passend eerste gesprek voor te bereiden."
     ? "In vier overzichtelijke stappen bereiden we een passend eerste gesprek én je afspraak voor."
     : content.hero_intro;
-  const statusText = "Na je aanvraag kun je een afspraak kiezen als er een agenda beschikbaar is. Anders neemt KRATOS persoonlijk contact met je op.";
+  const statusText = content.status_text === "Je aanvraag wordt gevalideerd en doorgestuurd zodra een goedgekeurde bestemming is ingesteld. Een verstuurde intake is geen bevestigde afspraak."
+    ? "Na stap 3 slaan we je intake veilig op. In stap 4 kies je een datum zodra Calendly is gekoppeld; zonder koppeling neemt Kratos persoonlijk contact op."
+    : content.status_text;
 
   return (
     <div className="form-layout intake-flow" data-step={step}>
@@ -277,7 +279,7 @@ export function IntakeForm({
                 </div>
                 {isDemo ? <div className="intake-demo-boundary" role="note"><TriangleAlert aria-hidden="true" /><span><strong>Lokale demo — niet zichtbaar in het live CMS</strong><small>Deze testaanvraag blijft alleen in de lokale fixtureomgeving en maakt geen echte afspraak aan.</small></span></div> : null}
                 <div className="intake-reference"><CheckCircle2 aria-hidden="true" /><span><strong>Aanvraag opgeslagen</strong><small>{reference}</small></span></div>
-                <p className="muted">KRATOS volgt je aanvraag persoonlijk op.</p>
+                <p className="muted">Zodra de Calendly-koppeling actief is, kan hier direct een datum en tijd worden gekozen. Tot die tijd volgt Kratos je aanvraag persoonlijk op.</p>
                 <Link className="button button--outline" href="/trajecten">Bekijk de trajecten</Link>
               </section>
             )}

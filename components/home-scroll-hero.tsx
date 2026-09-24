@@ -394,7 +394,7 @@ export function HomeScrollHero({
                 {primaryCtaLabel}
                 <ArrowRight size={19} aria-hidden="true" />
               </Link>
-              <Link className="button button--text" href="/trajecten">Bekijk de trajecten</Link>
+              <Link className="button button--text" href="/werkwijze">Bekijk onze werkwijze</Link>
             </div>
           </div>
         </div>

@@ -1,5 +1,7 @@
 # KRATOS content sources and open client input
 
+> Historical content audit: the latest user instruction preserves the original website content, media, sections and animations. Proposed content/media replacements described below are excluded from the release; source questions remain for a future separately scoped content update.
+
 Checked 24 September 2026. This is an internal handoff record. The 23 September client correction takes precedence over older campaigns and the existing site when they conflict.
 
 | Topic | Verified source | Use and conflict | Status |

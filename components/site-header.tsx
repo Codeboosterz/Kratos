@@ -13,7 +13,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
   const [open, setOpen] = useState(false);
   const checkout = pathname.startsWith("/checkout");
   const focusedFlow = pathname === "/intake" || pathname.startsWith("/trajecten/");
-  const navItems = [[copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.method, "/werkwijze"], [copy.community, "/community"]] as const;
+  const navItems = [[copy.results, "/resultaten"], [copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.community, "/community"]] as const;
 
   if (pathname.startsWith("/beheer")) return null;
 

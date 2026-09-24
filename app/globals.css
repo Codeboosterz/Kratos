@@ -151,9 +151,9 @@ img { max-width: 100%; }
 .lime { color: var(--lime); }
 .motion-word-mask { display: inline-block; overflow: hidden; vertical-align: bottom; }
 .motion-word { display: inline-block; will-change: transform, opacity; }
-.hero-first-scroll-title .motion-word { opacity: .86; transition: transform .68s cubic-bezier(.22,1,.36,1), opacity .68s cubic-bezier(.22,1,.36,1); }
-.hero-first-scroll-title .motion-word--from-left { transform: translateX(-6%); }
-.hero-first-scroll-title .motion-word--from-right { transform: translateX(6%); transition-delay: .08s; }
+.hero-first-scroll-title .motion-word { opacity: .42; transition: transform .68s cubic-bezier(.22,1,.36,1), opacity .68s cubic-bezier(.22,1,.36,1); }
+.hero-first-scroll-title .motion-word--from-left { transform: translateX(-108%); }
+.hero-first-scroll-title .motion-word--from-right { transform: translateX(108%); transition-delay: .08s; }
 .hero-first-scroll-title .motion-word.is-revealed { opacity: 1; transform: translateX(0); }
 .motion-line { display: inline-block; will-change: transform, opacity; }
 .muted { color: var(--muted); }
@@ -1103,7 +1103,7 @@ img { max-width: 100%; }
 
 /* 2026 editorial build */
 .section--editorial { padding-block: clamp(7rem, 11vw, 12rem); }
-.home-scroll-hero { position: relative; height: 180svh; min-height: 1200px; overflow: visible; border-bottom: 1px solid var(--border); background: var(--carbon); }
+.home-scroll-hero { position: relative; height: 400svh; min-height: 1800px; overflow: visible; border-bottom: 1px solid var(--border); background: var(--carbon); }
 .home-scroll-hero__sentinel { position: absolute; z-index: -1; top: 0; left: 0; width: 1px; height: 104px; pointer-events: none; }
 .home-scroll-hero__sticky { position: sticky; top: var(--site-header-height); height: calc(100svh - var(--site-header-height)); overflow: hidden; isolation: isolate; background: #060806; }
 .home-scroll-hero__poster-frame,
@@ -1624,38 +1624,4 @@ img { max-width: 100%; }
   .cms-calendar-toolbar button,
   .cms-appointment-actions a { min-height: 44px; }
   .cms-calendar-upcoming .cms-panel__heading > a { width: 44px; height: 44px; }
-}
-
-/* Unit 29: concise public content and truthful media states. */
-.product-card__image--empty,
-.product-editorial-hero__image--empty { display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, #242b1c, var(--carbon) 68%); color: var(--lime); }
-.product-card__image--empty span,
-.product-editorial-hero__image--empty span { font-family: var(--display); font-size: clamp(2.5rem, 6vw, 7rem); font-weight: 800; letter-spacing: -.04em; opacity: .65; }
-.product-card__body { grid-template-rows: auto auto auto 1fr; }
-.product-card h2 { overflow-wrap: anywhere; }
-.kratos-offer-directions { margin-block: 2rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.kratos-short-section { max-width: 850px; }
-.kratos-short-section > p { max-width: 670px; }
-.kratos-short-section > .button { margin-top: 1.25rem; }
-.kratos-omar-intro { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-.kratos-omar-intro__photo { position: relative; min-height: 390px; border-radius: 20px; overflow: hidden; }
-.kratos-omar-intro__photo img { object-fit: cover; object-position: 50% 35%; }
-.product-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-block: 2rem; }
-.product-facts article { border: 1px solid var(--border); border-radius: 18px; padding: clamp(1.25rem, 2.5vw, 2rem); background: var(--charcoal); }
-.product-facts h3 { margin: 0 0 .7rem; font: 800 1.8rem/1 var(--display); text-transform: uppercase; }
-.product-facts p { margin: 0; color: var(--muted); }
-.product-facts ul { padding: 0; margin: 0; list-style: none; }
-.product-facts li { display: flex; gap: .5rem; align-items: center; margin: .5rem 0; }
-.product-facts li svg { width: 18px; color: var(--lime); flex: none; }
-@media (max-width: 800px) {
-  .kratos-omar-intro, .product-facts, .kratos-offer-directions { grid-template-columns: 1fr; }
-  .kratos-omar-intro__photo { min-height: 320px; }
-  .product-card__body { gap: .75rem; }
-  .product-card__highlights { max-height: none; }
-  .product-editorial-hero__image--empty { min-height: 250px; }
-}
-.editorial-light .lead { color: #343a30; }
-.hero-first-scroll-title .motion-word-mask { overflow: visible; }
-@media (prefers-reduced-motion: reduce) {
-  .hero-first-scroll-title .motion-word { opacity: 1; transform: none; transition: none; }
 }

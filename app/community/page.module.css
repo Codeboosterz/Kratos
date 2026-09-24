@@ -37,5 +37,3 @@
 @media (prefers-reduced-motion: reduce) {
   .page a { transition: none; }
 }
-.title { overflow-wrap: anywhere; }
-@media (max-width: 430px) { .title { font-size: clamp(2.9rem, 12.5vw, 4rem); } }

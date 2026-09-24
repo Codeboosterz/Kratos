@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Activity, ArrowRight, BarChart3, ClipboardCheck, MessageCircle, Moon, SlidersHorizontal, TrendingUp, Zap } from "lucide-react";
-import { ScrollAccent } from "@/components/scroll-story";
+import { ClientStoriesRail, ScrollAccent } from "@/components/scroll-story";
 import { EditorialReveal } from "@/components/editorial-motion";
 import { getPublishedHomeHero } from "@/src/cms/home";
 import { getPublishedCmsPage } from "@/src/cms/site-pages";
@@ -18,6 +18,7 @@ export default async function ResultsPage() {
   const motionSettings = await getPublishedHomeHero();
   const content = await getPublishedCmsPage("resultaten");
   const animateAccents = motionSettings.motion_results_accents === "slide";
+  const stories = [1, 2, 3, 4].map((number) => ({ label: content[`story_${number}_label`], title: content[`story_${number}_title`], text: content[`story_${number}_text`], image: content[`story_${number}_image_url`] }));
 
   return (
     <>
@@ -55,6 +56,9 @@ export default async function ResultsPage() {
         </div>
       </section>
 
+      <section className="section section--editorial" aria-labelledby="client-stories-title">
+        <div className="site-container"><div className="section-heading section-heading--center"><span className="eyebrow">{content.stories_eyebrow}</span><h2 id="client-stories-title" className="section-title">{content.stories_title} <ScrollAccent enabled={animateAccents}>{content.stories_accent}</ScrollAccent></h2><p className="muted">{content.stories_intro}</p></div><ClientStoriesRail motionMode={motionSettings.motion_client_stories} stories={stories} /></div>
+      </section>
 
       <section className="section section--tight" data-sticky-final-sentinel><div className="site-container final-cta"><BarChart3 aria-hidden="true" /><span className="eyebrow">Jouw startpunt</span><h2 className="section-title">{content.final_title} <ScrollAccent enabled={animateAccents} direction="right">{content.final_accent}</ScrollAccent></h2><p>{content.final_text}</p><Link className="button button--primary" href="/intake?source=results">Plan een intake <ArrowRight aria-hidden="true" size={20} /></Link></div></section>
     </>

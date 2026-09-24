@@ -8,17 +8,9 @@
       "name": "Transformation Pack",
       "category": "personal_training",
       "format": "Persoonlijke training",
-      "summary": "Persoonlijke trainingssessies met Omar, afgestemd op jouw doel.",
-      "highlights": [
-        "Personal training",
-        "Samen afspraken maken",
-        "Train met Omar"
-      ],
-      "goalKeys": [
-        "afvallen",
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Tien persoonlijke sessies met een plan dat meebeweegt met je doel, ritme en voortgang.",
+      "highlights": ["10 sessies", "Plan op maat", "Persoonlijke coaching"],
+      "goalKeys": ["afvallen", "spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -27,8 +19,7 @@
       "active": true,
       "featured": true,
       "image": "/images/programs/cards/transformation-pack-card-v3.webp",
-      "imageAlt": "Omar voert een deadlift uit in een fitnessruimte.",
-      "priceUnit": null
+      "imageAlt": "Omar voert een deadlift uit in een fitnessruimte."
     },
     {
       "id": "product-premium-online",
@@ -36,17 +27,9 @@
       "name": "Premium Online Coaching",
       "category": "online",
       "format": "Online begeleiding",
-      "summary": "Train zelfstandig met begeleiding en persoonlijke feedback op afstand.",
-      "highlights": [
-        "Online begeleiding",
-        "Feedback op afstand",
-        "Zelfstandig trainen"
-      ],
-      "goalKeys": [
-        "afvallen",
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Online structuur, persoonlijke afstemming en gerichte feedback, waar je ook traint.",
+      "highlights": ["Weekstructuur", "Persoonlijke feedback", "Online begeleiding"],
+      "goalKeys": ["afvallen", "spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -55,8 +38,7 @@
       "active": true,
       "featured": true,
       "image": "/images/programs/cards/premium-online-coaching-card-v3.webp",
-      "imageAlt": "Premium Online Coaching",
-      "priceUnit": null
+      "imageAlt": "Omar begeleidt een persoonlijk coachingsmoment in de fitnessruimte."
     },
     {
       "id": "product-training-nutrition",
@@ -64,17 +46,9 @@
       "name": "Training + Voeding Bundle",
       "category": "bundle",
       "format": "Gecombineerd traject",
-      "summary": "Combineer training met voedingsbegeleiding in één traject.",
-      "highlights": [
-        "Training",
-        "Voedingsbegeleiding",
-        "Begeleid traject"
-      ],
-      "goalKeys": [
-        "afvallen",
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Training en voedingsbegeleiding samengebracht in één heldere, persoonlijke route.",
+      "highlights": ["Training", "Voedingskeuzes", "Persoonlijke coaching"],
+      "goalKeys": ["afvallen", "spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -83,8 +57,7 @@
       "active": true,
       "featured": true,
       "image": "/images/programs/cards/training-voeding-bundle-card-v3.webp",
-      "imageAlt": "Omar coacht een klant tijdens een dumbbell press.",
-      "priceUnit": null
+      "imageAlt": "Omar coacht een klant tijdens een dumbbell press."
     },
     {
       "id": "product-duo-coaching",
@@ -92,17 +65,9 @@
       "name": "Duo Coaching",
       "category": "duo",
       "format": "Samen trainen",
-      "summary": "Train samen met je trainingspartner onder persoonlijke begeleiding van Omar.",
-      "highlights": [
-        "Twee trainingspartners",
-        "Samen trainen",
-        "Begeleiding door Omar"
-      ],
-      "goalKeys": [
-        "afvallen",
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Een persoonlijk begeleid traject voor twee trainingspartners die samen sterker willen worden.",
+      "highlights": ["Voor twee personen", "Gedeelde motivatie", "Persoonlijke begeleiding"],
+      "goalKeys": ["afvallen", "spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -111,8 +76,7 @@
       "active": true,
       "featured": false,
       "image": "/images/programs/cards/duo-coaching-card-v3.webp",
-      "imageAlt": "Duo Coaching",
-      "priceUnit": null
+      "imageAlt": "Omar begeleidt een klant tijdens een krachtoefening."
     },
     {
       "id": "product-training-plan",
@@ -120,16 +84,9 @@
       "name": "Jouw Trainingsschema",
       "category": "digital_program",
       "format": "Zelfstandig programma",
-      "summary": "Een trainingsprogramma om zelfstandig mee aan de slag te gaan.",
-      "highlights": [
-        "Trainingsprogramma",
-        "Zelfstandig trainen",
-        "Eigen tempo"
-      ],
-      "goalKeys": [
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Een zelfstandig programma met een duidelijke trainingsstructuur die aansluit op je doel.",
+      "highlights": ["Weekstructuur", "Heldere oefeningen", "Zelfstandig trainen"],
+      "goalKeys": ["spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -138,8 +95,7 @@
       "active": true,
       "featured": false,
       "image": "/images/programs/cards/trainingsschema-card-v3.webp",
-      "imageAlt": "Omar voert een kabeloefening uit volgens een trainingsschema.",
-      "priceUnit": null
+      "imageAlt": "Omar voert een kabeloefening uit volgens een trainingsschema."
     },
     {
       "id": "product-hwo-beginners",
@@ -147,16 +103,9 @@
       "name": "HWO for Beginners",
       "category": "home_workout",
       "format": "Thuisprogramma",
-      "summary": "Een thuisprogramma voor beginners.",
-      "highlights": [
-        "Thuis trainen",
-        "Beginnersniveau",
-        "Zelfstandig programma"
-      ],
-      "goalKeys": [
-        "afvallen",
-        "fit-sterk"
-      ],
+      "summary": "Een toegankelijk achtweeks programma om thuis gericht en stap voor stap te leren trainen.",
+      "highlights": ["8 weken", "Beginnersniveau", "Thuis trainen"],
+      "goalKeys": ["afvallen", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -165,8 +114,7 @@
       "active": true,
       "featured": false,
       "image": "/images/programs/cards/hwo-beginners-card-v3.webp",
-      "imageAlt": "Omar zit met een dumbbell naast een gewichtenrek.",
-      "priceUnit": null
+      "imageAlt": "Omar zit met een dumbbell naast een gewichtenrek."
     },
     {
       "id": "product-hwo-lower-body",
@@ -174,16 +122,9 @@
       "name": "HWO Lower Body & Glutes",
       "category": "home_workout",
       "format": "Thuisprogramma",
-      "summary": "Een thuisprogramma met focus op benen en billen.",
-      "highlights": [
-        "Thuis trainen",
-        "Ben en bilfocus",
-        "Zelfstandig programma"
-      ],
-      "goalKeys": [
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Een achtweeks thuisprogramma met gerichte focus op benen, billen en een sterke basis.",
+      "highlights": ["8 weken", "Lower body", "Thuis trainen"],
+      "goalKeys": ["spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -192,8 +133,7 @@
       "active": true,
       "featured": false,
       "image": "/images/programs/cards/lower-body-glutes-card-v3.webp",
-      "imageAlt": "Een trainer begeleidt een beenoefening op een mat.",
-      "priceUnit": null
+      "imageAlt": "Een trainer begeleidt een beenoefening op een mat."
     },
     {
       "id": "product-12-weeks",
@@ -201,17 +141,9 @@
       "name": "12 Weken Transformatie",
       "category": "transformation",
       "format": "Transformatietraject",
-      "summary": "Een afgebakend traject met persoonlijke begeleiding.",
-      "highlights": [
-        "Begeleid traject",
-        "Training",
-        "Afspraken vooraf"
-      ],
-      "goalKeys": [
-        "afvallen",
-        "spieropbouw",
-        "fit-sterk"
-      ],
+      "summary": "Twaalf weken persoonlijke begeleiding rond training, dagelijkse keuzes en bewuste voortgang.",
+      "highlights": ["12 weken", "Persoonlijke start", "Voortgang volgen"],
+      "goalKeys": ["afvallen", "spieropbouw", "fit-sterk"],
       "priceCents": null,
       "priceStatus": "verification_required",
       "checkoutMode": "disabled",
@@ -220,8 +152,7 @@
       "active": true,
       "featured": false,
       "image": "/images/programs/cards/12-weken-transformatie-card-v3.webp",
-      "imageAlt": "Omar traint met een dumbbell in de fitnessruimte.",
-      "priceUnit": null
+      "imageAlt": "Omar traint met een dumbbell in de fitnessruimte."
     }
   ]
 }
