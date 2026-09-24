@@ -125,7 +125,7 @@ test("trajectory cards use the approved editorial artwork and CMS-ready hierarch
   }
 });
 
-test("all eight trajectory detail flows lead to the matching checkout", async ({ page }) => {
+test("all eight unpriced trajectory detail flows lead to a selected price request", async ({ page }) => {
   for (const product of catalogue.products.filter((item) => item.active)) {
     await page.goto("/trajecten?categorie=alle");
     await page.locator(".product-card").filter({ has: page.locator(`a[href="/trajecten/${product.slug}"]`) }).getByTestId("open-product").click();
@@ -136,11 +136,10 @@ test("all eight trajectory detail flows lead to the matching checkout", async ({
     await expect(page.locator(".header-cta")).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Bekijk wat je krijgt" })).toHaveAttribute("href", "#traject-inhoud");
     await expect(page.locator("#traject-inhoud")).toHaveCount(1);
-    for (const link of await starts.all()) await expect(link).toHaveAttribute("href", `/checkout/${product.slug}`);
-    await starts.last().click();
-    await expect(page).toHaveURL(new RegExp(`/checkout/${product.slug}$`));
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(product.name);
-    await expect(page.getByTestId("open-checkout")).toBeVisible();
+    await expect(starts).toHaveAttribute("href", `/intake?source=product-detail&product=${product.slug}&intent=price`);
+    await starts.click();
+    await expect(page).toHaveURL(new RegExp(`/intake\\?source=product-detail&product=${product.slug}&intent=price$`));
+    await expect(page.getByRole("heading", { name: "Waar wil je naartoe?" })).toBeVisible();
   }
 });
 

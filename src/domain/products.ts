@@ -38,6 +38,7 @@ export type Product = {
   highlights: [string, string, string];
   goalKeys: GoalKey[];
   priceCents: number | null;
+  priceUnit: "per_session" | "per_person" | "per_duo" | "per_month" | "per_package" | null;
   priceStatus: PriceStatus;
   checkoutMode: CheckoutMode;
   trainerizePlanId: string | null;

@@ -90,3 +90,7 @@ Reuse existing CSS variables and approved tokens:
 
 - Existing Kratos public/CMS system is the visual source of truth.
 - 21st.dev Event Manager informs calendar information density and view switching, not provider ownership.
+
+## Unit 29 preservation — 24 September 2026
+
+The latest user instruction preserves all original marketing content, sections, photos and animations from production baseline `8a731da`. Homepage composition, hero distance, community reveal, Faith story and other page scroll effects are unchanged. Only the existing final product action explains and opens a selected price request when unpriced; the intake adds editable product and contact-intent controls.

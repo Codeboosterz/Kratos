@@ -2,9 +2,12 @@
 
 ## Current Phase
 
-- Client handover preparation; Units 19–26 audit/repairs validated, release verification next
+- Unit 29 release preparation: original website content, sections and scroll animations preserved; only selected price requests and intake selection improvements remain.
 
 ## Current Goal
+
+- 24 September: latest user instruction supersedes the earlier public-content rewrite and explicitly authorizes website publication. Homepage, marketing pages, navigation, approved imagery, catalogue copy and animation CSS/components are restored to production baseline `8a731da`. All original sections, hero timing, community reveal and Faith filmstrip remain. Existing final product action routes unpriced products to selected price requests; intake preserves editable product/intent, drafts and attribution. Unrelated dirty files are excluded.
+- Validation: typecheck, lint, 263 unit/integration tests, all 35 browser tests (including original animation suites) and the 49-page production build pass. Corrected production preview runs at `http://127.0.0.1:3300/`; visual evidence is under `artifacts/qa/unit29/restored/`. Production deployment pending.
 
 - 11 September: Unit 19 smoke/security/form/CTA audit complete. Repair Units
   20–26 pass 223 tests, 30 browser checks, lint/typecheck/build and zero-advisory

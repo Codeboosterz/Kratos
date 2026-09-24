@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IntakeForm } from "@/components/intake-form";
 import { intakeSources, type IntakeInput } from "@/src/schemas/intake";
-import { getProduct } from "@/src/server/catalogue";
+import { getProduct, getProducts } from "@/src/server/catalogue";
 import { getPublishedCmsPage } from "@/src/cms/site-pages";
 
 export const metadata: Metadata = { title: "Plan een intake", description: "Vertel Kratos Fitness over je doel en voorkeursvorm." };
@@ -12,6 +12,7 @@ export default async function IntakePage({ searchParams }: Props) {
   const query = await searchParams;
   const rawProduct = Array.isArray(query.product) ? query.product[0] : query.product;
   const rawSource = Array.isArray(query.source) ? query.source[0] : query.source;
+  const rawIntent = Array.isArray(query.intent) ? query.intent[0] : query.intent;
   const product = rawProduct && getProduct(rawProduct) ? rawProduct : null;
   const source = rawSource && intakeSources.includes(rawSource as NonNullable<IntakeInput["source"]>)
     ? (rawSource as NonNullable<IntakeInput["source"]>)
@@ -21,7 +22,7 @@ export default async function IntakePage({ searchParams }: Props) {
   return (
     <section className="section">
       <div className="site-container">
-        <IntakeForm product={product} source={source} content={content} />
+        <IntakeForm product={product} source={source} intent={rawIntent === "price" ? "price" : "meeting"} productOptions={getProducts().map(({ slug, name }) => ({ slug, name }))} content={content} />
       </div>
     </section>
   );

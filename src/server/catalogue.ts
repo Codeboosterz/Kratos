@@ -24,6 +24,7 @@ const productSchema = z.object({
   ]),
   goalKeys: z.array(z.enum(goalKeys)).min(1),
   priceCents: z.number().int().positive().nullable(),
+  priceUnit: z.enum(["per_session", "per_person", "per_duo", "per_month", "per_package"]).nullable().default(null),
   priceStatus: z.enum(["verification_required", "verified", "archived"]),
   checkoutMode: z.enum(["trainerize_external", "stripe_internal", "disabled"]),
   trainerizePlanId: z.string().nullable(),

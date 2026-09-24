@@ -112,3 +112,7 @@ committed separately from their production application.
   the presence of existing secret/webhook variable names is not verification.
 - Verify web-to-database-to-CMS and Stripe/webhook round trips after authorized
   configuration/deployment. No live payment or customer email was attempted.
+
+## Unit 29 — selected price requests
+
+Unpriced product start actions use the existing intake route with product and price intent. The editable intake selection restores from session drafts and reaches the existing lead payload; source attribution and backend checkout guards remain. A nullable price unit is parsed with a null default without rewriting catalogue content.
