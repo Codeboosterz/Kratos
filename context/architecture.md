@@ -75,6 +75,13 @@
   production event verification remain deployment-time gates; no paid drain or
   new monitoring vendor is configured.
 
+## Public content revision — Unit 29 (local, 24 September 2026)
+
+- The eight active catalogue slugs remain in `config/products.json`; current prices and Stripe price IDs are null. Product detail defaults and media approval live in `src/content/product-details.ts`, with new per-product CMS fields for audience, delivery, inclusions and practical details. Existing CMS revisions read through default merging; owner publication still invalidates product pages.
+- Public product actions route unpriced products to the existing intake with a selected product and price intent. A confirmed price, explicit unit and internal Stripe mapping are required before the public action points to checkout. The checkout server continues to enforce its own readiness rules.
+- The intake keeps source attribution and selected product in existing columns. Price versus kennismaking intent is visible, editable, restored from the local draft and stored as a typed prefix in the existing note field. No new lead table or provider path was added.
+- New event copy and the five coaching steps use fields in the existing CMS page definitions. Current community image fields and revision identity remain. Unverified social URLs have no public link.
+
 ## Deployment Model
 
 Next.js on Vercel with Supabase as the production data source. Migrations are

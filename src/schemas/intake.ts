@@ -43,6 +43,7 @@ export const intakeDraftStorageSchema = z.object({
     consentVersion: z.literal("2026-08-draft-1"),
     product: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).nullable(),
     source: z.enum(intakeSources).nullable(),
+    intent: z.enum(["meeting", "price"]).optional(),
     idempotencyKey: z.uuid(),
   }),
 });

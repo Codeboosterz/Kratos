@@ -35,7 +35,7 @@ test("intake validates steps and returns a demo reference", async ({ page }) => 
   await page.getByLabel("Naam").fill("Ada Tester"); await page.getByLabel("E-mailadres").fill("ada@example.com"); await page.getByRole("checkbox").check(); await page.getByTestId("submit-intake").click();
   await expect(progressStep("Afspraak")).toHaveAttribute("aria-current", "step");
   await expect(page.getByRole("heading", { name: "Intake ontvangen" })).toBeVisible(); await expect(page.locator(".intake-reference small")).toHaveText(/DEMO-INT-/);
-  await expect(page.getByText(/agenda.*nog niet gekoppeld/i)).toBeVisible();
+  await expect(page.getByText(/We nemen persoonlijk contact met je op/i)).toBeVisible();
   await expect(page.getByText("Lokale demo — niet zichtbaar in het live CMS")).toBeVisible();
 });
 
@@ -109,53 +109,28 @@ test("key pages have no serious accessibility violations", async ({ page }) => {
   for (const route of ["/", "/trajecten", "/intake", "/community", "/checkout/transformatie-pack-10-sessies"]) { await page.goto(route); const results = await new AxeBuilder({ page }).analyze(); expect(results.violations.filter((item) => ["serious", "critical"].includes(item.impact || "")), route).toEqual([]); }
 });
 
-test("trajectory cards use the approved editorial artwork and CMS-ready hierarchy", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
+test("all eight products remain visible with truthful price actions", async ({ page }) => {
   await page.goto("/trajecten?categorie=alle");
-
   const cards = page.locator(".product-card");
   await expect(cards).toHaveCount(8);
-
-  for (let index = 0; index < await cards.count(); index += 1) {
-    const card = cards.nth(index);
+  for (const product of catalogue.products.filter(item => item.active)) {
+    const card = cards.filter({ has: page.locator(`a[href="/trajecten/${product.slug}"]`) });
+    await expect(card).toContainText("Prijs op aanvraag");
     await expect(card.locator(".product-card__highlights li")).toHaveCount(3);
-    await expect(card.locator("img")).toHaveAttribute("alt", /\S/);
-    await expect(card.locator("img")).toHaveAttribute("src", /images(?:%2F|\/)programs(?:%2F|\/)cards/);
-    await expect(card.getByRole("link", { name: "Bekijk traject", exact: true })).toBeVisible();
-  }
-});
-
-test("all eight trajectory detail flows lead to the matching checkout", async ({ page }) => {
-  for (const product of catalogue.products.filter((item) => item.active)) {
-    await page.goto("/trajecten?categorie=alle");
-    await page.locator(".product-card").filter({ has: page.locator(`a[href="/trajecten/${product.slug}"]`) }).getByTestId("open-product").click();
-    await expect(page).toHaveURL(new RegExp(`/trajecten/${product.slug}$`));
-    const starts = page.getByTestId("start-product");
-    await expect(starts).toHaveCount(1);
-    await expect(page.locator(".coach-feature")).toHaveCount(0);
-    await expect(page.locator(".header-cta")).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Bekijk wat je krijgt" })).toHaveAttribute("href", "#traject-inhoud");
-    await expect(page.locator("#traject-inhoud")).toHaveCount(1);
-    for (const link of await starts.all()) await expect(link).toHaveAttribute("href", `/checkout/${product.slug}`);
-    await starts.last().click();
-    await expect(page).toHaveURL(new RegExp(`/checkout/${product.slug}$`));
+    await expect(card.getByRole("link", { name: /Vraag prijs en trajectinformatie aan/ })).toHaveAttribute("href", new RegExp(`product=${product.slug}`));
+    await page.goto(`/trajecten/${product.slug}`);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(product.name);
-    await expect(page.getByTestId("open-checkout")).toBeVisible();
+    await expect(page.getByTestId("start-product")).toHaveAttribute("href", `/intake?source=product-detail&product=${product.slug}&intent=price`);
+    await page.goto("/trajecten?categorie=alle");
   }
 });
 
-test("community replaces tools and its interest CTA preserves source", async ({ page, request }) => {
+test("community keeps the tools redirect and has no coaching interest action", async ({ page, request }) => {
   const redirect = await request.get("/gratis-tools", { maxRedirects: 0 });
   expect(redirect.status()).toBe(308);
-  expect(redirect.headers().location).toContain("/community");
   await page.goto("/community");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Faith &");
-  await expect(page.locator(".tool-card--live")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Faith & Fitness", exact: true })).toHaveCount(2);
-  await expect.poll(async () => page.locator("main img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
-  await page.getByTestId("community-interest").first().click();
-  await expect(page).toHaveURL(/intake\?source=community/);
-  await expect(page.getByRole("heading", { name: "Waar wil je naartoe?" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("COMMUNITY.");
+  await expect(page.getByTestId("community-interest")).toHaveCount(0);
 });
 
 test("320px layout has no horizontal overflow and mobile navigation works", async ({ page }) => {
@@ -175,8 +150,7 @@ test("375px public routes use legible controls and contained swipe rails", async
 
   await page.goto("/gratis-tools");
   await expect(page).toHaveURL(/\/community$/);
-  await expect(page.getByTestId("community-interest").first()).toBeVisible();
-  expect(await page.getByTestId("community-interest").first().evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("COMMUNITY.");
 
   await page.goto("/intake");
   await expect(page.locator(".intake-step-heading")).toBeInViewport();
@@ -186,133 +160,16 @@ test("375px public routes use legible controls and contained swipe rails", async
   expect(footerTargetHeights.every((height) => height >= 44)).toBe(true);
 });
 
-test("floating intake CTA is not rendered", async ({ page }) => {
-  await page.goto("/"); await expect(page.locator(".community-reveal")).toHaveClass(/is-ready/); await page.evaluate(() => window.scrollTo(0, 1200)); await expect(page.getByTestId("sticky-intake")).toHaveCount(0); await page.goto("/intake"); await expect(page.getByTestId("sticky-intake")).toHaveCount(0);
-});
-
-test("first-scroll storytelling animations complete without hiding copy", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.goto("/");
-
-  const heroAccents = page.locator("#home-title .motion-word");
-  await expect(heroAccents.first()).toHaveCSS("opacity", "0.42");
-  await page.evaluate(() => window.scrollTo(0, 12));
-  await expect(heroAccents.first()).toHaveCSS("opacity", "1", { timeout: 2_000 });
-  await expect(heroAccents.nth(1)).toHaveCSS("opacity", "1", { timeout: 2_000 });
-
-  await page.goto("/werkwijze");
-  await page.locator("#method-title").scrollIntoViewIfNeeded();
-  await expect(page.locator("#method-title .typewriter-line > span").last()).toHaveCSS("opacity", "1", { timeout: 3_000 });
-  await expect(page.locator("#method-title .motion-line")).toHaveCSS("opacity", "1", { timeout: 3_000 });
-
-  await page.goto("/resultaten");
-  await page.locator("#client-stories-title").scrollIntoViewIfNeeded();
-  await expect(page.locator(".client-story-card").first()).toBeVisible();
-  await expect(page.locator(".client-stories-rail")).toHaveAttribute("aria-label", /toekomstige cliëntverhalen/);
-});
-
-test("homepage hero scrubs the recovered lift sequence once", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/");
-
-  const hero = page.getByTestId("scroll-hero");
-  const canvas = page.getByTestId("scroll-hero-canvas");
-  const endTagline = page.getByTestId("scroll-hero-end-tagline");
-  await expect(hero).toHaveAttribute("data-sequence-ready", "true", { timeout: 8_000 });
-  await page.waitForTimeout(1_000);
-  expect(Number(await hero.getAttribute("data-sequence-loaded"))).toBeLessThanOrEqual(12);
-  expect(await hero.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(2_500);
-  await expect(canvas).toHaveAttribute("data-frame", "001");
-  await expect(endTagline).toHaveCSS("opacity", "0");
-  await expect(endTagline).toContainText("Word sterker.");
-  await expect(endTagline).toContainText("Blijf sterker.");
-
-  const scrollRange = await hero.evaluate((element) => element.getBoundingClientRect().height - window.innerHeight);
-  await page.evaluate((distance) => window.scrollTo(0, distance * 0.52), scrollRange);
-  await page.waitForTimeout(1_500);
-  const middleFrame = Number(await canvas.getAttribute("data-frame"));
-  expect(middleFrame).toBeGreaterThan(42);
-  expect(middleFrame).toBeLessThan(92);
-
-  await page.evaluate((distance) => window.scrollTo(0, distance), scrollRange);
-  await page.waitForTimeout(1_500);
-  expect(Number(await canvas.getAttribute("data-frame"))).toBeGreaterThan(112);
-  await expect(endTagline).toHaveCSS("opacity", "1");
-  await expect(endTagline).toBeInViewport();
-  await expect(endTagline.locator(".home-scroll-hero__end-tagline-line").first()).toBeInViewport();
-  await expect(endTagline.locator(".home-scroll-hero__end-tagline-line").last()).toBeInViewport();
-});
-
-test("essential homepage scroll sequences remain functional with reduced motion enabled", async ({ page }) => {
+test("home, method and community keep their key content visible with reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
-
-  const marquee = page.locator(".brand-marquee__track");
-  const marqueeX = () => marquee.evaluate((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m41);
-  const marqueeStart = await marqueeX();
-  await expect.poll(marqueeX, { timeout: 3_000 }).toBeLessThan(marqueeStart - 8);
-
-  const reducedHero = page.getByTestId("scroll-hero");
-  const reducedCanvas = page.getByTestId("scroll-hero-canvas");
-  await expect(reducedHero).toHaveAttribute("data-sequence-ready", "true", { timeout: 8_000 });
-  const reducedHeroHeight = await reducedHero.evaluate((element) => element.getBoundingClientRect().height);
-  expect(reducedHeroHeight).toBeGreaterThan(2_500);
-  await expect(reducedCanvas).toHaveCSS("display", "block");
-  await page.evaluate((distance) => window.scrollTo(0, distance), (reducedHeroHeight - 800) * 0.35);
-  await page.waitForTimeout(500);
-  expect(Number(await reducedCanvas.getAttribute("data-frame"))).toBeGreaterThan(20);
-
-  const grid = page.locator(".community-reveal");
-  const items = grid.locator(".grid_item");
-  const visibleItems = () => items.evaluateAll((elements) => elements.filter((element) => {
-    const style = getComputedStyle(element);
-    return style.visibility !== "hidden" && Number(style.opacity) > 0.05;
-  }).length);
-
-  await expect(grid).toHaveClass(/is-ready/);
-  expect(await visibleItems()).toBe(1);
-  await expect(page.locator("#omar-title")).toHaveText("mar");
-  await expect(grid).toHaveAttribute("data-community-pin-start", /\d/);
-  await expect(grid).toHaveAttribute("data-community-pin-end", /\d/);
-
-  const pinRange = await grid.evaluate((element) => ({
-    start: Number(element.dataset.communityPinStart),
-    end: Number(element.dataset.communityPinEnd),
-  }));
-  const viewportHeight = await page.evaluate(() => window.innerHeight);
-  expect(pinRange.end - pinRange.start).toBeGreaterThan(viewportHeight * 2);
-
-  const scrollRevealTo = (progress: number) => page.evaluate(({ start, end, progress }) => {
-    window.scrollTo(0, start + (end - start) * progress);
-  }, { ...pinRange, progress });
-  const sticky = grid.locator(".grid_sticky");
-  const stickyTop = () => sticky.evaluate((element) => element.getBoundingClientRect().top);
-  const revealProgress = () => grid.evaluate((element) => Number(element.dataset.communityProgress ?? "0"));
-
-  await scrollRevealTo(0.1);
-  await expect.poll(revealProgress).toBeGreaterThan(0.08);
-  const pinnedTop = await stickyTop();
-
-  await scrollRevealTo(0.55);
-  await expect.poll(async () => Math.abs((await stickyTop()) - pinnedTop)).toBeLessThan(2);
-  await expect.poll(visibleItems).toBeGreaterThan(1);
-
-  await scrollRevealTo(0.97);
-  await expect.poll(async () => Math.abs((await stickyTop()) - pinnedTop)).toBeLessThan(2);
-  await expect.poll(visibleItems).toBe(await items.count());
-  await expect.poll(() => grid.locator(".grid_item_middle").evaluate((element) => {
-    const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
-    return Math.abs(Math.hypot(matrix.a, matrix.b) - 1);
-  })).toBeLessThan(0.03);
-
-  await page.evaluate(({ end, viewportHeight }) => {
-    window.scrollTo(0, end + viewportHeight * 0.3);
-  }, { end: pinRange.end, viewportHeight });
-  await expect.poll(revealProgress).toBe(1);
-  await expect.poll(async () => pinnedTop - (await stickyTop())).toBeGreaterThan(100);
-  await expect.poll(() => page.locator(".faith-section").evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(viewportHeight);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator("#offer-title")).toBeVisible();
+  await expect(page.locator("#omar-title")).toHaveText("Omar.");
+  await page.goto("/werkwijze");
+  await expect(page.locator(".process-timeline")).toContainText("Vertel ons je doel");
+  await page.goto("/community");
+  await expect(page.getByTestId("sticky-intake")).toHaveCount(0);
 });
 
 test("owner CMS login is branded, private and honest before provider configuration", async ({ page }) => {

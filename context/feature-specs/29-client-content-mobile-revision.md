@@ -1,0 +1,3 @@
+# Unit 29: Client content and mobile revision
+
+Source: 24 September 2026 user request and the 23 September build pack. Preserve the current CMS, routes, checkout guards, brand assets and media. Reorder home to expose all offer categories; make product content and price actions truthful; separate Faith & Fitness events from coaching; consolidate the method on `/werkwijze`; keep Omar's biography limited to documented facts. Add a visible, editable product selection to the existing intake. Verify source gaps in `docs/kratos-content-sources.md`, run checks and inspect a local preview. No production deployment or real form/payment submission.

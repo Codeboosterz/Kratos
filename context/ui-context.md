@@ -5,6 +5,10 @@
 Preserve the existing premium Kratos carbon/lime visual language. Public intake
 uses clear progressive disclosure; the CMS uses a dense but calm operations UI.
 
+## Unit 29 public revision (24 September 2026)
+
+The homepage now places the compact offer immediately after a shorter scroll-sequence hero, followed by short Omar, method and community sections. The full coaching flow appears only on `/werkwijze`; `/community` has event copy and no coaching-specific event action. The existing visual tokens, logo, fonts and CMS-managed media remain. Duo and online product media use a branded empty slot until the client approves images that meet the requested subject criteria. Product cards show a price request while current prices are unverified. Results and testimonials retain their routes/content but have no empty promotional cards or navigation entry. The hero slogan is fully visible and accessible without first scrolling.
+
 ## Colors
 
 Reuse existing CSS variables and approved tokens:

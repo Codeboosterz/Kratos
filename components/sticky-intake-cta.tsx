@@ -33,7 +33,7 @@ export function StickyIntakeCta() {
     const finalObserver = new IntersectionObserver(([entry]) => setFinalVisible(entry.isIntersecting), { threshold: 0.2 });
     const frame = requestAnimationFrame(() => {
       setHydrated(true);
-      setCompetingAction(Boolean(document.querySelector("[data-competing-sticky-action]")));
+      setCompetingAction(pathname === "/community" || Boolean(document.querySelector("[data-competing-sticky-action]")));
       if (!hero || !finalCta) { setHeroVisible(true); setFinalVisible(false); return; }
 
       const heroRect = hero.getBoundingClientRect();

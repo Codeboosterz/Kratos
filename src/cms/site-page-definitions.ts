@@ -1,5 +1,6 @@
 import { z } from "zod";
 import productConfig from "@/config/products.json";
+import { productDetails } from "@/src/content/product-details";
 
 export type CmsFieldDefinition = {
   key: string;
@@ -48,6 +49,13 @@ const methodFields: CmsFieldDefinition[] = [
   field("Basis", "basis_eyebrow", "Bovenregel", "De basis"), field("Basis", "basis_title", "Titel", "Duidelijk waar het moet."), field("Basis", "basis_accent", "Groen deel", "Persoonlijk waar het telt."),
   ...[1,2,3,4].flatMap((n) => [field("Basis", `feature_${n}_title`, `Kaart ${n} — titel`, ["Heldere afspraken","Persoonlijk contact","Bewuste voortgang","Bijsturen"][n-1]), field("Basis", `feature_${n}_text`, `Kaart ${n} — tekst`, ["Je weet wat de volgende stap is en waarom die past.","Vragen en voortgang krijgen een vaste plek.","We volgen relevante signalen zonder losse garanties.","De route kan veranderen wanneer je context verandert."][n-1], "textarea", 240)]),
   field("Laatste oproep", "final_eyebrow", "Bovenregel", "Begin bij jezelf"), field("Laatste oproep", "final_title", "Titel", "Jouw doel. Jouw ritme."), field("Laatste oproep", "final_accent", "Groen deel", "Jouw route."),
+  ...[
+    ["Vertel ons je doel", "Vul de intake in en geef aan waar je aan wilt werken, hoeveel trainingservaring je hebt en welke begeleiding je zoekt."],
+    ["Maak kennis met Omar", "Bespreek je doel, je huidige situatie en praktische mogelijkheden. Zo wordt duidelijk welk traject bij je past."],
+    ["Bespreek plan en afspraken", "Bespreek inhoud, contactvorm, prijs en startmoment. Het plan sluit aan op het gekozen traject."],
+    ["Ga aan de slag", "Train met Omar, samen met je trainingspartner of zelfstandig met online begeleiding, afhankelijk van je traject."],
+    ["Bespreek je voortgang", "Kijk samen wat werkt en waar aanpassing nodig is. De vorm van evaluatie volgt jullie afspraken."],
+  ].flatMap(([title, text], index) => [field("Coachingflow", `coaching_step_${index + 1}_title`, `Stap ${index + 1} — titel`, title), field("Coachingflow", `coaching_step_${index + 1}_text`, `Stap ${index + 1} — tekst`, text, "textarea", 360)]),
 ];
 
 const catalogueFields: CmsFieldDefinition[] = [
@@ -71,6 +79,10 @@ const catalogueFields: CmsFieldDefinition[] = [
       )),
       field(section, `product_${key}_image_url`, "Afbeelding", product.image, "image"),
       field(section, `product_${key}_image_alt`, "Beeldbeschrijving", product.imageAlt, "text", 180),
+      field(section, `product_${key}_audience`, "Voor wie", productDetails[product.slug].audience, "textarea", 320),
+      field(section, `product_${key}_delivery`, "Begeleidingsvorm", productDetails[product.slug].delivery, "textarea", 320),
+      field(section, `product_${key}_included`, "Inbegrepen — één regel per punt", productDetails[product.slug].included.join("\n"), "textarea", 420),
+      field(section, `product_${key}_practical`, "Praktische gegevens", productDetails[product.slug].practical, "textarea", 320),
     ];
   }),
 ];
@@ -88,6 +100,10 @@ const communityFields: CmsFieldDefinition[] = [
     .map((item) => ({ ...item, key: `community_${item.key}`, defaultValue: item.key === "hero_image_alt" ? "Een deelnemer doet een lunge tijdens een buitentraining" : item.defaultValue })),
   field("Hero", "community_hero_cta", "Knoptekst", "Ik heb interesse"),
   field("Hero", "community_hero_note", "Onder de knop", "Vertel ons dat je wilt meedoen. Kratos neemt persoonlijk contact met je op.", "textarea", 260),
+  field("Events", "community_event_intro", "Introductie", "Een community waarin geloof, beweging en verbinding samenkomen.", "textarea", 320),
+  field("Events", "community_event_separation", "Scheidingszin", "KRATOS Faith & Fitness staat los van onze persoonlijke coachingstrajecten.", "textarea", 320),
+  field("Events", "community_event_details", "Wat gebeurt er?", "Tijdens onze events komen mensen bij elkaar voor workouts, challenges en momenten van geloof en inspiratie. Iedere editie krijgt zijn eigen invulling op verschillende locaties.", "textarea", 520),
+  field("Events", "community_event_follow", "Volguitnodiging", "Volg KRATOS Fitness op social media voor nieuwe locaties, data en inschrijvingen voor Faith & Fitness-events.", "textarea", 320),
   field("Beelden", "community_image_2_url", "Samen trainen", "/images/community/partner-stretch.jpg", "image"),
   field("Beelden", "community_image_2_alt", "Beeldbeschrijving", "Twee deelnemers ondersteunen elkaar bij een stretch"),
   field("Beelden", "community_image_3_url", "Reflectie", "/images/faith/05-reflection.webp", "image"),

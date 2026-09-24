@@ -60,14 +60,19 @@ function storageKey(product: string | null, source: IntakeInput["source"]) {
 export function IntakeForm({
   product,
   source,
+  intent,
+  productOptions,
   content,
 }: {
   product: string | null;
   source: IntakeInput["source"];
+  intent: "meeting" | "price";
+  productOptions: { slug: string; name: string }[];
   content: IntakePageContent;
 }) {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<IntakeDraft>(() => initialDraft(product, source));
+  const [requestIntent, setRequestIntent] = useState<"meeting" | "price">(intent);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "stored" | "failure">("idle");
   const [message, setMessage] = useState("");
@@ -92,14 +97,15 @@ export function IntakeForm({
           const parsed = intakeDraftStorageSchema.safeParse(JSON.parse(saved));
           if (parsed.success) {
             setStep(parsed.data.step);
-            setDraft((current) => ({ ...current, ...parsed.data.draft, note: "", consent: false }));
+            setDraft((current) => ({ ...current, ...parsed.data.draft, product: productOptions.some(option => option.slug === parsed.data.draft.product) ? parsed.data.draft.product : null, note: "", consent: false }));
+            setRequestIntent(parsed.data.draft.intent ?? intent);
           }
         }
       } catch { /* A corrupt or unavailable session store should never block the form. */ }
       setHydrated(true);
     });
     return () => { active = false; };
-  }, [draftKey]);
+  }, [draftKey, intent, productOptions]);
 
   useEffect(() => {
     if (!hydrated || status === "stored") return;
@@ -118,11 +124,12 @@ export function IntakeForm({
           consentVersion: draft.consentVersion,
           product: draft.product,
           source: draft.source,
+          intent: requestIntent,
           idempotencyKey: draft.idempotencyKey,
         },
       }));
     } catch { /* Draft recovery is progressive enhancement. */ }
-  }, [draft, draftKey, hydrated, status, step]);
+  }, [draft, draftKey, hydrated, requestIntent, status, step]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -178,7 +185,7 @@ export function IntakeForm({
     event.preventDefault();
     if (step !== 3) return;
     if (status === "submitting" || !validateStep()) return;
-    const parsed = intakeSchema.safeParse(draft);
+    const parsed = intakeSchema.safeParse({ ...draft, note: `${requestIntent === "price" ? "Intentie: prijsinformatie." : "Intentie: kennismaking."}${draft.note ? ` ${draft.note}` : ""}` });
     if (!parsed.success) {
       setErrors(issueMap(parsed.error));
       queueMicrotask(() => errorRef.current?.focus());
@@ -206,7 +213,7 @@ export function IntakeForm({
       setIsDemo(Boolean(payload.demo));
       setMessage(payload.schedulingUrl
         ? `Je intake is veilig opgeslagen onder referentie ${payload.reference}. Kies nu een beschikbaar moment.`
-        : `Je intake is ontvangen onder referentie ${payload.reference}. De agenda is nog niet gekoppeld; we nemen persoonlijk contact met je op.`);
+        : `Je intake is ontvangen onder referentie ${payload.reference}. We nemen persoonlijk contact met je op.`);
       setStatus("stored");
       setStep(4);
       try { sessionStorage.removeItem(draftKey); } catch { /* Submission remains authoritative. */ }
@@ -221,9 +228,7 @@ export function IntakeForm({
   const heroIntro = content.hero_intro === "In drie stappen verzamelen we wat nodig is om een passend eerste gesprek voor te bereiden."
     ? "In vier overzichtelijke stappen bereiden we een passend eerste gesprek én je afspraak voor."
     : content.hero_intro;
-  const statusText = content.status_text === "Je aanvraag wordt gevalideerd en doorgestuurd zodra een goedgekeurde bestemming is ingesteld. Een verstuurde intake is geen bevestigde afspraak."
-    ? "Na stap 3 slaan we je intake veilig op. In stap 4 kies je een datum zodra Calendly is gekoppeld; zonder koppeling neemt Kratos persoonlijk contact op."
-    : content.status_text;
+  const statusText = "Na je aanvraag kun je een afspraak kiezen als er een agenda beschikbaar is. Anders neemt KRATOS persoonlijk contact met je op.";
 
   return (
     <div className="form-layout intake-flow" data-step={step}>
@@ -272,7 +277,7 @@ export function IntakeForm({
                 </div>
                 {isDemo ? <div className="intake-demo-boundary" role="note"><TriangleAlert aria-hidden="true" /><span><strong>Lokale demo — niet zichtbaar in het live CMS</strong><small>Deze testaanvraag blijft alleen in de lokale fixtureomgeving en maakt geen echte afspraak aan.</small></span></div> : null}
                 <div className="intake-reference"><CheckCircle2 aria-hidden="true" /><span><strong>Aanvraag opgeslagen</strong><small>{reference}</small></span></div>
-                <p className="muted">Zodra de Calendly-koppeling actief is, kan hier direct een datum en tijd worden gekozen. Tot die tijd volgt Kratos je aanvraag persoonlijk op.</p>
+                <p className="muted">KRATOS volgt je aanvraag persoonlijk op.</p>
                 <Link className="button button--outline" href="/trajecten">Bekijk de trajecten</Link>
               </section>
             )}
@@ -315,6 +320,8 @@ export function IntakeForm({
               {step === 2 ? (
                 <div className="intake-step-content">
                   <div className="intake-step-heading"><span>02</span><h2 ref={headingRef} tabIndex={-1}>Wat past bij jouw ritme?</h2><p>Zo bereiden we een eerste gesprek voor dat werkelijk aansluit.</p></div>
+                  <div className="field"><label htmlFor="product">Welk traject spreekt je aan?</label><select id="product" value={draft.product ?? ""} onChange={event => update("product", event.target.value || null)}><option value="">Nog geen keuze</option>{productOptions.map(option => <option key={option.slug} value={option.slug}>{option.name}</option>)}</select></div>
+                  <fieldset><legend>Waarvoor wil je contact?</legend><div className="choice-grid"><label className="choice-card"><input type="radio" name="request-intent" checked={requestIntent === "meeting"} onChange={() => setRequestIntent("meeting")} /> Kennismaking</label><label className="choice-card"><input type="radio" name="request-intent" checked={requestIntent === "price"} onChange={() => setRequestIntent("price")} /> Prijsinformatie</label></div></fieldset>
                   <fieldset>
                     <legend>Welke vorm spreekt je het meest aan?</legend>
                     <div className="choice-grid">
@@ -327,7 +334,7 @@ export function IntakeForm({
                     {errors.format ? <p className="field-error" role="alert">{errors.format}</p> : null}
                   </fieldset>
                   <div className="field"><label htmlFor="availability">Wanneer kun je meestal trainen?</label><input id="availability" value={draft.availability} onChange={(event) => update("availability", event.target.value)} onBlur={() => validateField("availability")} aria-invalid={Boolean(errors.availability)} aria-describedby={errors.availability ? "availability-error" : "availability-help"} /><small id="availability-help" className="field-help">Bijvoorbeeld: maandag- en woensdagavond.</small>{errors.availability ? <span id="availability-error" className="field-error" role="alert">{errors.availability}</span> : null}</div>
-                  <div className="field"><label htmlFor="note">Wat wil je nog meegeven? <span className="muted">(optioneel)</span></label><textarea id="note" value={draft.note} onChange={(event) => update("note", event.target.value)} onBlur={() => validateField("note")} aria-invalid={Boolean(errors.note)} /><small className="field-help">Deze vrije tekst wordt bewust niet in je tijdelijke browserconcept bewaard.</small>{errors.note ? <span className="field-error" role="alert">{errors.note}</span> : null}</div>
+                  <div className="field"><label htmlFor="note">Wat wil je nog meegeven? <span className="muted">(optioneel)</span></label><textarea id="note" maxLength={570} value={draft.note} onChange={(event) => update("note", event.target.value)} onBlur={() => validateField("note")} aria-invalid={Boolean(errors.note)} /><small className="field-help">Deze vrije tekst wordt bewust niet in je tijdelijke browserconcept bewaard.</small>{errors.note ? <span className="field-error" role="alert">{errors.note}</span> : null}</div>
                 </div>
               ) : null}
 

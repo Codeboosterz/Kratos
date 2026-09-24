@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/src/domain/products";
 import { productRoute } from "@/src/domain/routes";
+import { canPurchase, mediaApproved, priceLabel, priceRequestHref } from "@/src/content/product-details";
 
 export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const href = productRoute(product.slug);
@@ -10,7 +11,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
 
   return (
     <article className="product-card" aria-labelledby={titleId}>
-      <Link className="product-card__media-link" href={href} aria-label={`Bekijk ${product.name}`}>
+      {mediaApproved(product) ? <Link className="product-card__media-link" href={href} aria-label={`Bekijk ${product.name}`}>
         <div className="product-card__image">
           <Image
             src={product.image}
@@ -21,7 +22,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             sizes="(max-width: 560px) calc(100vw - 2.5rem), (max-width: 1100px) 50vw, 33vw"
           />
         </div>
-      </Link>
+      </Link> : <Link className="product-card__media-link" href={href} aria-label={`Bekijk ${product.name}`}><div className="product-card__image product-card__image--empty" aria-hidden="true"><span>KRATOS</span></div></Link>}
       <div className="product-card__body">
         <div className="product-card__heading">
           <span className="eyebrow">{product.format}</span>
@@ -32,10 +33,11 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           {product.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
         </ul>
         <div className="product-card__footer">
-          <p className="availability">Prijs en inhoud na bevestiging</p>
+          <p className="availability">{priceLabel(product)}</p>
           <Link className="product-card__cta" href={href} data-testid="open-product">
             Bekijk traject <ArrowUpRight aria-hidden="true" size={18} />
           </Link>
+          {!canPurchase(product) ? <Link className="product-card__cta" href={priceRequestHref(product.slug)}>Vraag prijs en trajectinformatie aan <ArrowUpRight aria-hidden="true" size={18} /></Link> : null}
         </div>
       </div>
     </article>

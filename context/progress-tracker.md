@@ -2,9 +2,12 @@
 
 ## Current Phase
 
-- Client handover preparation; Units 19–26 audit/repairs validated, release verification next
+- Client content and mobile revision (Unit 29) implemented and locally validated for review; production unchanged. Source audit: eight active local products, all prices unverified, biography PDF and approved duo/online photos still outstanding.
 
 ## Current Goal
+
+- 24 September: Unit 29 public content/mobile revision implemented locally for review. Homepage offer now follows the hero; eight products remain in the catalogue. Faith & Fitness is an event/community route with no intake interest action; Omar has a short sourced introduction while the biography remains pending; one five-step coaching explanation lives on `/werkwijze`. Unverified Duo/Online pictures are replaced by branded media slots. Public product actions use selected price requests; existing checkout guards remain. Intake product/intent persist and reach the existing payload. Existing CMS definitions now cover per-product facts, five coaching steps and community event copy. Source gaps are recorded in `docs/kratos-content-sources.md`. No production deployment, real lead, email or payment was made.
+- Validation after this unit: `npm run typecheck`, `npm run lint`, `npm test` (263/263), `npm run build` and the final Playwright suite (28/28) pass. Local production preview runs at `http://127.0.0.1:3300/`; screenshots of the seven key routes at 390/1440 plus initial, middle and end hero frames are under `artifacts/qa/unit29/`. The desktop hero sequence and reduced-motion mobile behavior pass browser checks. Widths 360/390/430/768/1440 showed zero document overflow and all visible images loaded. Open sources: Omar biography, approved Duo and Online media, verified event social URLs, per-product commercial inclusions/durations, current prices with units and Stripe setup.
 
 - 11 September: Unit 19 smoke/security/form/CTA audit complete. Repair Units
   20–26 pass 223 tests, 30 browser checks, lint/typecheck/build and zero-advisory

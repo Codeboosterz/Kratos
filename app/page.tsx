@@ -1,69 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Dumbbell, Flame, HeartPulse } from "lucide-react";
-import { BrandMarquee, CommunityGrid, EditorialReveal, SplitTextHeading } from "@/components/editorial-motion";
+import { ArrowRight } from "lucide-react";
 import { HomeScrollHero } from "@/components/home-scroll-hero";
-import { FaithScrollStory } from "@/components/faith-scroll-story";
-import { ProductCard } from "@/components/product-card";
 import { getPublishedHomeHero } from "@/src/cms/home";
-import { applyCmsProductPresentation, getFeaturedProducts } from "@/src/server/catalogue";
-import { getPublishedCmsPage } from "@/src/cms/site-pages";
+
+const directions = [
+  { title: "Personal training", text: "Train persoonlijk met Omar.", href: "/trajecten?categorie=personal_training" },
+  { title: "Duo Coaching", text: "Train samen met je trainingspartner.", href: "/trajecten/duo-coaching" },
+  { title: "Online Coaching", text: "Ontvang begeleiding op afstand.", href: "/trajecten/premium-online-coaching" },
+  { title: "Zelfstandig trainen", text: "Bekijk schema's en thuisprogramma's.", href: "/trajecten?categorie=digital_program" },
+];
 
 export default async function HomePage() {
   const hero = await getPublishedHomeHero();
-  const catalogueContent = await getPublishedCmsPage("trajecten");
-  const featured = getFeaturedProducts().map((product) => applyCmsProductPresentation(product, catalogueContent));
-  return (
-    <>
-      <HomeScrollHero
-        eyebrow={hero.eyebrow}
-        titleLineOne={hero.title_line_1}
-        titleLineOneAccent={hero.title_line_1_accent}
-        titleLineTwo={hero.title_line_2}
-        titleLineTwoAccent={hero.title_line_2_accent}
-        intro={hero.intro}
-        primaryCtaHref={hero.primary_cta_href}
-        primaryCtaLabel={hero.primary_cta_label}
-        posterSrc={hero.hero_image_url}
-        posterAlt={hero.hero_image_alt}
-        motionMode={hero.motion_hero_accents}
-      />
-      <BrandMarquee primary={hero.marquee_primary} secondary={hero.marquee_secondary} />
-      <section className="editorial-light mission-community" aria-labelledby="mission-title">
-        <div className="narrow-container editorial-center mission-community__intro">
-          <span className="eyebrow">{hero.mission_eyebrow}</span>
-          <SplitTextHeading id="mission-title" className="section-title">{hero.mission_title}</SplitTextHeading>
-          <p>{hero.mission_text}</p>
-        </div>
-        <div className="mission-community__stage">
-          <div className="mission-community__backdrop" aria-hidden="true" />
-          <div className="site-container">
-            <CommunityGrid images={hero.community_image_urls} centerImage={hero.mission_image_url} />
-          </div>
-        </div>
-      </section>
-      <FaithScrollStory eyebrow={hero.faith_eyebrow} title={hero.faith_title} subtitle={hero.faith_subtitle} intro={hero.faith_text} steps={hero.faith_story_steps} />
-      <section className="omar-band" aria-labelledby="omar-title">
-        <div className="site-container omar-band__grid">
-          <div className="omar-band__portrait"><Image src={hero.omar_image_url} alt="" fill sizes="(max-width: 800px) 90vw, 440px" /></div>
-          <EditorialReveal className="omar-band__word"><h2 id="omar-title">{hero.omar_word}</h2></EditorialReveal>
-          <EditorialReveal className="omar-band__story"><span className="eyebrow">{hero.omar_eyebrow}</span><h3>{hero.omar_title}</h3><p>{hero.omar_text}</p><Link className="button button--outline" href="/over-omar">Lees het verhaal <ArrowRight size={18} aria-hidden="true" /></Link></EditorialReveal>
-        </div>
-      </section>
-      <section className="section section--editorial reviews-section" aria-labelledby="reviews-title">
-        <div className="site-container">
-          <EditorialReveal className="section-heading section-heading--center"><span className="eyebrow">{hero.reviews_eyebrow}</span><h2 id="reviews-title" className="section-title">{hero.reviews_title} <span className="lime">{hero.reviews_title_accent}</span></h2><p className="muted">{hero.reviews_intro}</p></EditorialReveal>
-          <div className="review-placeholder-row" role="region" aria-label="Cliëntverhalen" tabIndex={0}>{hero.review_cards.map((item) => <article key={item.label}><span>{item.label}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
-        </div>
-      </section>
-      <section className="editorial-light trajectory-preview" aria-labelledby="directions-title">
-        <div className="site-container">
-          <EditorialReveal className="section-heading section-heading--center"><span className="eyebrow">{hero.directions_eyebrow}</span><h2 id="directions-title" className="section-title">{hero.directions_title} <span className="lime">{hero.directions_title_accent}</span></h2></EditorialReveal>
-          <div className="direction-grid"><Link href="/trajecten?doel=afvallen"><Flame aria-hidden="true" /><span><strong>Afvallen</strong><small>Bouw aan een vol te houden aanpak.</small></span><ArrowRight aria-hidden="true" /></Link><Link href="/trajecten?doel=spieropbouw"><Dumbbell aria-hidden="true" /><span><strong>Spieropbouw</strong><small>Werk gericht aan kracht en opbouw.</small></span><ArrowRight aria-hidden="true" /></Link><Link href="/trajecten?doel=fit-sterk"><HeartPulse aria-hidden="true" /><span><strong>Fit &amp; sterk</strong><small>Maak bewegen onderdeel van je ritme.</small></span><ArrowRight aria-hidden="true" /></Link></div>
-          <div className="lime-cta" data-sticky-final-sentinel><CalendarDays aria-hidden="true" /><div><strong>{hero.final_cta_title}</strong><span>{hero.final_cta_text}</span></div><Link className="button button--dark" href="/intake?source=home-final">Plan een intake <ArrowRight aria-hidden="true" /></Link></div>
-        </div>
-      </section>
-      <section className="section section--tight featured-strip" aria-label="Uitgelichte trajecten"><div className="site-container"><div className="product-grid">{featured.map((product) => <ProductCard product={product} key={product.id} />)}</div></div></section>
-    </>
-  );
+  return <>
+    <HomeScrollHero eyebrow={hero.eyebrow} titleLineOne={hero.title_line_1} titleLineOneAccent={hero.title_line_1_accent} titleLineTwo={hero.title_line_2} titleLineTwoAccent={hero.title_line_2_accent} intro="Personal training met Omar, samen trainen met Duo Coaching of begeleiding op afstand met Premium Online Coaching. Bekijk welke vorm past bij jouw doel." primaryCtaHref="/intake?source=home-hero" primaryCtaLabel="Plan een intake" posterSrc={hero.hero_image_url} posterAlt={hero.hero_image_alt} motionMode={hero.motion_hero_accents} />
+    <section className="section section--tight" aria-labelledby="offer-title"><div className="site-container"><span className="eyebrow">Onze begeleiding</span><h2 id="offer-title" className="section-title">Welke begeleiding past bij jou?</h2><p className="lead">Kies voor persoonlijke begeleiding, samen trainen of zelfstandig aan de slag gaan.</p><div className="direction-grid kratos-offer-directions">{directions.map(item => <Link key={item.title} href={item.href}><span><strong>{item.title}</strong><small>{item.text}</small></span><ArrowRight aria-hidden="true" /></Link>)}</div><Link className="button button--outline" href="/trajecten">Bekijk alle trajecten <ArrowRight aria-hidden="true" /></Link></div></section>
+    <section className="section section--tight editorial-light" aria-labelledby="omar-title"><div className="site-container kratos-omar-intro"><div className="kratos-omar-intro__photo"><Image src={hero.omar_image_url} alt="Omar traint in de fitnessruimte" fill sizes="(max-width: 800px) 100vw, 40vw" /></div><div><span className="eyebrow">Over de coach</span><h2 id="omar-title" className="section-title">Omar.</h2><p className="lead">Maak kennis met Omar, de coach achter KRATOS Fitness.</p><Link className="button button--dark" href="/over-omar">Leer Omar kennen <ArrowRight aria-hidden="true" /></Link></div></div></section>
+    <section className="section section--tight" aria-labelledby="method-title"><div className="site-container kratos-short-section"><span className="eyebrow">Onze werkwijze</span><h2 id="method-title" className="section-title">Van aanvraag tot evaluatie.</h2><p>Bekijk hoe persoonlijke coaching werkt en wat je bij iedere stap kunt verwachten.</p><Link className="button button--outline" href="/werkwijze">Bekijk onze werkwijze <ArrowRight aria-hidden="true" /></Link></div></section>
+    <section className="section section--tight editorial-light" aria-labelledby="faith-title"><div className="site-container kratos-short-section"><span className="eyebrow">KRATOS Faith &amp; Fitness · Community &amp; events</span><h2 id="faith-title" className="section-title">FAITH. FITNESS. COMMUNITY.</h2><p>Samen trainen, elkaar aanmoedigen en nieuwe mensen ontmoeten. Workouts, challenges, geloof en inspiratie komen samen in onze events.</p><p>KRATOS Faith &amp; Fitness staat los van onze persoonlijke coachingstrajecten.</p><Link className="button button--dark" href="/community">Ontdek Faith &amp; Fitness <ArrowRight aria-hidden="true" /></Link></div></section>
+    <section className="section section--tight" data-sticky-final-sentinel><div className="site-container lime-cta"><div><strong>Bespreek jouw doel met Omar.</strong><span>Vertel waar je aan wilt werken en vraag informatie over de begeleiding.</span></div><Link className="button button--dark" href="/intake?source=home-final">Plan een intake <ArrowRight aria-hidden="true" /></Link></div></section>
+  </>;
 }
