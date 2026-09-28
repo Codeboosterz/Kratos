@@ -53,6 +53,41 @@ const legacyProductImages: Record<string, string> = {
   "12-weken-transformatie": "/media/programs/09-12-week-transformation.jpg",
 };
 
+const previousProductArtwork: Record<string, { image: string; imageAlt: string }> = {
+  "transformatie-pack-10-sessies": {
+    "image": "/images/programs/cards/transformation-pack-card-v3.webp",
+    "imageAlt": "Omar voert een deadlift uit in een fitnessruimte."
+  },
+  "premium-online-coaching": {
+    "image": "/images/programs/cards/premium-online-coaching-card-v3.webp",
+    "imageAlt": "Omar begeleidt een persoonlijk coachingsmoment in de fitnessruimte."
+  },
+  "training-voeding-bundle": {
+    "image": "/images/programs/cards/training-voeding-bundle-card-v3.webp",
+    "imageAlt": "Omar coacht een klant tijdens een dumbbell press."
+  },
+  "duo-coaching": {
+    "image": "/images/programs/cards/duo-coaching-card-v3.webp",
+    "imageAlt": "Omar begeleidt een klant tijdens een krachtoefening."
+  },
+  "jouw-trainingsschema": {
+    "image": "/images/programs/cards/trainingsschema-card-v3.webp",
+    "imageAlt": "Omar voert een kabeloefening uit volgens een trainingsschema."
+  },
+  "hwo-beginners": {
+    "image": "/images/programs/cards/hwo-beginners-card-v3.webp",
+    "imageAlt": "Omar zit met een dumbbell naast een gewichtenrek."
+  },
+  "hwo-lower-body-glutes": {
+    "image": "/images/programs/cards/lower-body-glutes-card-v3.webp",
+    "imageAlt": "Een trainer begeleidt een beenoefening op een mat."
+  },
+  "12-weken-transformatie": {
+    "image": "/images/programs/cards/12-weken-transformatie-card-v3.webp",
+    "imageAlt": "Omar traint met een dumbbell in de fitnessruimte."
+  }
+};
+
 const legacyProductSummaries: Record<string, string> = {
   "transformatie-pack-10-sessies": "Een persoonlijk traject rond training, ritme en voortgang.",
   "premium-online-coaching": "Structuur en persoonlijke afstemming, waar je ook traint.",
@@ -97,7 +132,8 @@ export function filterProducts(category: CategoryFilter, goal: GoalKey | null): 
 export function applyCmsProductPresentation(product: Product, content: Record<string, string>): Product {
   const key = product.slug.replaceAll("-", "_");
   const cmsImage = content[`product_${key}_image_url`]?.trim();
-  const image = cmsImage && cmsImage !== legacyProductImages[product.slug]
+  const previousArtwork = previousProductArtwork[product.slug];
+  const image = cmsImage && cmsImage !== legacyProductImages[product.slug] && cmsImage !== previousArtwork?.image
     ? cmsImage
     : product.image;
   const cmsSummary = content[`product_${key}_summary`]?.trim();
@@ -113,6 +149,8 @@ export function applyCmsProductPresentation(product: Product, content: Record<st
       content[`product_${key}_highlight_${index + 1}`] || highlight
     )) as Product["highlights"],
     image,
-    imageAlt: content[`product_${key}_image_alt`] || product.imageAlt,
+    imageAlt: image === product.image && content[`product_${key}_image_alt`] === previousArtwork?.imageAlt
+      ? product.imageAlt
+      : content[`product_${key}_image_alt`] || product.imageAlt,
   };
 }

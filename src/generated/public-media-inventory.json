@@ -1,6 +1,6 @@
 {
-  "count": 179,
-  "sizeBytes": 24516681,
+  "count": 176,
+  "sizeBytes": 22789535,
   "files": [
     {
       "path": "/hero-frames/frame_001.jpg",
@@ -627,24 +627,52 @@
       "sizeBytes": 286297
     },
     {
+      "path": "/images/programs/cards/12-weken-transformatie-approved-v2.webp",
+      "sizeBytes": 149690
+    },
+    {
       "path": "/images/programs/cards/12-weken-transformatie-card-v3.webp",
       "sizeBytes": 269564
+    },
+    {
+      "path": "/images/programs/cards/duo-coaching-approved-v2.webp",
+      "sizeBytes": 180992
     },
     {
       "path": "/images/programs/cards/duo-coaching-card-v3.webp",
       "sizeBytes": 205506
     },
     {
+      "path": "/images/programs/cards/hwo-beginners-approved-v2.webp",
+      "sizeBytes": 130884
+    },
+    {
       "path": "/images/programs/cards/hwo-beginners-card-v3.webp",
       "sizeBytes": 261970
+    },
+    {
+      "path": "/images/programs/cards/hwo-lower-body-glutes-approved-v2.webp",
+      "sizeBytes": 135678
+    },
+    {
+      "path": "/images/programs/cards/jouw-trainingsschema-approved-v2.webp",
+      "sizeBytes": 197686
     },
     {
       "path": "/images/programs/cards/lower-body-glutes-card-v3.webp",
       "sizeBytes": 48370
     },
     {
+      "path": "/images/programs/cards/premium-online-coaching-approved-v2.webp",
+      "sizeBytes": 132928
+    },
+    {
       "path": "/images/programs/cards/premium-online-coaching-card-v3.webp",
       "sizeBytes": 160672
+    },
+    {
+      "path": "/images/programs/cards/training-voeding-bundle-approved-v2.webp",
+      "sizeBytes": 147902
     },
     {
       "path": "/images/programs/cards/training-voeding-bundle-card-v3.webp",
@@ -653,6 +681,10 @@
     {
       "path": "/images/programs/cards/trainingsschema-card-v3.webp",
       "sizeBytes": 201088
+    },
+    {
+      "path": "/images/programs/cards/transformation-pack-approved-v2.webp",
+      "sizeBytes": 198756
     },
     {
       "path": "/images/programs/cards/transformation-pack-card-v3.webp",
@@ -673,50 +705,6 @@
     {
       "path": "/img/Transparent logo.png",
       "sizeBytes": 95194
-    },
-    {
-      "path": "/media/programs/01-training-schema.jpg",
-      "sizeBytes": 263921
-    },
-    {
-      "path": "/media/programs/02-training-voeding-bundle.jpg",
-      "sizeBytes": 256102
-    },
-    {
-      "path": "/media/programs/03-premium-online-coaching.jpg",
-      "sizeBytes": 251565
-    },
-    {
-      "path": "/media/programs/04-transformation-pack-10-sessions.jpg",
-      "sizeBytes": 239544
-    },
-    {
-      "path": "/media/programs/05-duo-coaching.jpg",
-      "sizeBytes": 215689
-    },
-    {
-      "path": "/media/programs/06-hwo-beginners-room.jpg",
-      "sizeBytes": 206940
-    },
-    {
-      "path": "/media/programs/07-hwo-lower-body-glutes.jpg",
-      "sizeBytes": 226947
-    },
-    {
-      "path": "/media/programs/09-12-week-transformation.jpg",
-      "sizeBytes": 233879
-    },
-    {
-      "path": "/media/programs/cards/premium-online-coaching-hero-v2.jpg",
-      "sizeBytes": 349851
-    },
-    {
-      "path": "/media/programs/cards/training-voeding-bundle-hero-v2.jpg",
-      "sizeBytes": 353076
-    },
-    {
-      "path": "/media/programs/cards/transformation-pack-hero-v2.jpg",
-      "sizeBytes": 404148
     }
   ]
 }
