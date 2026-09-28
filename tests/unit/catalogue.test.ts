@@ -56,6 +56,16 @@ describe("server-owned product catalogue", () => {
     ]);
   });
 
+  it("upgrades saved previous default artwork and its stale description", () => {
+    const product = getProduct("premium-online-coaching")!;
+    const updated = applyCmsProductPresentation(product, {
+      product_premium_online_coaching_image_url: "/images/programs/cards/premium-online-coaching-card-v3.webp",
+      product_premium_online_coaching_image_alt: "Omar begeleidt een persoonlijk coachingsmoment in de fitnessruimte.",
+    });
+    expect(updated.image).toBe(product.image);
+    expect(updated.imageAlt).toBe(product.imageAlt);
+  });
+
   it("preserves a genuinely custom CMS product image", () => {
     const product = getProduct("premium-online-coaching");
     expect(product).not.toBeNull();

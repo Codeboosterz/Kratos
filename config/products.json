@@ -18,8 +18,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": true,
-      "image": "/images/programs/cards/transformation-pack-card-v3.webp",
-      "imageAlt": "Omar voert een deadlift uit in een fitnessruimte."
+      "image": "/images/programs/cards/transformation-pack-approved-v2.webp",
+      "imageAlt": "Omar begeleidt een sporter bij een goblet squat in de fitnessruimte."
     },
     {
       "id": "product-premium-online",
@@ -37,8 +37,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": true,
-      "image": "/images/programs/cards/premium-online-coaching-card-v3.webp",
-      "imageAlt": "Omar begeleidt een persoonlijk coachingsmoment in de fitnessruimte."
+      "image": "/images/programs/cards/premium-online-coaching-approved-v2.webp",
+      "imageAlt": "Omar begeleidt een sporter via een videogesprek op zijn laptop."
     },
     {
       "id": "product-training-nutrition",
@@ -56,8 +56,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": true,
-      "image": "/images/programs/cards/training-voeding-bundle-card-v3.webp",
-      "imageAlt": "Omar coacht een klant tijdens een dumbbell press."
+      "image": "/images/programs/cards/training-voeding-bundle-approved-v2.webp",
+      "imageAlt": "Omar bespreekt trainingsplanning met een maaltijd naast zijn notities."
     },
     {
       "id": "product-duo-coaching",
@@ -75,8 +75,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": false,
-      "image": "/images/programs/cards/duo-coaching-card-v3.webp",
-      "imageAlt": "Omar begeleidt een klant tijdens een krachtoefening."
+      "image": "/images/programs/cards/duo-coaching-approved-v2.webp",
+      "imageAlt": "Omar begeleidt twee sporters bij kettlebell squats."
     },
     {
       "id": "product-training-plan",
@@ -94,8 +94,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": false,
-      "image": "/images/programs/cards/trainingsschema-card-v3.webp",
-      "imageAlt": "Omar voert een kabeloefening uit volgens een trainingsschema."
+      "image": "/images/programs/cards/jouw-trainingsschema-approved-v2.webp",
+      "imageAlt": "Omar bekijkt een persoonlijk trainingsschema op een tablet."
     },
     {
       "id": "product-hwo-beginners",
@@ -113,8 +113,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": false,
-      "image": "/images/programs/cards/hwo-beginners-card-v3.webp",
-      "imageAlt": "Omar zit met een dumbbell naast een gewichtenrek."
+      "image": "/images/programs/cards/hwo-beginners-approved-v2.webp",
+      "imageAlt": "Omar demonstreert een squat naar een stoel in een woonkamer."
     },
     {
       "id": "product-hwo-lower-body",
@@ -132,8 +132,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": false,
-      "image": "/images/programs/cards/lower-body-glutes-card-v3.webp",
-      "imageAlt": "Een trainer begeleidt een beenoefening op een mat."
+      "image": "/images/programs/cards/hwo-lower-body-glutes-approved-v2.webp",
+      "imageAlt": "Omar demonstreert een lunge op een trainingsmat thuis."
     },
     {
       "id": "product-12-weeks",
@@ -151,8 +151,8 @@
       "stripePriceId": null,
       "active": true,
       "featured": false,
-      "image": "/images/programs/cards/12-weken-transformatie-card-v3.webp",
-      "imageAlt": "Omar traint met een dumbbell in de fitnessruimte."
+      "image": "/images/programs/cards/12-weken-transformatie-approved-v2.webp",
+      "imageAlt": "Omar bespreekt een trainingsplanning met een sporter in de fitnessruimte."
     }
   ]
 }
