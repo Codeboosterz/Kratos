@@ -6,6 +6,10 @@
 
 ## Current Goal
 
+- 1 October: Unit 32 verified locally — final rejected gym photo on /community replaced with the existing outdoor group-training photo and matching alt text. Typecheck, scoped lint and all six Faith story Chromium/WebKit checks pass (desktop forward/reverse scroll, reduced motion, mobile controls). Story structure and animation code unchanged. Preview: http://127.0.0.1:3560/community. Publication pending.
+
+- 1 October: Unit 31 published via PR #3 as `e26969b`; Vercel `dpl_FNNwRP8uWPJ7owJGbSDfLgyMjrEM` READY on kratosfitness.be. Homepage Faith story removed; /community now carries event copy, socials and responsive slides. All 16 live Chromium/WebKit motion/community/history checks pass, all eight approved package images remain correctly mapped, and bounded deployment error-log scan has no entries. Local implementation/audit: /Users/denzil/.codex/worktrees/approved-traject-images/Kratos, branch codex/mobile-motion-community; production preview http://127.0.0.1:3550/community.
+
 - 1 October: Unit 31 implemented — portrait mobile hero scrubbing, lightweight mobile mosaic reveals, Safari layout refresh and canvas re-entry reset. Faith story moved to /community with event copy, native mobile slides and existing social links. 265 unit/integration tests, lint/typecheck/build and all 37 Chromium browser tests pass; targeted WebKit resize and history checks pass three consecutive repeats each. Public routes checked in both engines at 390/1440px. Release verification pending.
 
 - 28 September: Unit 30 published via PR #2, production commit `1350ca7`, Vercel deployment `dpl_Dc67k4M8FMVW6xkfZuMdQHu8nfcc` READY. All eight approved version 2 images verified live on desktop/mobile catalogue and corresponding detail pages; no overflow or browser errors. Bounded deployment error-log scan returned no entries. Original sections and animation source unchanged.
