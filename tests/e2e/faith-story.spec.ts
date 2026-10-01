@@ -1,12 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const chapterTitles = [
-  "Begin met aandacht",
-  "Bouw aan ritme",
-  "Draag de last",
-  "Erken de groei",
-  "Voed je geest",
-  "Ga met betekenis",
+  "Samenkomen",
+  "Samen bewegen",
+  "Elkaar aanmoedigen",
+  "Geloof & inspiratie",
+  "Nieuwe verbindingen",
+  "De volgende editie",
 ] as const;
 const photoChapters = [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5];
 
@@ -28,7 +28,7 @@ async function scrollStoryTo(page: Page, progress: number) {
 test("Faith & Fitness keeps the rolling copy, filmstrip and stepper synchronized", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/");
+  await page.goto("/community");
 
   const story = page.getByTestId("faith-scroll-story");
   const pin = story.locator(".faith-story__pin");
@@ -115,7 +115,7 @@ test("Faith & Fitness keeps the rolling copy, filmstrip and stepper synchronized
 test("Faith & Fitness keeps the approved desktop filmstrip when reduced motion is enabled", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/#faith-title");
+  await page.goto("/community#faith-title");
 
   const story = page.getByTestId("faith-scroll-story");
   await expect(story).toHaveAttribute("data-story-mode", "pinned");
@@ -125,28 +125,21 @@ test("Faith & Fitness keeps the approved desktop filmstrip when reduced motion i
   await expect(story.locator(".faith-story__copy-panel")).toHaveCount(chapterTitles.length);
 });
 
-test("Faith & Fitness uses a readable non-pinned chapter flow on mobile", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
+test("Faith & Fitness mobile slides support forward, reverse and keyboard controls", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/#faith-title");
-
+  await page.goto("/community#faith-title");
   const story = page.getByTestId("faith-scroll-story");
-  const chapters = story.locator(".faith-story__mobile-chapter");
-  await expect(story).toHaveAttribute("data-story-mode", "static");
-  await expect(chapters).toHaveCount(chapterTitles.length);
+  await expect(story.locator(".faith-story__mobile-chapter")).toHaveCount(6);
   await expect(story.locator(".faith-story__desktop-stage")).toHaveCSS("display", "none");
-  await expect(story.locator(".faith-story__mobile-image")).toHaveCount(photoChapters.length);
-  const mobileSources = await story.locator(".faith-story__mobile-image img").evaluateAll((images) => images.map((img) => new URL((img as HTMLImageElement).src).searchParams.get("url")));
-  expect(new Set(mobileSources).size).toBe(13);
-  expect(mobileSources).not.toContain("/images/community/coached-row.jpg");
-  expect(mobileSources).not.toContain("/images/omar-deadlift.jpg");
-  const imageBounds = await story.locator(".faith-story__mobile-image").evaluateAll((elements) => elements.map((element) => ({ left: element.getBoundingClientRect().left, right: element.getBoundingClientRect().right })));
-  for (const bounds of imageBounds) {
-    expect(bounds.left).toBeGreaterThanOrEqual(0);
-    expect(bounds.right).toBeLessThanOrEqual(390);
+  for(let index=1;index<6;index++) {
+    await story.getByRole("button", { name: "Volgende slide" }).click();
+    await expect(story.locator(".faith-story__mobile-controls span")).toHaveText(`${index+1} / 6`);
   }
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-
-  const chapterTops = await chapters.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().top));
-  expect(chapterTops).toEqual([...chapterTops].sort((left, right) => left - right));
+  await expect(story.getByRole("button", { name: "Volgende slide" })).toBeDisabled();
+  for(let index=4;index>=0;index--) {
+    await story.getByRole("button", { name: "Vorige slide" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(story.locator(".faith-story__mobile-controls span")).toHaveText(`${index+1} / 6`);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

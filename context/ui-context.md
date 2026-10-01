@@ -94,3 +94,6 @@ Reuse existing CSS variables and approved tokens:
 ## Unit 29 preservation — 24 September 2026
 
 The latest user instruction preserves all original marketing content, sections, photos and animations from production baseline `8a731da`. Homepage composition, hero distance, community reveal, Faith story and other page scroll effects are unchanged. Only the existing final product action explains and opens a selected price request when unpriced; the intake adds editable product and contact-intent controls.
+
+## Unit 31 — responsive image motion
+The homepage hero now scrubs on portrait mobile with a shorter stable-height range, lower canvas pixel density and smaller frame retention. Compact landscape and reduced-motion hero stay readable without pinning; reduced-motion marquee is static. Mobile community photos reveal per row without pinning. Faith & Fitness slides live on /community: desktop retains the filmstrip and mobile uses native horizontal snap scrolling with previous/next controls. Header coaching CTA is suppressed on the event page; primary actions follow existing social profiles.

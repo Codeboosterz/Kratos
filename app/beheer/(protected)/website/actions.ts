@@ -59,6 +59,7 @@ export async function publishHomeRevision(_state: CmsActionState, formData: Form
   }
 
   revalidatePath("/");
+  revalidatePath("/community"); // Faith story photos retain the home CMS revision.
   revalidatePath("/beheer");
   revalidatePath("/beheer/website");
   return { status: "success", message: `Versie ${published.published_version} staat nu live.`, revisionId: published.published_revision_id, version: published.published_version };

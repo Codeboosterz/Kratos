@@ -16,6 +16,19 @@ describe("community content upgrade without a database rewrite", () => {
     mocks.single.mockResolvedValueOnce({ data: { published_revision_id: "community" } }).mockResolvedValueOnce({ data: { content: { hero_title: "BMI", community_hero_title: "Samen groeien" } } });
     const content = await getPublishedCmsPage("gratis-tools");
     expect(content.community_hero_title).toBe("Samen groeien");
-    expect(content.community_hero_accent).toBe("Fitness.");
+    expect(content.community_hero_accent).toBe("Community.");
   });
+  it("upgrades the former coaching invitation while retaining selected photos", async () => {
+    mocks.single.mockResolvedValueOnce({ data: { published_revision_id: "old" } }).mockResolvedValueOnce({ data: { content: {
+      community_hero_title: "Faith &", community_hero_accent: "Fitness.", community_hero_cta: "Ik heb interesse",
+      community_hero_image_url: "/images/community/partner-stretch.jpg",
+      community_final_text: "Wil je meer weten over Faith & Fitness? Geef je interesse door via de intake en vermeld dat je voor de community komt."
+    } } });
+    const content = await getPublishedCmsPage("gratis-tools");
+    expect(content.community_hero_title).toBe("Faith. Fitness.");
+    expect(content.community_hero_cta).toContain("Instagram");
+    expect(content.community_final_text).not.toContain("intake");
+    expect(content.community_hero_image_url).toBe("/images/community/partner-stretch.jpg");
+  });
+
 });

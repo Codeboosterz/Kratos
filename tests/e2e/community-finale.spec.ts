@@ -45,7 +45,7 @@ for (const viewport of [{ width: 2013, height: 1604 }, { width: 1440, height: 90
         sceneTop: sceneRect.top, sceneBottom: sceneRect.bottom,
         gridWidth: grid.getBoundingClientRect().width,
         allVisible: [...grid.children].every(tile => Number(getComputedStyle(tile).opacity) > 0.999),
-        nextTop: document.querySelector(".faith-section")!.getBoundingClientRect().top,
+        nextTop: document.querySelector(".omar-band")!.getBoundingClientRect().top,
       };
     });
 
@@ -107,9 +107,8 @@ test("community finale refits after resize and removes desktop transforms on mob
       const start = Number(element.dataset.communityPinStart);
       const end = Number(element.dataset.communityPinEnd);
       const measuredStart = element.getBoundingClientRect().top + scrollY - header;
-      return Math.abs(start - measuredStart) <= 1
-        && Math.abs(end - start - ((element as HTMLElement).offsetHeight - sticky.offsetHeight)) <= 1;
-    })).toBe(true);
+      return Math.max(Math.abs(start - measuredStart), Math.abs(end - start - ((element as HTMLElement).offsetHeight - sticky.offsetHeight)));
+    })).toBeLessThanOrEqual(1);
     // A second refresh (fonts/adjacent pinned story) can move the range after
     // the first resize refresh. Seek the current range on each poll, then give
     // native scroll/GSAP two frames before checking both position and geometry.

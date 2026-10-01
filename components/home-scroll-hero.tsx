@@ -91,12 +91,13 @@ export function HomeScrollHero({
       const media = gsap.matchMedia();
 
       media.add(
-        "(min-width: 901px)",
+        "(prefers-reduced-motion: no-preference) and (min-width: 901px), (prefers-reduced-motion: no-preference) and (min-height: 561px)",
         () => {
           const context = canvas.getContext("2d", { alpha: false });
           if (!context) return;
 
-          const minimizeMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const minimizeMotion = false;
+          const compact = window.matchMedia("(max-width: 900px)").matches;
           const endTaglineLines = gsap.utils.toArray<HTMLElement>(
             ".home-scroll-hero__end-tagline-line > span",
             endTagline,
@@ -121,11 +122,11 @@ export function HomeScrollHero({
           const syncCanvasSize = () => {
             const cssWidth = Math.max(1, canvas.clientWidth);
             const cssHeight = Math.max(1, canvas.clientHeight);
-            const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+            const pixelRatio = Math.min(window.devicePixelRatio || 1, compact ? 1 : 2);
             const nextWidth = Math.round(cssWidth * pixelRatio);
             const nextHeight = Math.round(cssHeight * pixelRatio);
 
-            if (canvas.width !== nextWidth || canvas.height !== nextHeight) {
+            if (canvas.width !== nextWidth || canvas.height !== nextHeight || renderWidth !== cssWidth || renderHeight !== cssHeight) {
               canvas.width = nextWidth;
               canvas.height = nextHeight;
               renderWidth = cssWidth;
@@ -182,7 +183,7 @@ export function HomeScrollHero({
               if (
                 image
                 && !FRAME_ANCHOR_SET.has(index)
-                && Math.abs(index - target) > FRAME_RETENTION_RADIUS
+                && Math.abs(index - target) > (compact ? 8 : FRAME_RETENTION_RADIUS)
               ) {
                 frames[index] = undefined;
               }
@@ -198,7 +199,7 @@ export function HomeScrollHero({
 
             const image = new window.Image();
             image.decoding = "async";
-            image.fetchPriority = "low";
+            image.fetchPriority = index === 0 ? "high" : "low";
             image.onload = () => {
               if (cancelled) {
                 resolve(false);
@@ -274,7 +275,7 @@ export function HomeScrollHero({
             // Coarse anchors make large scroll jumps visually stable. Detailed frames
             // are requested only around the user's current position.
             anchorPrimeTimer = window.setTimeout(() => {
-              replaceLoadQueue(FRAME_ANCHORS.filter((index) => index !== 0));
+              replaceLoadQueue(currentTarget === 0 ? FRAME_ANCHORS.filter((index) => index !== 0) : frameWindow(currentTarget, 1));
             }, 400);
           };
 
@@ -294,9 +295,9 @@ export function HomeScrollHero({
             scrollTrigger: {
               id: "home-scroll-frame-hero",
               trigger: section,
-              start: "top top+=76",
-              end: "bottom bottom",
-              scrub: minimizeMotion ? true : MOTION.scrollScrub,
+              start: () => `top top+=${Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-height")) || 76}`,
+              end: () => `+=${section.offsetHeight - (section.querySelector<HTMLElement>(".home-scroll-hero__sticky")?.offsetHeight || window.innerHeight)}`,
+              scrub: compact ? 0.15 : MOTION.scrollScrub,
               invalidateOnRefresh: true,
               onRefresh: () => drawFrame(true),
               onUpdate: (self) => {

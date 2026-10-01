@@ -6,6 +6,10 @@
 
 ## Current Goal
 
+- 1 October: Unit 31 implemented — portrait mobile hero scrubbing, lightweight mobile mosaic reveals, Safari layout refresh and canvas re-entry reset. Faith story moved to /community with event copy, native mobile slides and existing social links. 265 unit/integration tests, lint/typecheck/build and all 37 Chromium browser tests pass; targeted WebKit resize and history checks pass three consecutive repeats each. Public routes checked in both engines at 390/1440px. Release verification pending.
+
+- 28 September: Unit 30 published via PR #2, production commit `1350ca7`, Vercel deployment `dpl_Dc67k4M8FMVW6xkfZuMdQHu8nfcc` READY. All eight approved version 2 images verified live on desktop/mobile catalogue and corresponding detail pages; no overflow or browser errors. Bounded deployment error-log scan returned no entries. Original sections and animation source unchanged.
+
 - 28 September: Unit 30 ready for publication — eight approved version 2 Omar images mapped to their matching packages, optimized to WebP (1.27 MB combined). Image paths and descriptions updated; sections, layout and animation code unchanged. Typecheck, lint, 264 tests and production build pass. Browser suite: 34/35 pass; the sole development LCP warning concerns the unchanged omar-cable photo, and that route test passes against the production build. All animation tests pass. Catalogue verified at 320/375/430/768/1024/1440px with eight correct images, no overflow; all eight detail mappings pass. Local preview: http://127.0.0.1:3400/trajecten.
 
 - 24 September: latest user instruction supersedes the earlier public-content rewrite and explicitly authorizes website publication. Homepage, marketing pages, navigation, approved imagery, catalogue copy and animation CSS/components are restored to production baseline `8a731da`. All original sections, hero timing, community reveal and Faith filmstrip remain. Existing final product action routes unpriced products to selected price requests; intake preserves editable product/intent, drafts and attribution. Unrelated dirty files are excluded.
