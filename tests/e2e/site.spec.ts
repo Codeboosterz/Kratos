@@ -143,18 +143,17 @@ test("all eight unpriced trajectory detail flows lead to a selected price reques
   }
 });
 
-test("community replaces tools and its interest CTA preserves source", async ({ page, request }) => {
+test("community replaces tools and directs event interest to socials", async ({ page, request }) => {
   const redirect = await request.get("/gratis-tools", { maxRedirects: 0 });
   expect(redirect.status()).toBe(308);
   expect(redirect.headers().location).toContain("/community");
   await page.goto("/community");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Faith &");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Faith. Fitness.");
   await expect(page.locator(".tool-card--live")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Faith & Fitness", exact: true })).toHaveCount(2);
-  await expect.poll(async () => page.locator("main img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
-  await page.getByTestId("community-interest").first().click();
-  await expect(page).toHaveURL(/intake\?source=community/);
-  await expect(page.getByRole("heading", { name: "Waar wil je naartoe?" })).toBeVisible();
+  await expect.poll(async () => page.locator("main > div > section").first().locator("img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
+  await expect(page.getByTestId("community-social").first()).toHaveAttribute("href", /instagram\.com/);
+  await expect(page.locator('main a[href*="source=community"]')).toHaveCount(0);
 });
 
 test("320px layout has no horizontal overflow and mobile navigation works", async ({ page }) => {
@@ -174,8 +173,8 @@ test("375px public routes use legible controls and contained swipe rails", async
 
   await page.goto("/gratis-tools");
   await expect(page).toHaveURL(/\/community$/);
-  await expect(page.getByTestId("community-interest").first()).toBeVisible();
-  expect(await page.getByTestId("community-interest").first().evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  await expect(page.getByTestId("community-social").first()).toBeVisible();
+  expect(await page.getByTestId("community-social").first().evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
 
   await page.goto("/intake");
   await expect(page.locator(".intake-step-heading")).toBeInViewport();
@@ -251,17 +250,13 @@ test("essential homepage scroll sequences remain functional with reduced motion 
   const marquee = page.locator(".brand-marquee__track");
   const marqueeX = () => marquee.evaluate((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m41);
   const marqueeStart = await marqueeX();
-  await expect.poll(marqueeX, { timeout: 3_000 }).toBeLessThan(marqueeStart - 8);
+  await expect.poll(marqueeX).toBe(marqueeStart);
 
   const reducedHero = page.getByTestId("scroll-hero");
   const reducedCanvas = page.getByTestId("scroll-hero-canvas");
-  await expect(reducedHero).toHaveAttribute("data-sequence-ready", "true", { timeout: 8_000 });
-  const reducedHeroHeight = await reducedHero.evaluate((element) => element.getBoundingClientRect().height);
-  expect(reducedHeroHeight).toBeGreaterThan(2_500);
-  await expect(reducedCanvas).toHaveCSS("display", "block");
-  await page.evaluate((distance) => window.scrollTo(0, distance), (reducedHeroHeight - 800) * 0.35);
-  await page.waitForTimeout(500);
-  expect(Number(await reducedCanvas.getAttribute("data-frame"))).toBeGreaterThan(20);
+  await expect(reducedHero).not.toHaveAttribute("data-sequence-ready", "true");
+  await expect(reducedCanvas).toHaveCSS("display", "none");
+  await expect(reducedHero.locator('.home-scroll-hero__copy')).toBeVisible();
 
   const grid = page.locator(".community-reveal");
   const items = grid.locator(".grid_item");
@@ -311,7 +306,7 @@ test("essential homepage scroll sequences remain functional with reduced motion 
   }, { end: pinRange.end, viewportHeight });
   await expect.poll(revealProgress).toBe(1);
   await expect.poll(async () => pinnedTop - (await stickyTop())).toBeGreaterThan(100);
-  await expect.poll(() => page.locator(".faith-section").evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(viewportHeight);
+  await expect.poll(() => page.locator(".omar-band").evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(viewportHeight);
 });
 
 test("owner CMS login is branded, private and honest before provider configuration", async ({ page }) => {

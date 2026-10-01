@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
+import { refreshScrollLayout } from "@/motion/refresh-scroll-layout";
 import { MOTION } from "@/motion/animation-tokens";
 import { getCommunityImagePosition } from "@/src/content/community-media";
 
@@ -31,11 +32,11 @@ export function BrandMarquee({ primary = "Reach your full potential", secondary 
   const scope = useRef<HTMLDivElement>(null);
   useGSAP(() => {
     const track = scope.current?.querySelector<HTMLElement>(".brand-marquee__track");
-    if (!track) return;
+    if (!track || reducedMotion()) return;
 
     gsap.fromTo(track, { xPercent: 0 }, {
       xPercent: -50,
-      duration: reducedMotion() ? 80 : 64,
+      duration: 64,
       ease: "none",
       repeat: -1,
       force3D: true,
@@ -117,6 +118,16 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
         caption.textContent = "Niet alleen bij Kratos";
       }
       root.dataset.communityProgress = "1.0000";
+      if (!reducedMotion()) {
+        // Animate each row in its own visible range; a phone cannot contain the
+        // complete fifteen-photo desktop composition in one pinned viewport.
+        gsap.utils.toArray<HTMLElement>(".grid_item", root).forEach((tile) => {
+          gsap.fromTo(tile, { y: 24, opacity: 0.35 }, {
+            y: 0, opacity: 1, ease: "none",
+            scrollTrigger: { trigger: tile, start: "top 96%", end: "top 72%", scrub: true, invalidateOnRefresh: true },
+          });
+        });
+      }
       return () => {
         if (caption) caption.textContent = "Solo missie?";
         delete root.dataset.communityProgress;
@@ -235,7 +246,8 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
       };
     });
 
-    return () => media.revert();
+    const stopLayoutRefresh = refreshScrollLayout(root.closest(".mission-community"));
+    return () => { stopLayoutRefresh(); media.revert(); };
   }, { scope, dependencies: [images, centerImage], revertOnUpdate: true });
 
   const surroundingImages = images.filter((_, index) => index !== 7).slice(0, 14);

@@ -84,24 +84,30 @@ const aboutFields: CmsFieldDefinition[] = [
 ];
 
 const communityFields: CmsFieldDefinition[] = [
-  ...hero("Faith & Fitness Community", "Faith &", "Fitness.", "Sterk in lichaam. Geworteld in geloof. Een plek om samen te bewegen, elkaar aan te moedigen en bewust te groeien.", "/images/community/outdoor-lunge.jpg")
+  ...hero("Faith & Fitness Community", "Faith. Fitness.", "Community.", "KRATOS Faith & Fitness brengt mensen samen rond geloof, beweging en verbinding. Tijdens onze community-events trainen we samen, moedigen we elkaar aan en ontmoeten we nieuwe mensen.", "/images/community/outdoor-lunge.jpg")
     .map((item) => ({ ...item, key: `community_${item.key}`, defaultValue: item.key === "hero_image_alt" ? "Een deelnemer doet een lunge tijdens een buitentraining" : item.defaultValue })),
-  field("Hero", "community_hero_cta", "Knoptekst", "Ik heb interesse"),
-  field("Hero", "community_hero_note", "Onder de knop", "Vertel ons dat je wilt meedoen. Kratos neemt persoonlijk contact met je op.", "textarea", 260),
+  field("Hero", "community_hero_cta", "Knoptekst", "Volg ons op Instagram"),
+  field("Hero", "community_hero_note", "Onder de knop", "Volg KRATOS Fitness voor nieuwe locaties, data, inschrijvingen en aankomende Faith & Fitness-events.", "textarea", 260),
   field("Beelden", "community_image_2_url", "Samen trainen", "/images/community/partner-stretch.jpg", "image"),
   field("Beelden", "community_image_2_alt", "Beeldbeschrijving", "Twee deelnemers ondersteunen elkaar bij een stretch"),
   field("Beelden", "community_image_3_url", "Reflectie", "/images/faith/05-reflection.webp", "image"),
   field("Beelden", "community_image_3_alt", "Beeldbeschrijving", "Omar leest tijdens een rustig moment in de fitnessruimte"),
-  field("De basis", "community_values_title", "Titel", "Samen groeien."),
-  field("De basis", "community_values_accent", "Groen deel", "Op jouw tempo."),
+  field("De basis", "community_values_title", "Titel", "Samen bewegen."),
+  field("De basis", "community_values_accent", "Groen deel", "Samen verbinden."),
   ...[1, 2, 3].flatMap((n) => [
     field("De basis", `community_value_${n}_title`, `Pijler ${n} — titel`, ["Geloof & reflectie", "Beweging & ritme", "Verbinding & steun"][n - 1]),
     field("De basis", `community_value_${n}_text`, `Pijler ${n} — tekst`, ["Ruimte voor geloof, dankbaarheid en de betekenis achter je volgende stap.", "Aandacht voor je lichaam, kleine gewoonten en de kracht van samen bewegen.", "Elkaar aanmoedigen, ervaringen delen en samen onderweg zijn."][n - 1], "textarea", 320),
   ]),
-  field("Kennismaken", "community_final_title", "Titel", "Je hoeft het niet"),
-  field("Kennismaken", "community_final_accent", "Groen deel", "alleen te doen."),
-  field("Kennismaken", "community_final_text", "Tekst", "Wil je meer weten over Faith & Fitness? Geef je interesse door via de intake en vermeld dat je voor de community komt.", "textarea", 360),
-  field("Kennismaken", "community_final_note", "Verwachting", "Een interesseaanvraag is geen lidmaatschap, boeking of betaling. Praktische afspraken bespreken we persoonlijk.", "textarea", 300),
+  field("Kennismaken", "community_final_title", "Titel", "Bij de volgende editie"),
+  field("Kennismaken", "community_final_accent", "Groen deel", "aanwezig zijn?"),
+  field("Kennismaken", "community_final_text", "Tekst", "Iedere editie krijgt een eigen invulling en vindt plaats in een andere stad of omgeving. Volg ons op social media voor nieuwe locaties, data en inschrijvingen.", "textarea", 360),
+  field("Kennismaken", "community_final_note", "Verwachting", "KRATOS Faith & Fitness is onze aparte community- en eventtak en staat los van persoonlijke coachingstrajecten.", "textarea", 300),
+  field("Social media", "community_social_url", "Instagram-link", "https://www.instagram.com/_kratos_fitness/", "text", 240),
+  field("Social media", "community_facebook_url", "Facebook-link", "https://www.facebook.com/share/1Cn8mGMSm3/", "text", 240),
+  ...[1, 2, 3, 4, 5, 6].flatMap((n) => [
+    field("Eventverhaal", `community_story_${n}_title`, `Slide ${n} — titel`, ["Samenkomen", "Samen bewegen", "Elkaar aanmoedigen", "Geloof & inspiratie", "Nieuwe verbindingen", "De volgende editie"][n - 1]),
+    field("Eventverhaal", `community_story_${n}_text`, `Slide ${n} — tekst`, ["Een community waarin geloof, beweging en verbinding samenkomen.", "Gezamenlijke workouts, challenges en teamwork brengen ons in beweging.", "Samen sterker worden begint bij elkaar ondersteunen en aanmoedigen.", "Tijdens onze events maken we ruimte voor momenten van geloof, inspiratie en persoonlijke groei.", "Ontmoet nieuwe mensen en deel ervaringen in een betrokken community.", "Iedere editie krijgt een eigen invulling. Volg onze socials voor locaties, data en inschrijvingen."][n - 1], "textarea", 360),
+  ]),
 ];
 
 const intakeFields: CmsFieldDefinition[] = [

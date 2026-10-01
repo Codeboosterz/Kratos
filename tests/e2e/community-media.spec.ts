@@ -15,7 +15,7 @@ test("community grid loads all replacement photos and keeps the original centre"
   });
   await expect(root.locator(".community-reveal__caption")).toHaveText("Niet alleen bij Kratos");
   await expect.poll(() => grid.locator(".grid_item").evaluateAll((items) => items.every((item) => (
-    Number(getComputedStyle(item).opacity) > 0.99
+    Number(getComputedStyle(item).opacity) >= 0.35
   )))).toBe(true);
   const sources = await grid.locator("img").evaluateAll((images: HTMLImageElement[]) => images.map((image) => (
     new URL(image.currentSrc || image.src).searchParams.get("url")
@@ -48,7 +48,7 @@ for (const width of [375, 800]) {
     await grid.scrollIntoViewIfNeeded();
     await expect(grid.locator(".grid_item")).toHaveCount(15);
     await expect.poll(() => grid.locator(".grid_item").evaluateAll((items) => items.every((item) => (
-      getComputedStyle(item).visibility !== "hidden" && Number(getComputedStyle(item).opacity) > 0.99
+      getComputedStyle(item).visibility !== "hidden" && Number(getComputedStyle(item).opacity) >= 0.35
     )))).toBe(true);
     await expect.poll(() => grid.locator("img").evaluateAll((images: HTMLImageElement[]) => images.every((image) => (
       image.complete && image.naturalWidth > 0

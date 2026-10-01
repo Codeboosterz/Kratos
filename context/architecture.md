@@ -116,3 +116,6 @@ committed separately from their production application.
 ## Unit 29 — selected price requests
 
 Unpriced product start actions use the existing intake route with product and price intent. The editable intake selection restores from session drafts and reaches the existing lead payload; source attribution and backend checkout guards remain. A nullable price unit is parsed with a null default without rewriting catalogue content.
+
+## Unit 31 — independent community events
+Faith & Fitness lives exclusively at /community. Its event copy and social URLs use the existing gratis-tools CMS identity, with exact-old-default read upgrades. The approved story photos retain their existing home CMS storage/history. The homepage no longer mounts the Faith story. No database migration or provider changes.

@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Stepper, StepperIndicator, StepperItem, StepperSeparator } from "@/components/ui/stepper";
+import { refreshScrollLayout } from "@/motion/refresh-scroll-layout";
 import { MOTION } from "@/motion/animation-tokens";
 import { getFaithStoryPhotos, type FaithStoryStep } from "@/src/content/faith-story";
 
@@ -31,6 +32,13 @@ function stepNumber(index: number) {
 
 export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Props) {
   const scope = useRef<HTMLElement>(null);
+  const mobileRail = useRef<HTMLDivElement>(null);
+  const [mobileStep, setMobileStep] = useState(0);
+  const moveMobile = (index: number) => {
+    const rail = mobileRail.current;
+    const slide = rail?.querySelectorAll<HTMLElement>(".faith-story__mobile-chapter")[index];
+    if (rail && slide) rail.scrollTo({ left: slide.offsetLeft, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  };
   const [activeStep, setActiveStep] = useState(1);
   const photos = useMemo(() => getFaithStoryPhotos(steps), [steps]);
 
@@ -122,7 +130,7 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
           end: () => `+=${Math.max(window.innerHeight * steps.length * 0.92, 3_600)}`,
           pin,
           pinSpacing: true,
-          scrub: MOTION.faithScrub,
+          scrub: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? true : MOTION.faithScrub,
           // This scene follows another pin. Early pin anticipation can make it
           // activate before the community scene has completely cleared.
           anticipatePin: 0,
@@ -189,7 +197,8 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
       };
     });
 
-    return () => media.revert();
+    const stopLayoutRefresh = refreshScrollLayout();
+    return () => { stopLayoutRefresh(); media.revert(); };
   }, { scope, dependencies: [steps, photos], revertOnUpdate: true });
 
   return (
@@ -259,11 +268,24 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
             </Stepper>
           </div>
 
-          <div className="faith-story__mobile-chapters">
-            <header className="faith-story__mobile-context">
+          <div className="faith-story__mobile-context">
+            <header>
               <h3>{subtitle}</h3>
               <p>{intro}</p>
             </header>
+            <div className="faith-story__mobile-controls" aria-label="Faith & Fitness-slides">
+              <button type="button" onClick={() => moveMobile(mobileStep - 1)} disabled={mobileStep === 0} aria-label="Vorige slide">←</button>
+              <span aria-live="polite">{mobileStep + 1} / {steps.length}</span>
+              <button type="button" onClick={() => moveMobile(mobileStep + 1)} disabled={mobileStep === steps.length - 1} aria-label="Volgende slide">→</button>
+            </div>
+          </div>
+          <div className="faith-story__mobile-chapters" ref={mobileRail} tabIndex={0} role="region" aria-label="Faith & Fitness-eventverhaal" onScroll={() => {
+            const rail = mobileRail.current;
+            if (!rail) return;
+            const slides = Array.from(rail.querySelectorAll<HTMLElement>(".faith-story__mobile-chapter"));
+            const closest = slides.reduce((best, slide, index) => Math.abs(slide.offsetLeft - rail.scrollLeft) < Math.abs(slides[best].offsetLeft - rail.scrollLeft) ? index : best, 0);
+            setMobileStep(closest);
+          }}>
             {steps.map((step, index) => (
               <article className="faith-story__mobile-chapter" key={`${step.title}-mobile-${index}`}>
                 <div>
@@ -271,11 +293,11 @@ export function FaithScrollStory({ eyebrow, title, subtitle, intro, steps }: Pro
                   <h4>{step.title}</h4>
                   <p>{step.text}</p>
                 </div>
-                {photos.filter((photo) => photo.stepIndex === index).map((photo, photoIndex) => (
+                <div className="faith-story__mobile-photos">{photos.filter((photo) => photo.stepIndex === index).map((photo, photoIndex) => (
                   <figure className="faith-story__mobile-image" key={`${photo.image_url}-${photoIndex}`}>
                     <Image src={photo.image_url} alt={photo.image_alt} fill sizes="(max-width: 900px) 92vw, 48vw" />
                   </figure>
-                ))}
+                ))}</div>
               </article>
             ))}
           </div>

@@ -8,7 +8,7 @@ describe("CMS-editable Faith & Fitness community", () => {
     expect(definition.route).toBe("/community");
     expect(definition.title).toBe("Faith & Fitness Community");
     const defaults = cmsPageDefaults(definition);
-    expect(defaults.community_hero_title).toBe("Faith &");
+    expect(defaults.community_hero_title).toBe("Faith. Fitness.");
     expect(parseCmsPageContent(definition, defaults).success).toBe(true);
     expect(definition.fields.some((item) => item.key.startsWith("tool_"))).toBe(false);
   });

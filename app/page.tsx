@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowRight, CalendarDays, Dumbbell, Flame, HeartPulse } from "lucide-react";
 import { BrandMarquee, CommunityGrid, EditorialReveal, SplitTextHeading } from "@/components/editorial-motion";
 import { HomeScrollHero } from "@/components/home-scroll-hero";
-import { FaithScrollStory } from "@/components/faith-scroll-story";
 import { ProductCard } from "@/components/product-card";
 import { getPublishedHomeHero } from "@/src/cms/home";
 import { applyCmsProductPresentation, getFeaturedProducts } from "@/src/server/catalogue";
@@ -42,7 +41,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <FaithScrollStory eyebrow={hero.faith_eyebrow} title={hero.faith_title} subtitle={hero.faith_subtitle} intro={hero.faith_text} steps={hero.faith_story_steps} />
       <section className="omar-band" aria-labelledby="omar-title">
         <div className="site-container omar-band__grid">
           <div className="omar-band__portrait"><Image src={hero.omar_image_url} alt="" fill sizes="(max-width: 800px) 90vw, 440px" /></div>
