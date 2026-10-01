@@ -33,6 +33,10 @@ export async function getPublishedCmsPage(slug: string): Promise<Record<string, 
     const parsed = parseStoredCmsPageContent(definition, revision.content);
     if (!parsed.success) return fallback;
     if (slug === "gratis-tools") {
+      if (parsed.data.community_image_3_url === "/images/faith/05-reflection.webp") {
+        parsed.data.community_image_3_url = fallback.community_image_3_url;
+        parsed.data.community_image_3_alt = fallback.community_image_3_alt;
+      }
       for (const [key, previous] of Object.entries(previousCommunityCopy)) {
         if (parsed.data[key] === previous) parsed.data[key] = fallback[key];
       }
