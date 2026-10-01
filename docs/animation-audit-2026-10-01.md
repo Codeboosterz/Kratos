@@ -27,3 +27,6 @@
 - Local production preview: http://127.0.0.1:3550/community. Screenshots and browser reports are under artifacts/qa/unit31.
 
 Browser emulation verifies behavior and geometry, not a physical-device frame-rate guarantee. No real intake, email, payment or booking was created during QA.
+
+## Release
+PR #3 merged as e26969b. Vercel production is READY. All 16 live Chromium/WebKit checks pass, including mobile canvas pixel rendering and history return. Eight approved package image mappings are unchanged. Deployment-filtered error scan returned no entries during the bounded verification window.

@@ -14,11 +14,18 @@ export const metadata: Metadata = {
 
 const icons = [BookOpen, Dumbbell, Users];
 
+// The community story uses outdoor event imagery instead of this coaching photo.
+function communityPhoto<T extends { image_url: string; image_alt: string }>(photo: T): T {
+  return photo.image_url === "/images/community/coached-press.jpg"
+    ? { ...photo, image_url: "/images/community/team-lunges.jpg", image_alt: "Deelnemers doen samen lunges tijdens de buitentraining in het park." }
+    : photo;
+}
+
 export default async function CommunityPage() {
   // Keep the registered CMS identity and its revision history; only its public route changes.
   const content = await getPublishedCmsPage("gratis-tools");
   const home = await getPublishedHomeHero();
-  const steps = home.faith_story_steps.map((step, index) => ({ ...step, title: content[`community_story_${index + 1}_title`], text: content[`community_story_${index + 1}_text`] }));
+  const steps = home.faith_story_steps.map((step, index) => ({ ...communityPhoto(step), additional_images: step.additional_images.map(communityPhoto), title: content[`community_story_${index + 1}_title`], text: content[`community_story_${index + 1}_text`] }));
   const socialHref = /^https:\/\/(www\.)?instagram\.com\//.test(content.community_social_url) ? content.community_social_url : "https://www.instagram.com/_kratos_fitness/";
   const facebookHref = /^https:\/\/(www\.)?facebook\.com\//.test(content.community_facebook_url) ? content.community_facebook_url : "https://www.facebook.com/share/1Cn8mGMSm3/";
   return (
