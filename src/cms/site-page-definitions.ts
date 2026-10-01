@@ -90,8 +90,8 @@ const communityFields: CmsFieldDefinition[] = [
   field("Hero", "community_hero_note", "Onder de knop", "Volg KRATOS Fitness voor nieuwe locaties, data, inschrijvingen en aankomende Faith & Fitness-events.", "textarea", 260),
   field("Beelden", "community_image_2_url", "Samen trainen", "/images/community/partner-stretch.jpg", "image"),
   field("Beelden", "community_image_2_alt", "Beeldbeschrijving", "Twee deelnemers ondersteunen elkaar bij een stretch"),
-  field("Beelden", "community_image_3_url", "Reflectie", "/images/faith/05-reflection.webp", "image"),
-  field("Beelden", "community_image_3_alt", "Beeldbeschrijving", "Omar leest tijdens een rustig moment in de fitnessruimte"),
+  field("Beelden", "community_image_3_url", "Samen bewegen", "/images/community/team-lunges.jpg", "image"),
+  field("Beelden", "community_image_3_alt", "Beeldbeschrijving", "Deelnemers doen samen lunges tijdens de buitentraining in het park."),
   field("De basis", "community_values_title", "Titel", "Samen bewegen."),
   field("De basis", "community_values_accent", "Groen deel", "Samen verbinden."),
   ...[1, 2, 3].flatMap((n) => [

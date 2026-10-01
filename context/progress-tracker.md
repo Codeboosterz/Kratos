@@ -6,6 +6,10 @@
 
 ## Current Goal
 
+- 1 October: Unit 33 locally verified — community hero collage now uses the outdoor group lunges photo instead of solo reflection, including precise old-default CMS migration and alt text. Typecheck/scoped lint pass; 1440px Chromium and 390px WebKit verify image decoding, crop and no overflow. Layout and animation code unchanged. Preview: http://127.0.0.1:3560/community.
+
+- 1 October: Unit 32 published via PR #4, production commit `2e96ea7`, Vercel `dpl_2ZfoEs4Cwh4hNbYCGZyMKxfoiJs1` READY. Final Faith story photo uses existing outdoor group-training image; live image mapping and decoding verified at 1440px Chromium and 390px WebKit. Six local Faith story animation checks, typecheck and scoped lint passed.
+
 - 1 October: Unit 32 verified locally — final rejected gym photo on /community replaced with the existing outdoor group-training photo and matching alt text. Typecheck, scoped lint and all six Faith story Chromium/WebKit checks pass (desktop forward/reverse scroll, reduced motion, mobile controls). Story structure and animation code unchanged. Preview: http://127.0.0.1:3560/community. Publication pending.
 
 - 1 October: Unit 31 published via PR #3 as `e26969b`; Vercel `dpl_FNNwRP8uWPJ7owJGbSDfLgyMjrEM` READY on kratosfitness.be. Homepage Faith story removed; /community now carries event copy, socials and responsive slides. All 16 live Chromium/WebKit motion/community/history checks pass, all eight approved package images remain correctly mapped, and bounded deployment error-log scan has no entries. Local implementation/audit: /Users/denzil/.codex/worktrees/approved-traject-images/Kratos, branch codex/mobile-motion-community; production preview http://127.0.0.1:3550/community.
