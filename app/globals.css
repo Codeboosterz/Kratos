@@ -1701,3 +1701,12 @@ img { max-width: 100%; }
   .home-scroll-hero__sticky { position: relative; top: auto; }
   .home-scroll-hero__end-tagline { display: none; }
 }
+
+/* Match CommunityGrid's tall-mobile motion branch; native sticky releases
+   after reveal + fitted enlargement, without intercepting touch scrolling. */
+@media (max-width: 900px) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+  .mission-community__stage > .site-container { width: 100%; }
+  .community-reveal { --community-pin-distance: max(120svh, 900px); min-height: calc(100svh - var(--site-header-height) + var(--community-pin-distance)); }
+  .grid_sticky { position: sticky; top: var(--site-header-height); height: calc(100svh - var(--site-header-height)); align-content: center; overflow: clip; padding: 0; }
+  .community-reveal__scene { width: calc(100% - 3rem); will-change: transform; }
+}

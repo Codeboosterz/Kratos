@@ -6,6 +6,10 @@
 
 ## Current Goal
 
+- 10 October: Unit 39 complete locally — tall mobile community grid now shares centre-out reveal, fitted enlargement and native sticky release with shorter travel. CUA production-preview checks pass at 320/390/430px (15 decoded photos, no overflow), forward/reverse, release, reduced-motion runtime cleanup, 844×390 landscape fallback and restored desktop 1440×900 finale. 280 unit/integration tests, lint, typecheck, whitespace and 49-page Webpack build pass. Browser regression cases updated; CLI Playwright suite not run (browser verification used CUA). Preview http://127.0.0.1:3564/ (session 38399), screenshot artifacts/qa/unit39/mobile-grid-430.jpg. Unit 38 pending edits preserved. Not deployed.
+
+- 10 October: Units 34–37 published as 1441711; Vercel dpl_CETBnHktfo7sGo3PSNLL6ELdQjJ3 READY, live stories and mobile photo loading verified. Unit 38 implemented locally: internal scheduling copy removed from confirmation and default guidance, with legacy CMS guidance normalized. Regression red→green, 279 tests, lint and typecheck pass. Local intake preview on port 3563 verified; not yet deployed.
+
 - 10 October: Unit 37 complete locally — two supplied transformation stories and original JPG collages added; story 02 shortened; first two exact legacy placeholders upgraded without replacing custom CMS copy. CMS photo path/alt fields round-trip; empty stories remain hidden. Desktop two-column and 390/320px single-column layouts checked through CUA, both photos decoded, contain framing, no horizontal overflow. 278 tests/55 files, lint, production build (49 pages), TypeScript and whitespace pass. Preview http://127.0.0.1:3562/#reviews-title (session 88551). No commit, push, database write or deployment.
 
 - 10 October: Unit 37 started — replace the first two untouched review placeholders with supplied transformation facts and a shortened client story; preserve CMS edits and unrelated work. Original collage file paths requested; no production changes authorized in this unit.

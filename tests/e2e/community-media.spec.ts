@@ -43,6 +43,7 @@ test("community grid loads all replacement photos and keeps the original centre"
 for (const width of [375, 800]) {
   test(`community photos remain visible and contained at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     const grid = page.locator(".community-grid");
     await grid.scrollIntoViewIfNeeded();

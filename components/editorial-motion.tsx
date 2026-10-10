@@ -112,34 +112,28 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
     if (!center || !sticky || !scene) return;
 
     const media = gsap.matchMedia();
-    // Compact layouts are not pinned. A desktop-length scrub would reveal the
-    // photos only after this short section has already left the viewport.
-    media.add({ compact: "(max-width: 900px)", reduced: "(prefers-reduced-motion: reduce)" }, (context) => {
-      if (!context.conditions?.compact) return;
-      gsap.set([center, ...surrounding], { x: 0, y: 0, scale: 1, autoAlpha: 1 });
-      if (backdrop) gsap.set(backdrop, { autoAlpha: 1 });
-      if (caption) {
-        gsap.set(caption, { color: "#f4f6ef" });
-        caption.textContent = "Niet alleen bij Kratos";
+    media.add({
+      desktop: "(min-width: 901px)",
+      compact: "(max-width: 900px)",
+      portrait: "(max-width: 900px) and (min-height: 600px)",
+      reduced: "(prefers-reduced-motion: reduce)",
+    }, (context) => {
+      const mobileReveal = context.conditions?.portrait && !context.conditions?.reduced;
+      // Short landscape and reduced-motion mobile show the complete grid
+      // without a scroll hold. Tall phones share the desktop phase ordering.
+      if (!context.conditions?.desktop && !mobileReveal) {
+        gsap.set([center, ...surrounding], { x: 0, y: 0, scale: 1, autoAlpha: 1 });
+        if (backdrop) gsap.set(backdrop, { autoAlpha: 1 });
+        if (caption) {
+          gsap.set(caption, { color: "#f4f6ef" });
+          caption.textContent = "Niet alleen bij Kratos";
+        }
+        root.dataset.communityProgress = "1.0000";
+        return () => {
+          if (caption) caption.textContent = "Solo missie?";
+          delete root.dataset.communityProgress;
+        };
       }
-      root.dataset.communityProgress = "1.0000";
-      if (!context.conditions?.reduced) {
-        // Animate each row in its own visible range; a phone cannot contain the
-        // complete fifteen-photo desktop composition in one pinned viewport.
-        gsap.utils.toArray<HTMLElement>(".grid_item", root).forEach((tile) => {
-          gsap.fromTo(tile, { y: 24, opacity: 0.35 }, {
-            y: 0, opacity: 1, ease: "none",
-            scrollTrigger: { trigger: tile, start: "top 96%", end: "top 72%", scrub: true, invalidateOnRefresh: true },
-          });
-        });
-      }
-      return () => {
-        if (caption) caption.textContent = "Solo missie?";
-        delete root.dataset.communityProgress;
-      };
-    });
-
-    media.add("(min-width: 901px)", () => {
       const centerX = () => center.offsetLeft + center.offsetWidth / 2;
       const centerY = () => center.offsetTop + center.offsetHeight / 2;
       const travelX = (element: HTMLElement) => centerX() - (element.offsetLeft + element.offsetWidth / 2);

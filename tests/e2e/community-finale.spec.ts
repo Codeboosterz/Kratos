@@ -1,9 +1,10 @@
 import { mkdir } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 
-for (const viewport of [{ width: 2013, height: 1604 }, { width: 1440, height: 900 }, { width: 1280, height: 600 }]) {
+for (const viewport of [{ width: 2013, height: 1604 }, { width: 1440, height: 900 }, { width: 1280, height: 600 }, { width: 320, height: 667 }, { width: 390, height: 844 }, { width: 430, height: 932 }]) {
   test(`community holds, reveals, enlarges and releases at ${viewport.width}×${viewport.height}`, async ({ page }) => {
     await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/");
     const root = page.locator(".community-reveal");
     const scene = root.locator(".community-reveal__scene");

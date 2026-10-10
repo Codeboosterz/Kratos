@@ -21,6 +21,9 @@ test("community scene cleans up across responsive breakpoints", async ({page})=>
   const grid=page.locator('.community-reveal');
   await expect(grid).toHaveAttribute('data-community-pin-end', /\d/);
   await page.setViewportSize({width:390,height:844});
+  await expect(grid.locator('.grid_sticky')).toHaveCSS('position','sticky');
+  await expect(grid).toHaveAttribute('data-community-pin-end', /\d/);
+  await page.setViewportSize({width:844,height:390});
   await expect(grid.locator('.grid_sticky')).toHaveCSS('position','static');
   await expect(grid).not.toHaveAttribute('data-community-pin-end', /\d/);
   await page.setViewportSize({width:1440,height:900});

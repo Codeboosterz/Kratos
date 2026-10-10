@@ -97,3 +97,11 @@ The latest user instruction preserves all original marketing content, sections, 
 
 ## Unit 31 — responsive image motion
 The homepage hero now scrubs on portrait mobile with a shorter stable-height range, lower canvas pixel density and smaller frame retention. Compact landscape and reduced-motion hero stay readable without pinning; reduced-motion marquee is static. Mobile community photos reveal per row without pinning. Faith & Fitness slides live on /community: desktop retains the filmstrip and mobile uses native horizontal snap scrolling with previous/next controls. Header coaching CTA is suppressed on the event page; primary actions follow existing social profiles.
+
+## Unit 39 — mobile community reveal (supersedes compact row reveal)
+
+At widths up to 900px and heights of at least 600px, with motion enabled, the
+three-column community grid shares the desktop centre-out reveal, fitted 2.5%
+minimum enlargement and native sticky release. Mobile travel is max(120svh,
+900px). Shorter viewports and reduced-motion mobile show all images immediately
+without pinning. Responsive/preference changes revert transforms and triggers.

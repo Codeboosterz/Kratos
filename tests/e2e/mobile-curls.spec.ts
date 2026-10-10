@@ -7,7 +7,8 @@ test("mobile community reveal responds to motion preferences", async ({ page }) 
   const tile = page.locator(".community-reveal .grid_item").first();
   await expect.poll(() => tile.evaluate(e => getComputedStyle(e).opacity)).toBe("1");
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect.poll(() => tile.evaluate(e => getComputedStyle(e).opacity)).toBe("0.35");
+  await expect(page.locator(".community-reveal")).toHaveAttribute("data-community-pin-end", /\d/);
+  await expect.poll(() => tile.evaluate(e => getComputedStyle(e).opacity)).toBe("0");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect.poll(() => tile.evaluate(e => getComputedStyle(e).opacity)).toBe("1");
 });

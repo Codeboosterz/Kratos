@@ -111,7 +111,7 @@ const communityFields: CmsFieldDefinition[] = [
 ];
 
 const intakeFields: CmsFieldDefinition[] = [
-  field("Introductie", "hero_eyebrow", "Bovenregel", "Persoonlijke intake"), field("Introductie", "hero_title", "Titel", "Vertel ons"), field("Introductie", "hero_accent", "Groen deel", "waar je naartoe wilt."), field("Introductie", "hero_intro", "Introductie", "In vier overzichtelijke stappen bereiden we een passend eerste gesprek én je afspraak voor.", "textarea", 360), field("Na verzenden", "status_title", "Titel", "Wat gebeurt hierna?"), field("Na verzenden", "status_text", "Tekst", "Na stap 3 slaan we je intake veilig op. In stap 4 kies je een datum zodra Calendly is gekoppeld; zonder koppeling neemt Kratos persoonlijk contact op.", "textarea", 420),
+  field("Introductie", "hero_eyebrow", "Bovenregel", "Persoonlijke intake"), field("Introductie", "hero_title", "Titel", "Vertel ons"), field("Introductie", "hero_accent", "Groen deel", "waar je naartoe wilt."), field("Introductie", "hero_intro", "Introductie", "In vier overzichtelijke stappen bereiden we een passend eerste gesprek én je afspraak voor.", "textarea", 360), field("Na verzenden", "status_title", "Titel", "Wat gebeurt hierna?"), field("Na verzenden", "status_text", "Tekst", "Na het versturen ontvang je een bevestiging. Daarna plannen we samen je intakegesprek.", "textarea", 420),
 ];
 
 const contactFields: CmsFieldDefinition[] = [
