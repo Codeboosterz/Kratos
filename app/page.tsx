@@ -7,9 +7,11 @@ import { ProductCard } from "@/components/product-card";
 import { getPublishedHomeHero } from "@/src/cms/home";
 import { applyCmsProductPresentation, getFeaturedProducts } from "@/src/server/catalogue";
 import { getPublishedCmsPage } from "@/src/cms/site-pages";
+import { visibleReviewCards } from "@/src/domain/review-cards";
 
 export default async function HomePage() {
   const hero = await getPublishedHomeHero();
+  const reviews = visibleReviewCards(hero.review_cards);
   const catalogueContent = await getPublishedCmsPage("trajecten");
   const featured = getFeaturedProducts().map((product) => applyCmsProductPresentation(product, catalogueContent));
   return (
@@ -48,12 +50,15 @@ export default async function HomePage() {
           <EditorialReveal className="omar-band__story"><span className="eyebrow">{hero.omar_eyebrow}</span><h3>{hero.omar_title}</h3><p>{hero.omar_text}</p><Link className="button button--outline" href="/over-omar">Lees het verhaal <ArrowRight size={18} aria-hidden="true" /></Link></EditorialReveal>
         </div>
       </section>
-      <section className="section section--editorial reviews-section" aria-labelledby="reviews-title">
+      {reviews.length > 0 ? <section className="section section--editorial reviews-section" aria-labelledby="reviews-title">
         <div className="site-container">
           <EditorialReveal className="section-heading section-heading--center"><span className="eyebrow">{hero.reviews_eyebrow}</span><h2 id="reviews-title" className="section-title">{hero.reviews_title} <span className="lime">{hero.reviews_title_accent}</span></h2><p className="muted">{hero.reviews_intro}</p></EditorialReveal>
-          <div className="review-placeholder-row" role="region" aria-label="Cliëntverhalen" tabIndex={0}>{hero.review_cards.map((item) => <article key={item.label}><span>{item.label}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
+          <div className="review-placeholder-row client-story-grid" aria-label="Cliëntverhalen">{reviews.map((item) => <article key={item.label}>
+            {item.image_url ? <div className="client-story-photo"><Image src={item.image_url} alt={item.image_alt || item.title} fill sizes="(max-width: 767px) 100vw, 50vw" /></div> : null}
+            <div className="client-story-copy"><span>{item.label}</span><h3>{item.title}</h3><p>{item.text}</p></div>
+          </article>)}</div>
         </div>
-      </section>
+      </section> : null}
       <section className="editorial-light trajectory-preview" aria-labelledby="directions-title">
         <div className="site-container">
           <EditorialReveal className="section-heading section-heading--center"><span className="eyebrow">{hero.directions_eyebrow}</span><h2 id="directions-title" className="section-title">{hero.directions_title} <span className="lime">{hero.directions_title_accent}</span></h2></EditorialReveal>

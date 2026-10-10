@@ -32,15 +32,19 @@ export function BrandMarquee({ primary = "Reach your full potential", secondary 
   const scope = useRef<HTMLDivElement>(null);
   useGSAP(() => {
     const track = scope.current?.querySelector<HTMLElement>(".brand-marquee__track");
-    if (!track || reducedMotion()) return;
+    if (!track) return;
 
-    gsap.fromTo(track, { xPercent: 0 }, {
-      xPercent: -50,
-      duration: 64,
-      ease: "none",
-      repeat: -1,
-      force3D: true,
+    const media = gsap.matchMedia();
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.fromTo(track, { xPercent: 0 }, {
+        xPercent: -50,
+        duration: 64,
+        ease: "none",
+        repeat: -1,
+        force3D: true,
+      });
     });
+    return () => media.revert();
   }, { scope, dependencies: [primary, secondary], revertOnUpdate: true });
 
   const group = (key: string) => (
@@ -110,7 +114,8 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
     const media = gsap.matchMedia();
     // Compact layouts are not pinned. A desktop-length scrub would reveal the
     // photos only after this short section has already left the viewport.
-    media.add("(max-width: 900px)", () => {
+    media.add({ compact: "(max-width: 900px)", reduced: "(prefers-reduced-motion: reduce)" }, (context) => {
+      if (!context.conditions?.compact) return;
       gsap.set([center, ...surrounding], { x: 0, y: 0, scale: 1, autoAlpha: 1 });
       if (backdrop) gsap.set(backdrop, { autoAlpha: 1 });
       if (caption) {
@@ -118,7 +123,7 @@ export function CommunityGrid({ images, centerImage }: { images: string[]; cente
         caption.textContent = "Niet alleen bij Kratos";
       }
       root.dataset.communityProgress = "1.0000";
-      if (!reducedMotion()) {
+      if (!context.conditions?.reduced) {
         // Animate each row in its own visible range; a phone cannot contain the
         // complete fifteen-photo desktop composition in one pinned viewport.
         gsap.utils.toArray<HTMLElement>(".grid_item", root).forEach((tile) => {

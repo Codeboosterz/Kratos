@@ -1,6 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { clientStoryCards, previousReviewsIntro, reviewsIntro, upgradeClientStories } from "@/src/content/client-stories";
 import { isSupabaseConfigured } from "@/src/supabase/config";
 import { createPublicClient } from "@/src/supabase/public";
 import { communityImageDefaults, previousCommunityImageDefaults, faithCommunityPhotos } from "@/src/content/community-media";
@@ -78,6 +79,8 @@ const defaultFaithStorySteps = previousFaithStorySteps.map((step, index) => {
 });
 
 const reviewCardSchema = z.object({
+  image_url: safeImageUrl.or(z.literal("")).optional(),
+  image_alt: z.string().trim().max(240).optional(),
   label: z.string().trim().min(2).max(60),
   title: z.string().trim().min(2).max(100),
   text: z.string().trim().min(20).max(420),
@@ -129,12 +132,8 @@ const homeHeroObjectSchema = z.object({
   reviews_eyebrow: z.string().trim().min(2).max(80).default("Ervaringen"),
   reviews_title: z.string().trim().min(2).max(100).default("Niet onze woorden."),
   reviews_title_accent: z.string().trim().min(2).max(80).default("Die van hen."),
-  reviews_intro: z.string().trim().min(20).max(420).default("Deze ruimte is klaar voor goedgekeurde cliëntverhalen. Namen, beelden en resultaten worden pas gepubliceerd na toestemming."),
-  review_cards: z.array(reviewCardSchema).length(4).default(Array.from({ length: 4 }, (_, index) => ({
-    label: `Cliëntverhaal ${String(index + 1).padStart(2, "0")}`,
-    title: "Verhaal in voorbereiding",
-    text: "Hier verschijnt een gecontroleerd verhaal met context, toestemming en passend beeld.",
-  }))),
+  reviews_intro: z.string().trim().min(20).max(420).default(reviewsIntro),
+  review_cards: z.array(reviewCardSchema).length(4).default(clientStoryCards),
   directions_eyebrow: z.string().trim().min(2).max(80).default("Kies jouw richting"),
   directions_title: z.string().trim().min(2).max(100).default("Waar wil je aan"),
   directions_title_accent: z.string().trim().min(2).max(80).default("werken?"),
@@ -164,6 +163,8 @@ export const homeHeroSchema = z.preprocess((input) => {
 
   return {
     ...content,
+    review_cards: upgradeClientStories(content.review_cards),
+    ...(content.reviews_intro === previousReviewsIntro ? { reviews_intro: reviewsIntro } : {}),
     // Replace the old default poster set, not a client's custom image choices.
     ...(hasLegacyCommunityDefaults ? { community_image_urls: [...communityImageDefaults] } : {}),
     ...(hasPreviousFaithPhotos ? { faith_story_steps: steps.map((step, index) => ({
@@ -217,8 +218,8 @@ export const defaultHomeHero: HomeHeroContent = {
   reviews_eyebrow: "Ervaringen",
   reviews_title: "Niet onze woorden.",
   reviews_title_accent: "Die van hen.",
-  reviews_intro: "Deze ruimte is klaar voor goedgekeurde cliëntverhalen. Namen, beelden en resultaten worden pas gepubliceerd na toestemming.",
-  review_cards: Array.from({ length: 4 }, (_, index) => ({ label: `Cliëntverhaal ${String(index + 1).padStart(2, "0")}`, title: "Verhaal in voorbereiding", text: "Hier verschijnt een gecontroleerd verhaal met context, toestemming en passend beeld." })),
+  reviews_intro: reviewsIntro,
+  review_cards: clientStoryCards,
   directions_eyebrow: "Kies jouw richting",
   directions_title: "Waar wil je aan",
   directions_title_accent: "werken?",
@@ -313,6 +314,8 @@ export function homeHeroFromFormData(formData: FormData) {
     reviews_intro: formData.get("reviews_intro"),
     review_cards: Array.from({ length: 4 }, (_, index) => ({
       label: formData.get(`review_${index}_label`),
+      image_url: formData.get(`review_${index}_image_url`) ?? undefined,
+      image_alt: formData.get(`review_${index}_image_alt`) ?? undefined,
       title: formData.get(`review_${index}_title`),
       text: formData.get(`review_${index}_text`),
     })),

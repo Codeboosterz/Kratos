@@ -1,6 +1,6 @@
 {
-  "count": 176,
-  "sizeBytes": 22789535,
+  "count": 178,
+  "sizeBytes": 23199728,
   "files": [
     {
       "path": "/hero-frames/frame_001.jpg",
@@ -485,6 +485,14 @@
     {
       "path": "/hero-frames/frame_121.jpg",
       "sizeBytes": 79241
+    },
+    {
+      "path": "/images/client-stories/story-01.jpg",
+      "sizeBytes": 161374
+    },
+    {
+      "path": "/images/client-stories/story-02.jpg",
+      "sizeBytes": 248819
     },
     {
       "path": "/images/community/agility-drill.jpg",

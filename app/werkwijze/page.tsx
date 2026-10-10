@@ -15,7 +15,7 @@ export default async function MethodPage() {
     <>
       <section className="page-hero page-hero--split" data-sticky-hero-sentinel>
         <div className="site-container split-panel">
-          <EditorialReveal className="split-panel__content"><span className="eyebrow-pill">{content.hero_eyebrow}</span><h1 className="display-title">{content.hero_title}<br /><span className="lime">{content.hero_accent}</span></h1><p className="lead">{content.hero_intro}</p><Link className="button button--primary" href="/intake?source=method-hero">Plan een intake <ArrowRight aria-hidden="true" /></Link></EditorialReveal>
+          <EditorialReveal className="split-panel__content"><span className="eyebrow-pill">{content.hero_eyebrow}</span><h1 className="display-title">{content.hero_title}<br /><span className="lime">{content.hero_accent}</span></h1><p className="lead">{content.hero_intro}</p><Link className="button button--outline" href="/trajecten">Ontdek de trajecten <ArrowRight aria-hidden="true" /></Link></EditorialReveal>
           <div className="split-panel__image"><Image src={content.hero_image_url} alt={content.hero_image_alt} fill priority sizes="(max-width: 800px) 100vw, 52vw" /></div>
         </div>
       </section>

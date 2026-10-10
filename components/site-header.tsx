@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Brand } from "@/components/brand";
 
 type HeaderCopy = { results: string; method: string; trajectories: string; about: string; community: string; cta: string };
@@ -11,6 +11,25 @@ type HeaderCopy = { results: string; method: string; trajectories: string; about
 export function SiteHeader({ copy }: { copy: HeaderCopy }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  useEffect(() => {
+    if (!open) return;
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    };
+    const desktop = window.matchMedia("(min-width: 1101px)");
+    const closeOnDesktop = () => { if (desktop.matches) setOpen(false); };
+    document.addEventListener("keydown", dismiss);
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => {
+      document.removeEventListener("keydown", dismiss);
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
+  }, [open]);
   const checkout = pathname.startsWith("/checkout");
   const focusedFlow = pathname === "/intake" || pathname === "/community" || pathname.startsWith("/trajecten/");
   const navItems = [[copy.results, "/resultaten"], [copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.community, "/community"]] as const;
@@ -31,7 +50,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
         <Brand compact />
         <nav className="desktop-nav" aria-label="Hoofdnavigatie">
           {navItems.map(([label, href]) => (
-            <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>
+            <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
               {label}
             </Link>
           ))}
@@ -40,6 +59,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
           {copy.cta}
         </Link> : null}
         <button
+          ref={menuButton}
           type="button"
           className="menu-button"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
@@ -52,7 +72,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
       </div>
       {open ? (
         <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobiele navigatie">
-          {navItems.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}
+          {navItems.map(([label, href]) => <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>)}
           {!focusedFlow ? <Link className="button button--primary" href="/intake?source=mobile-menu" onClick={() => setOpen(false)}>{copy.cta}</Link> : null}
         </nav>
       ) : null}

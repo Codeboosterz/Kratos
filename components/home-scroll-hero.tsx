@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { HeroFirstScrollTitle } from "@/components/hero-first-scroll-title";
 import { MOTION } from "@/motion/animation-tokens";
+import { heroFrameSource, mobileCanvasRatio, mobileFrameAtProgress } from "@/src/domain/hero-sequence";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -23,19 +24,15 @@ const FRAME_ANCHORS = Array.from(
   { length: Math.ceil((FRAME_COUNT - 1) / FRAME_ANCHOR_STEP) + 1 },
   (_, index) => Math.min(index * FRAME_ANCHOR_STEP, FRAME_COUNT - 1),
 );
-const FRAME_ANCHOR_SET = new Set(FRAME_ANCHORS);
-
-function frameSource(index: number) {
-  return `/hero-frames/frame_${String(index + 1).padStart(3, "0")}.jpg`;
-}
-
-function frameWindow(target: number, direction: 1 | -1) {
+function frameWindow(target: number, direction: 1 | -1, compact = false) {
   const ordered = [target];
-  const furthestOffset = Math.max(FRAME_WINDOW_BEHIND, FRAME_WINDOW_AHEAD);
+  const ahead = compact ? 4 : FRAME_WINDOW_AHEAD;
+  const behind = compact ? 2 : FRAME_WINDOW_BEHIND;
+  const furthestOffset = Math.max(behind, ahead);
 
   for (let offset = 1; offset <= furthestOffset; offset += 1) {
-    if (offset <= FRAME_WINDOW_AHEAD) ordered.push(target + offset * direction);
-    if (offset <= FRAME_WINDOW_BEHIND) ordered.push(target - offset * direction);
+    if (offset <= ahead) ordered.push(target + offset * direction);
+    if (offset <= behind) ordered.push(target - offset * direction);
   }
 
   return ordered.filter((index) => index >= 0 && index < FRAME_COUNT);
@@ -91,13 +88,25 @@ export function HomeScrollHero({
       const media = gsap.matchMedia();
 
       media.add(
-        "(prefers-reduced-motion: no-preference) and (min-width: 901px), (prefers-reduced-motion: no-preference) and (min-height: 561px)",
-        () => {
+        {
+          desktop: "(min-width: 901px)",
+          mobile: "(max-width: 900px)",
+          reducedMotion: "(prefers-reduced-motion: reduce)",
+          shortViewport: "(max-height: 560px)",
+        },
+        (mediaContext) => {
+          const compact = Boolean(mediaContext.conditions?.mobile);
+          if (mediaContext.conditions?.reducedMotion || (compact && mediaContext.conditions?.shortViewport)) return;
           const context = canvas.getContext("2d", { alpha: false });
           if (!context) return;
 
           const minimizeMotion = false;
-          const compact = window.matchMedia("(max-width: 900px)").matches;
+          const frameAnchors = compact ? [0, 60, FRAME_COUNT - 1] : FRAME_ANCHORS;
+          const frameAnchorSet = new Set(frameAnchors);
+          const requestedFrameIndex = (value: number) => compact
+            ? mobileFrameAtProgress(value / (FRAME_COUNT - 1))
+            : Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(value)));
+          canvas.dataset.sequence = compact ? "mobile-curls" : "desktop";
           const endTaglineLines = gsap.utils.toArray<HTMLElement>(
             ".home-scroll-hero__end-tagline-line > span",
             endTagline,
@@ -122,7 +131,9 @@ export function HomeScrollHero({
           const syncCanvasSize = () => {
             const cssWidth = Math.max(1, canvas.clientWidth);
             const cssHeight = Math.max(1, canvas.clientHeight);
-            const pixelRatio = Math.min(window.devicePixelRatio || 1, compact ? 1 : 2);
+            const pixelRatio = compact
+              ? mobileCanvasRatio(cssWidth, cssHeight, window.devicePixelRatio)
+              : Math.min(window.devicePixelRatio || 1, 2);
             const nextWidth = Math.round(cssWidth * pixelRatio);
             const nextHeight = Math.round(cssHeight * pixelRatio);
 
@@ -151,7 +162,7 @@ export function HomeScrollHero({
 
           const drawFrame = (force = false) => {
             syncCanvasSize();
-            const requestedFrame = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(frameState.value)));
+            const requestedFrame = requestedFrameIndex(frameState.value);
             const availableFrame = nearestLoadedFrame(requestedFrame);
             if (availableFrame < 0 || (!force && availableFrame === drawnFrame)) return;
 
@@ -160,11 +171,13 @@ export function HomeScrollHero({
 
             const sourceWidth = image.naturalWidth || image.width;
             const sourceHeight = image.naturalHeight || image.height;
-            const scale = Math.max(renderWidth / sourceWidth, renderHeight / sourceHeight);
+            const scale = compact
+              ? Math.min(renderWidth / sourceWidth, renderHeight / sourceHeight)
+              : Math.max(renderWidth / sourceWidth, renderHeight / sourceHeight);
             const width = sourceWidth * scale;
             const height = sourceHeight * scale;
             const overflowX = Math.max(0, width - renderWidth);
-            const x = -overflowX * 0.46;
+            const x = compact ? (renderWidth - width) / 2 : -overflowX * 0.46;
             const y = (renderHeight - height) / 2;
 
             context.clearRect(0, 0, renderWidth, renderHeight);
@@ -182,8 +195,8 @@ export function HomeScrollHero({
             frames.forEach((image, index) => {
               if (
                 image
-                && !FRAME_ANCHOR_SET.has(index)
-                && Math.abs(index - target) > (compact ? 8 : FRAME_RETENTION_RADIUS)
+                && !frameAnchorSet.has(index)
+                && Math.abs(index - target) > (compact ? 4 : FRAME_RETENTION_RADIUS)
               ) {
                 frames[index] = undefined;
               }
@@ -215,7 +228,7 @@ export function HomeScrollHero({
               failedFrames.add(index);
               resolve(false);
             };
-            image.src = frameSource(index);
+            image.src = heroFrameSource(index, compact);
           });
 
           const pumpLoadQueue = () => {
@@ -237,7 +250,7 @@ export function HomeScrollHero({
           };
 
           const replaceLoadQueue = (priorityFrames: number[]) => {
-            const nextQueue = [...priorityFrames, ...FRAME_ANCHORS].filter((index, position, items) => (
+            const nextQueue = [...priorityFrames, ...frameAnchors].filter((index, position, items) => (
               items.indexOf(index) === position
               && !frames[index]
               && !loadingFrames.has(index)
@@ -255,11 +268,11 @@ export function HomeScrollHero({
             lastTarget = target;
             currentTarget = target;
             evictDistantFrames(target);
-            replaceLoadQueue(frameWindow(target, direction));
+            replaceLoadQueue(frameWindow(target, direction, compact));
           };
 
           const updateFrame = () => {
-            const target = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(frameState.value)));
+            const target = requestedFrameIndex(frameState.value);
             if (target !== currentTarget) requestFramesForTarget(target);
             drawFrame();
           };
@@ -275,7 +288,7 @@ export function HomeScrollHero({
             // Coarse anchors make large scroll jumps visually stable. Detailed frames
             // are requested only around the user's current position.
             anchorPrimeTimer = window.setTimeout(() => {
-              replaceLoadQueue(currentTarget === 0 ? FRAME_ANCHORS.filter((index) => index !== 0) : frameWindow(currentTarget, 1));
+              replaceLoadQueue(currentTarget === 0 ? frameAnchors.filter((index) => index !== 0) : frameWindow(currentTarget, 1, compact));
             }, 400);
           };
 
@@ -319,7 +332,7 @@ export function HomeScrollHero({
               .to(endTaglineLines, { autoAlpha: 1, duration: 0.1 }, 0.86);
           } else {
             timeline
-              .to(canvas, { scale: 1.025, duration: 1 }, 0)
+              .to(canvas, { scale: compact ? 1 : 1.025, duration: 1 }, 0)
               .to(copy, { autoAlpha: 0, xPercent: -9, duration: 0.14 }, 0.045)
               .to(veil, { opacity: 0.34, duration: 0.18 }, 0.045)
               .to(cue, { autoAlpha: 0, y: 12, duration: 0.08 }, 0.01)
@@ -351,6 +364,7 @@ export function HomeScrollHero({
             delete section.dataset.sequenceRetained;
             delete section.dataset.scrollProgress;
             delete canvas.dataset.frame;
+            delete canvas.dataset.sequence;
           };
         },
       );
@@ -364,7 +378,8 @@ export function HomeScrollHero({
     <section ref={scope} className="home-scroll-hero" aria-labelledby="home-title" data-testid="scroll-hero">
       <span className="home-scroll-hero__sentinel" data-sticky-hero-sentinel aria-hidden="true" />
       <div className="home-scroll-hero__sticky">
-        <div className="home-scroll-hero__poster-frame">
+        <picture className="home-scroll-hero__poster-frame">
+          <source media="(max-width: 900px)" srcSet={heroFrameSource(0, true)} type="image/webp" />
           <Image
             className="home-scroll-hero__poster"
             src={posterSrc}
@@ -374,7 +389,7 @@ export function HomeScrollHero({
             fetchPriority="high"
             sizes="100vw"
           />
-        </div>
+        </picture>
         <canvas ref={canvasRef} className="home-scroll-hero__canvas" aria-hidden="true" data-testid="scroll-hero-canvas" />
         <div ref={veilRef} className="home-scroll-hero__veil" aria-hidden="true" />
         <div className="home-scroll-hero__bottom-fade" aria-hidden="true" />

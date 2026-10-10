@@ -29,6 +29,8 @@ function formDataForFaithSteps(stepCount: number) {
     formData.set(`review_${index}_label`, card.label);
     formData.set(`review_${index}_title`, card.title);
     formData.set(`review_${index}_text`, card.text);
+    formData.set(`review_${index}_image_url`, card.image_url ?? "");
+    formData.set(`review_${index}_image_alt`, card.image_alt ?? "");
   });
 
   return formData;
@@ -64,6 +66,7 @@ describe("Faith & Fitness CMS content", () => {
     expect(result.success).toBe(true);
     if (!result.success) return;
     expect(result.data.faith_story_steps).toHaveLength(7);
+    expect(result.data.review_cards[0].image_url).toBe(defaultHomeHero.review_cards[0].image_url);
     expect(result.data.faith_story_steps[6].title).toContain("7");
     expect(result.data.faith_story_steps[0].additional_images).toEqual(defaultHomeHero.faith_story_steps[0].additional_images);
   });
