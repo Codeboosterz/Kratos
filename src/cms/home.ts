@@ -192,7 +192,7 @@ export const defaultHomeHero: HomeHeroContent = {
   primary_cta_label: "Plan een intake",
   primary_cta_href: "/intake?source=home-hero",
   secondary_cta_label: "Bekijk onze werkwijze",
-  secondary_cta_href: "/resultaten",
+  secondary_cta_href: "/werkwijze",
   note: "Eerst jouw startpunt en doel helder krijgen.",
   hero_image_url: "/img/hero-header.jpg",
   hero_image_alt: "",

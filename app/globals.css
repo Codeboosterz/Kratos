@@ -1253,6 +1253,7 @@ img { max-width: 100%; }
 .coach-feature { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(3rem, 7vw, 7rem); align-items: center; }
 .coach-feature__image { position: relative; min-height: 620px; overflow: hidden; border-radius: 28px; }
 .coach-feature__image img { object-fit: cover; }
+.about-story .lead + .lead, .about-story .lead + .button { margin-top: 1.25rem; }
 .beliefs .direction-grid article { min-height: 150px; display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; padding: 1.4rem; border-radius: 18px; background: var(--carbon); color: var(--off-white); }
 .beliefs .direction-grid article > svg { color: var(--lime); }
 .beliefs .direction-grid article span { display: grid; }

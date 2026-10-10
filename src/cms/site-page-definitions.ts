@@ -1,5 +1,6 @@
 import { z } from "zod";
 import productConfig from "@/config/products.json";
+import { omarStory } from "@/src/content/omar-story";
 
 export type CmsFieldDefinition = {
   key: string;
@@ -27,18 +28,6 @@ const hero = (eyebrow: string, title: string, accent: string, intro: string, ima
   field("Hero", "hero_intro", "Introductie", intro, "textarea", 420),
   field("Hero", "hero_image_url", "Hero-afbeelding", image, "image"),
   field("Hero", "hero_image_alt", "Beeldbeschrijving", "", "text", 240),
-];
-
-const resultsFields: CmsFieldDefinition[] = [
-  ...hero("Persoonlijke coaching", "Resultaat begint met", "een eerlijk startpunt.", "Een helder beeld, relevante signalen en een route die aansluit op jouw leven.", "/images/omar-cable.jpg"),
-  field("Hero", "hero_check_1", "Punt 1", "Een helder beeld van waar je nu staat"), field("Hero", "hero_check_2", "Punt 2", "Inzicht in wat werkt en wat je remt"), field("Hero", "hero_check_3", "Punt 3", "Een plan dat aansluit op jouw leven"),
-  field("Voortgang", "method_eyebrow", "Bovenregel", "Jouw voortgang"), field("Voortgang", "method_title", "Titel", "Duidelijk volgen."), field("Voortgang", "method_accent", "Groen deel", "Bewust bijsturen."),
-  ...[1,2,3].flatMap((n) => [field("Voortgang", `step_${n}_title`, `Stap ${n} — titel`, ["Startpunt","Check-in","Bijsturen"][n-1]), field("Voortgang", `step_${n}_text`, `Stap ${n} — tekst`, ["We brengen je huidige situatie in kaart met een intake, metingen en vragenlijst.","Regelmatige check-ins maken ruimte voor vragen, knelpunten en kleine overwinningen.","Op basis van context en feedback verfijnen we de route wanneer dat nodig is."][n-1], "textarea", 320)]),
-  field("Context", "context_eyebrow", "Bovenregel", "Meten met betekenis"), field("Context", "context_title", "Titel", "Meten wat voor"), field("Context", "context_accent", "Groen deel", "jou relevant is."), field("Context", "context_image_url", "Afbeelding", "/images/omar-hydrate.jpg", "image"), field("Context", "context_image_alt", "Beeldbeschrijving", "Omar bespreekt een plan tijdens een coachingsmoment", "text", 240),
-  ...[1,2,3].flatMap((n) => [field("Context", `principle_${n}_title`, `Principe ${n} — titel`, ["Focus op wat telt","Data met betekenis","Voortgang die blijft"][n-1]), field("Context", `principle_${n}_text`, `Principe ${n} — tekst`, ["We kiezen samen signalen die passen bij je doel en dagelijkse leven.","Cijfers zijn geen eindpunt; ze helpen om beslissingen begrijpelijk te maken.","Door te meten, leren en bij te sturen bouw je aan een aanpak die past."][n-1], "textarea", 300)]),
-  field("Cliëntverhalen", "stories_eyebrow", "Bovenregel", "Verhalen van cliënten"), field("Cliëntverhalen", "stories_title", "Titel", "Echte verhalen verdienen"), field("Cliëntverhalen", "stories_accent", "Groen deel", "echte context."), field("Cliëntverhalen", "stories_intro", "Uitleg", "Deze scrollindeling is klaar voor gecontroleerde namen, beelden en ervaringen zodra toestemming en bronmateriaal bevestigd zijn.", "textarea", 420),
-  ...[1,2,3,4].flatMap((n) => [field("Cliëntverhalen", `story_${n}_label`, `Verhaal ${n} — label`, `Cliëntverhaal ${String(n).padStart(2, "0")}`), field("Cliëntverhalen", `story_${n}_title`, `Verhaal ${n} — titel`, "Ruimte voor een goedgekeurd verhaal"), field("Cliëntverhalen", `story_${n}_text`, `Verhaal ${n} — tekst`, "Naam, beeld en review worden pas na toestemming en controle gepubliceerd.", "textarea", 360), field("Cliëntverhalen", `story_${n}_image_url`, `Verhaal ${n} — afbeelding`, ["/images/omar-deadlift.jpg","/images/omar-cable.jpg","/images/omar-hydrate.jpg","/img/hero-header.jpg"][n-1], "image")]),
-  field("Laatste oproep", "final_title", "Titel", "Bespreek wat resultaat voor"), field("Laatste oproep", "final_accent", "Groen deel", "jou betekent."), field("Laatste oproep", "final_text", "Tekst", "Een intake maakt verwachtingen, mogelijkheden en een passende route helder.", "textarea", 320),
 ];
 
 const methodFields: CmsFieldDefinition[] = [
@@ -83,6 +72,14 @@ const aboutFields: CmsFieldDefinition[] = [
   field("Laatste oproep", "final_title", "Titel", "Begin met een helder gesprek."), field("Laatste oproep", "final_text", "Tekst", "Vertel waar jij aan wilt werken."),
 ];
 
+const legacyAboutDefaults = Object.fromEntries(aboutFields.map((item) => [item.key, item.defaultValue]));
+const sourceAboutFields = [
+  ...aboutFields.map((item) => ({ ...item, defaultValue: omarStory[item.key] ?? item.defaultValue })),
+  ...["coach_text_2", "coach_text_3", "community_text", "community_detail"].map((key) =>
+    field(key.startsWith("community") ? "Faith & Fitness" : "Mijn verhaal", key, key === "coach_text_2" ? "Geloof en discipline" : key === "coach_text_3" ? "Het ontstaan van KRATOS" : key === "community_text" ? "Communityverhaal" : "Events", omarStory[key], "textarea", 520)),
+  field("Faith & Fitness", "community_title", "Titel", omarStory.community_title),
+];
+
 const communityFields: CmsFieldDefinition[] = [
   ...hero("Faith & Fitness Community", "Faith. Fitness.", "Community.", "KRATOS Faith & Fitness brengt mensen samen rond geloof, beweging en verbinding. Tijdens onze community-events trainen we samen, moedigen we elkaar aan en ontmoeten we nieuwe mensen.", "/images/community/outdoor-lunge.jpg")
     .map((item) => ({ ...item, key: `community_${item.key}`, defaultValue: item.key === "hero_image_alt" ? "Een deelnemer doet een lunge tijdens een buitentraining" : item.defaultValue })),
@@ -119,16 +116,15 @@ const contactFields: CmsFieldDefinition[] = [
 ];
 
 const siteSettingsFields: CmsFieldDefinition[] = [
-  field("Navigatie", "nav_results", "Resultaten", "Resultaten"), field("Navigatie", "nav_method", "Werkwijze", "Werkwijze"), field("Navigatie", "nav_trajectories", "Trajecten", "Trajecten"), field("Navigatie", "nav_about", "Over Omar", "Over Omar"), field("Navigatie", "nav_community", "Faith & Fitness", "Faith & Fitness"), field("Navigatie", "nav_cta", "Intakeknop", "Plan een intake"),
+  field("Navigatie", "nav_method", "Werkwijze", "Werkwijze"), field("Navigatie", "nav_trajectories", "Trajecten", "Trajecten"), field("Navigatie", "nav_about", "Over Omar", "Over Omar"), field("Navigatie", "nav_community", "Faith & Fitness", "Faith & Fitness"), field("Navigatie", "nav_cta", "Intakeknop", "Plan een intake"),
   field("Voettekst", "footer_tagline", "Korte omschrijving", "Persoonlijke coaching met aandacht voor jouw doel, ritme en volgende stap.", "textarea", 260), field("Voettekst", "footer_explore", "Kolomtitel ontdekken", "Ontdek"), field("Voettekst", "footer_policy", "Kolomtitel contact", "Contact & beleid"), field("Voettekst", "footer_signature", "Slotregel", "Unleash your power"), field("Merk", "brand_tagline", "Merkregel", "Unleash your power"),
 ];
 
 export const cmsPageDefinitions: CmsPageDefinition[] = [
   { slug: "site-settings", route: "/", title: "Header & footer", description: "Navigatielabels, merktekst en voettekst. Routes en contactgegevens blijven beschermd.", fields: siteSettingsFields },
-  { slug: "resultaten", route: "/resultaten", title: "Resultaten", description: "Hero, voortgang, context en cliëntverhalen.", fields: resultsFields },
   { slug: "werkwijze", route: "/werkwijze", title: "Werkwijze", description: "Aanpak, stappen, basis en laatste oproep.", fields: methodFields },
   { slug: "trajecten", route: "/trajecten", title: "Trajecten", description: "Catalogus, productpresentatie en detailteksten. Prijzen en betaalinstellingen blijven beschermd.", fields: catalogueFields },
-  { slug: "over-omar", route: "/over-omar", title: "Over Omar", description: "Verhaal, waarden, coaching en werkwijze.", fields: aboutFields },
+  { slug: "over-omar", route: "/over-omar", title: "Over Omar", description: "Verhaal, waarden, coaching en werkwijze.", fields: sourceAboutFields },
   { slug: "gratis-tools", route: "/community", title: "Faith & Fitness Community", description: "Communityverhaal, pijlers, beelden en interesseoproep. De bestaande paginageschiedenis blijft behouden.", fields: communityFields },
   { slug: "intake", route: "/intake", title: "Intake", description: "Uitleg rond het intakeformulier. Formuliervalidatie blijft beschermd.", fields: intakeFields },
   { slug: "contact", route: "/contact", title: "Contact", description: "Contactintroductie en gecontroleerd informatiekader.", fields: contactFields },
@@ -161,5 +157,11 @@ export function parseCmsPageContent(definition: CmsPageDefinition, source: unkno
 // Read-time upgrades fill new fields; form submissions still use strict validation.
 export function parseStoredCmsPageContent(definition: CmsPageDefinition, source: unknown) {
   const stored = z.record(z.string(), z.unknown()).safeParse(source);
-  return parseCmsPageContent(definition, { ...cmsPageDefaults(definition), ...(stored.success ? stored.data : {}) });
+  const content = { ...cmsPageDefaults(definition), ...(stored.success ? stored.data : {}) };
+  if (definition.slug === "over-omar") {
+    for (const [key, value] of Object.entries(omarStory)) {
+      if (content[key] === legacyAboutDefaults[key]) content[key] = value;
+    }
+  }
+  return parseCmsPageContent(definition, content);
 }

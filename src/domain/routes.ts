@@ -1,7 +1,6 @@
 export const routes = {
   home: "/",
   trajectories: "/trajecten",
-  results: "/resultaten",
   about: "/over-omar",
   community: "/community",
   intake: "/intake",

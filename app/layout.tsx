@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <a className="skip-link" href="#main-content">Ga naar de inhoud</a>
         {fixtureMode ? <FixtureBanner /> : null}
-        <SiteHeader copy={{ results: site.nav_results, method: site.nav_method, trajectories: site.nav_trajectories, about: site.nav_about, community: site.nav_community, cta: site.nav_cta }} />
+        <SiteHeader copy={{ method: site.nav_method, trajectories: site.nav_trajectories, about: site.nav_about, community: site.nav_community, cta: site.nav_cta }} />
         <main id="main-content">{children}</main>
         <SiteFooter copy={{ tagline: site.footer_tagline, explore: site.footer_explore, policy: site.footer_policy, signature: site.footer_signature, brandTagline: site.brand_tagline, community: site.nav_community }} />
         <SiteTelemetry enabled={process.env.VERCEL_ENV === "production" && !fixtureMode} />

@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import catalogue from "../../config/products.json";
 
-const publicRoutes = ["/", "/werkwijze", "/trajecten", "/resultaten", "/over-omar", "/gratis-tools", "/intake", "/contact", "/privacy", "/voorwaarden", "/cookies", "/trajecten/transformatie-pack-10-sessies"];
+const publicRoutes = ["/", "/werkwijze", "/trajecten", "/over-omar", "/gratis-tools", "/intake", "/contact", "/privacy", "/voorwaarden", "/cookies", "/trajecten/transformatie-pack-10-sessies"];
 
 test("canonical routes render and public controls have real targets", async ({ page, request }) => {
   const consoleProblems: string[] = [];
@@ -163,7 +163,7 @@ test("320px layout has no horizontal overflow and mobile navigation works", asyn
 test("375px public routes use legible controls and contained swipe rails", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
 
-  for (const route of ["/", "/trajecten", "/intake", "/resultaten", "/gratis-tools", "/contact"]) {
+  for (const route of ["/", "/trajecten", "/intake", "/gratis-tools", "/contact"]) {
     await page.goto(route);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), route).toBe(true);
   }
@@ -204,9 +204,8 @@ test("first-scroll storytelling animations complete without hiding copy", async 
   await expect(page.locator("#method-title .motion-line")).toHaveCSS("opacity", "1", { timeout: 3_000 });
 
   await page.goto("/resultaten");
-  await page.locator("#client-stories-title").scrollIntoViewIfNeeded();
-  await expect(page.locator(".client-story-card").first()).toBeVisible();
-  await expect(page.locator(".client-stories-rail")).toHaveAttribute("aria-label", /toekomstige cliëntverhalen/);
+  await expect(page).toHaveURL(/\/#reviews-title$/);
+  await expect(page.locator("#reviews-title")).toBeVisible();
 });
 
 test("homepage hero scrubs the recovered lift sequence once", async ({ page }) => {

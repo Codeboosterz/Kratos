@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Brand } from "@/components/brand";
 
-type HeaderCopy = { results: string; method: string; trajectories: string; about: string; community: string; cta: string };
+type HeaderCopy = { method: string; trajectories: string; about: string; community: string; cta: string };
 
 export function SiteHeader({ copy }: { copy: HeaderCopy }) {
   const pathname = usePathname();
@@ -32,7 +32,7 @@ export function SiteHeader({ copy }: { copy: HeaderCopy }) {
   }, [open]);
   const checkout = pathname.startsWith("/checkout");
   const focusedFlow = pathname === "/intake" || pathname === "/community" || pathname.startsWith("/trajecten/");
-  const navItems = [[copy.results, "/resultaten"], [copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.community, "/community"]] as const;
+  const navItems = [[copy.method, "/werkwijze"], [copy.trajectories, "/trajecten"], [copy.about, "/over-omar"], [copy.community, "/community"]] as const;
 
   if (pathname.startsWith("/beheer")) return null;
 
